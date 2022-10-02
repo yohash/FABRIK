@@ -155,6 +155,13 @@
       },
       "url": "https://packages.unity.com"
     },
+    "com.yohash.bezier": {
+      "version": "https://github.com/yohash/Bezier.git#upm",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "e53b01502e53726760fe1063c79851d89b781166"
+    },
     "com.unity.modules.ai": {
       "version": "1.0.0",
       "depth": 0,

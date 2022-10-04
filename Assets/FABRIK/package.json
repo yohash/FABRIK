@@ -19,9 +19,9 @@
   ],
   "samples": [
     {
-      "displayName":"Setup for Custom IK",
-      "description":"The Custom IK scripts will perform IK by iteratively testing rotations. This sample scene shows you how to set up a basic robot limb with Custom IK",
-      "path":"Samples~/SetupCustomIK"
+      "displayName": "Setup for Custom IK",
+      "description": "The Custom IK scripts will perform IK by iteratively testing rotations. This sample scene shows you how to set up a basic robot limb with Custom IK",
+      "path": "Samples~/SetupCustomIK"
     }
   ]
   "author": {

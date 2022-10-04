@@ -142,7 +142,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b0aff0ad0ee4ba48af23bfd2da22579, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  axis: {x: 0, y: 0, z: 0}
+  axis: {x: 1, y: 0, z: 1}
   startOffset: {x: 0, y: 0, z: 0}
   MinAngle: -360
   MaxAngle: 360
@@ -192,7 +192,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b0aff0ad0ee4ba48af23bfd2da22579, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  axis: {x: 0, y: 0, z: 0}
+  axis: {x: 1, y: 0, z: 0}
   startOffset: {x: 0, y: 0, z: 0}
   MinAngle: -360
   MaxAngle: 360
@@ -243,7 +243,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b0aff0ad0ee4ba48af23bfd2da22579, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  axis: {x: 0, y: 0, z: 0}
+  axis: {x: 0, y: 1, z: 0}
   startOffset: {x: 0, y: 0, z: 0}
   MinAngle: -360
   MaxAngle: 360
@@ -360,7 +360,7 @@ GameObject:
   - component: {fileID: 23388633113992280}
   - component: {fileID: 114747600697138532}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: RobotArm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -520,7 +520,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b0aff0ad0ee4ba48af23bfd2da22579, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  axis: {x: 0, y: 0, z: 0}
+  axis: {x: 0, y: 1, z: 0}
   startOffset: {x: 0, y: 0, z: 0}
   MinAngle: -360
   MaxAngle: 360
@@ -571,7 +571,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5b0aff0ad0ee4ba48af23bfd2da22579, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  axis: {x: 0, y: 0, z: 0}
+  axis: {x: 0, y: 0, z: 1}
   startOffset: {x: 0, y: 0, z: 0}
   MinAngle: -360
   MaxAngle: 360

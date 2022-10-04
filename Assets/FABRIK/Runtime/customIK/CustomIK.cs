@@ -1,14 +1,10 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
-///  transcribed from www.alanzucconi.com/2017/04/10/robotic-arms
+/// Transcribed from www.alanzucconi.com/2017/04/10/robotic-arms
 /// </summary>
-
 public class CustomIK : MonoBehaviour
 {
-
   public Transform parentTR;
 
   public RobotJoint[] Joints;
@@ -87,7 +83,6 @@ public class CustomIK : MonoBehaviour
     }
   }
 
-
   public float PartialGradient(Vector3 target, float[] angles, int i)
   {
     // save the angle, it will be restored later
@@ -131,8 +126,12 @@ public class CustomIK : MonoBehaviour
       rote *= parentTR.rotation;
 
     for (int i = 1; i < Joints.Length; i++) {
-      rote *= Quaternion.AngleAxis(angles[i - 1], Joints[i - 1].axis);
-      Vector3 nextPoint = prevPoint + rote * Joints[i].startOffset;
+      var angle = angles[i - 1];
+      var axis = Joints[i - 1].axis;
+      var offset = Joints[i].startOffset;
+
+      rote *= Quaternion.AngleAxis(angle, axis);
+      Vector3 nextPoint = prevPoint + rote * offset;
 
       prevPoint = nextPoint;
     }

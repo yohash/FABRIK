@@ -1,13 +1,11 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 public class RobotJoint : MonoBehaviour
 {
-
   Transform tr;
 
   public Vector3 axis;
+  [Tooltip("This is the axis about which the joint will rotate.")]
   public Vector3 startOffset;
 
   public float MinAngle = -360f;

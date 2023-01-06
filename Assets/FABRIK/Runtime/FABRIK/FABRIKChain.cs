@@ -5,71 +5,65 @@ using UnityEngine;
 public class FABRIKChain : MonoBehaviour
 {
   [Header("Public References")]
-  public Transform chainBase;
-  public Transform chainHead;
-  public Transform chainSecond;
+  public Transform ChainBase;
+  public Transform ChainHead;
+  public Transform ChainSecond;
 
-  public Vector3 myLocalRelativeForward;
+  public Vector3 LocalRelativeForward;
 
-  public List<Vector3> newGlobalPos;
+  public List<Vector3> NewGlobalPos;
 
   [Header("Assign the Chain")]
-  public List<FABRIKJoint> theChain;
+  [SerializeField] private List<FABRIKJoint> chain;
 
   [Header("Assign Tolerances")]
-  public float locationTolerance = 0.005f;
-  private float locationTolSq;
-  public int maxIterations = 10;
+  [SerializeField] private float locationTolerance = 0.005f;
+  [SerializeField] private float locationTolSq;
+  [SerializeField] private int maxIterations = 10;
 
   [Header("Tracking Target")]
-  public Transform targetTR;
+  [SerializeField] private Transform target;
 
-  Transform chainEnd;
-  Transform tr;
+  [SerializeField] private Transform chainEnd;
 
   // ****************************************************************
   //		MONOBEHAVIOURS
   // ****************************************************************
   void Awake()
   {
-    tr = transform;
     // if the chain is shorter than 2 elements ([0] and [1]) it is not a chain
-    chainHead = theChain[0].transform;
-    chainSecond = theChain[1].transform;
+    ChainHead = chain[0].transform;
+    ChainSecond = chain[1].transform;
   }
 
   void Start()
   {
     // setup chain in a downstream direction
-    for (int i = 0; i < theChain.Count - 1; i++) {
-      theChain[i].linkLength = theChain[i + 1].startOffsetDistance;
+    for (int i = 0; i < chain.Count - 1; i++) {
+      chain[i].LinkLength = chain[i + 1].StartOffsetDistance;
       // set up the chain's preferred direction vectors
-      if (theChain[i].hasPreferredDirection) {
-        theChain[i].preferredActualForward = theChain[i].preferredRelativeForward * theChain[i].linkLength;
+      if (chain[i].HasPreferredDirection) {
+        chain[i].PreferredActualForward = chain[i].PreferredRelativeForward * chain[i].LinkLength;
       }
     }
     // send the variables for constraint checking in an upstream direction
-    theChain[0].setupFABRIKChain(tr);
-    for (int i = 1; i < theChain.Count; i++) {
-      theChain[i].setupFABRIKChain(theChain[i - 1].myTR);
+    chain[0].setupFABRIKChain(transform);
+    for (int i = 1; i < chain.Count; i++) {
+      chain[i].setupFABRIKChain(chain[i - 1].transform);
     }
 
     locationTolSq = locationTolerance * locationTolerance;
 
-    chainEnd = theChain[theChain.Count - 1].transform;
+    chainEnd = chain[chain.Count - 1].transform;
   }
 
   // ****************************************************************
   //		PUBLIC ACCESSORS TO SOLVE THE IK
   // ****************************************************************
-  public float getDistanceSq_fromTarget()
+  public bool DistanceIsWithinTolerance()
   {
-    return (chainEnd.position - targetTR.position).sqrMagnitude;
-  }
-
-  public bool targetDistance_isWithinTolerance()
-  {
-    if (getDistanceSq_fromTarget() <= locationTolSq) {
+    var distanceFromTargetSq = (chainEnd.position - target.position).sqrMagnitude;
+    if (distanceFromTargetSq <= locationTolSq) {
       return true;
     }
     return false;
@@ -80,65 +74,67 @@ public class FABRIKChain : MonoBehaviour
     // the BACKWARD process always initiates the FABRIK process,
     // so we will make a copy-array of our current positions to manipulate
     // get the current positions of all components into newLocals
-    newGlobalPos.Clear();
-    for (int i = 0; i < theChain.Count; i++) {
-      newGlobalPos.Add(theChain[i].myTR.position);
+    NewGlobalPos.Clear();
+    for (int i = 0; i < chain.Count; i++) {
+      NewGlobalPos.Add(chain[i].transform.position);
     }
 
     // compute each new position in the backward-step
-    Vector3 v, displace;
+    Vector3 v;
+    Vector3 displace;
     // initialize by setting the last joint to the target position
-    v = targetTR.position;
-    newGlobalPos[newGlobalPos.Count - 1] = v;
+    v = target.position;
+    NewGlobalPos[NewGlobalPos.Count - 1] = v;
     // cascade in the backward direction, upgrading each joint in 'newLocals' along the way
-    for (int i = newGlobalPos.Count - 1; i > 0; i--) {
+    for (int i = NewGlobalPos.Count - 1; i > 0; i--) {
       // get the new point by moving BACKWARD from current point, i, towards i-1 point
-      displace = newGlobalPos[i - 1] - newGlobalPos[i];
-      v = newGlobalPos[i] + displace.normalized * theChain[i].startOffsetDistance;
+      displace = NewGlobalPos[i - 1] - NewGlobalPos[i];
+      v = NewGlobalPos[i] + displace.normalized * chain[i].StartOffsetDistance;
       // save that new position in this forwward step
-      newGlobalPos[i - 1] = v;
+      NewGlobalPos[i - 1] = v;
     }
   }
 
   public void forward(Vector3 basePos)
   {
     // compute each new position in the forward-step
-    Vector3 v, displace;
+    Vector3 v;
+    Vector3 displace;
     // initialize by setting the first joint back to its origin
     v = basePos;
-    newGlobalPos[0] = v;
+    NewGlobalPos[0] = v;
     // cascade in the forward direction, upgrading each joint in 'newLocals' along the way
-    for (int i = 0; i < newGlobalPos.Count - 1; i++) {
+    for (int i = 0; i < NewGlobalPos.Count - 1; i++) {
       // get the new point by moving FORWARD from current point, i, towards i+1 point
-      displace = newGlobalPos[i + 1] - newGlobalPos[i];
+      displace = NewGlobalPos[i + 1] - NewGlobalPos[i];
 
       // vector 'displace' should give us enough info to determine conic constraints
-      v = theChain[i].constrainPoint(newGlobalPos[i] + displace, newGlobalPos[i]);
+      v = chain[i].constrainPoint(NewGlobalPos[i] + displace, NewGlobalPos[i]);
 
       // v is the new global point, so we can now interpolate between
       //   <currentPosition> = newGlobalPos[i], and 'v', by weight, to add 'sluggishness' to the joint
-      if (theChain[i].jointWeight < 1) {
+      if (chain[i].JointWeight < 1) {
         // joint weight is not one, apply the weight
-        v = Vector3.Lerp(newGlobalPos[i], v, theChain[i].jointWeight);
+        v = Vector3.Lerp(NewGlobalPos[i], v, chain[i].JointWeight);
       }
 
       // get a new displacement vector to the constrained point
-      displace = v - newGlobalPos[i];
+      displace = v - NewGlobalPos[i];
       // normalize and scale this vector, adding to our current location
-      v = newGlobalPos[i] + displace.normalized * theChain[i + 1].startOffsetDistance;
+      v = NewGlobalPos[i] + displace.normalized * chain[i + 1].StartOffsetDistance;
 
       // save that new position in this forwward step
-      newGlobalPos[i + 1] = v;
+      NewGlobalPos[i + 1] = v;
     }
   }
 
   public void moveChain()
   {
     // set every other joint relative to the one prior
-    for (int i = 0; i < newGlobalPos.Count - 1; i++) {
-      theChain[i].myTR.position = newGlobalPos[i];
-      theChain[i].LookAt_NextJoint(newGlobalPos[i + 1]);
+    for (int i = 0; i < NewGlobalPos.Count - 1; i++) {
+      chain[i].transform.position = NewGlobalPos[i];
+      chain[i].LookAt_NextJoint(NewGlobalPos[i + 1]);
     }
-    theChain[theChain.Count - 1].LookAt_NextJoint(targetTR.position);
+    chain[chain.Count - 1].LookAt_NextJoint(target.position);
   }
 }

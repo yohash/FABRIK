@@ -46,14 +46,14 @@ public class SpiderFABRIK : MonoBehaviour
     Vector3 v3;
     // find the forward-vector for each joint, relative to the centralHub forwad
     for (int i = 0; i < theFABRIKchains.Count; i++) {
-      joint = theFABRIKchains[i].chainSecond;
+      joint = theFABRIKchains[i].ChainSecond;
       rt = Vector3.Dot(centralHub.forward, joint.right);
       fwd = Vector3.Dot(centralHub.forward, joint.forward);
       up = Vector3.Dot(centralHub.forward, joint.up);
       v3 = new Vector3(rt, up, fwd);
       chainForwards.Add(v3);
-      theFABRIKchains[i].myLocalRelativeForward = v3;
-      theFABRIKchains[i].chainBase = centralHub;
+      theFABRIKchains[i].LocalRelativeForward = v3;
+      theFABRIKchains[i].ChainBase = centralHub;
     }
   }
 
@@ -67,8 +67,8 @@ public class SpiderFABRIK : MonoBehaviour
       for (int i = 0; i < useChain_toCenterHub.Count; i++) {
         if (useChain_toCenterHub[i]) {
           // draw its relative forward
-          Debug.DrawRay(theFABRIKchains[i].chainSecond.position,
-            theFABRIKchains[i].chainSecond.TransformDirection(chainForwards[i]), Color.red);
+          Debug.DrawRay(theFABRIKchains[i].ChainSecond.position,
+            theFABRIKchains[i].ChainSecond.TransformDirection(chainForwards[i]), Color.red);
         }
       }
     }
@@ -77,7 +77,7 @@ public class SpiderFABRIK : MonoBehaviour
       for (int i = 0; i < useChain_toCenterHub.Count; i++) {
         if (useChain_toCenterHub[i]) {
           // record its relative forward
-          v += theFABRIKchains[i].chainSecond.TransformDirection(chainForwards[i]);
+          v += theFABRIKchains[i].ChainSecond.TransformDirection(chainForwards[i]);
         }
 
         if (headObjectTransform != null) {
@@ -121,7 +121,7 @@ public class SpiderFABRIK : MonoBehaviour
       for (int i = 0; i < theFABRIKchains.Count; i++) {
         theFABRIKchains[i].backward();
         // update the base node
-        newSub += theFABRIKchains[i].newGlobalPos[0];
+        newSub += theFABRIKchains[i].NewGlobalPos[0];
       }
       // get the average of newSub
       newSub /= theFABRIKchains.Count;
@@ -129,7 +129,7 @@ public class SpiderFABRIK : MonoBehaviour
       if (override_HubCentering) {
         // we are to override centering the hub, instead using the
         // provided index.
-        newSub = theFABRIKchains[manualCenter_chainIndex].newGlobalPos[0];
+        newSub = theFABRIKchains[manualCenter_chainIndex].NewGlobalPos[0];
       }
 
       if (override_HubAtLocalZero) {
@@ -161,7 +161,7 @@ public class SpiderFABRIK : MonoBehaviour
     for (int i = 0; i < useChain_toCenterHub.Count; i++) {
       if (useChain_toCenterHub[i]) {
         // get vector sum of all fabChain, 2nd-chain relativelocalfowards
-        vn3 += theFABRIKchains[i].chainSecond.TransformDirection(theFABRIKchains[i].myLocalRelativeForward);
+        vn3 += theFABRIKchains[i].ChainSecond.TransformDirection(theFABRIKchains[i].LocalRelativeForward);
       }
     }
     if (headObjectTransform != null) {
@@ -196,7 +196,7 @@ public class SpiderFABRIK : MonoBehaviour
     //		2) a 'head' object is declared and it has rotated
     bool withingRange = true;
     for (int i = 0; i < theFABRIKchains.Count; i++) {
-      withingRange = (withingRange && theFABRIKchains[i].targetDistance_isWithinTolerance());
+      withingRange = (withingRange && theFABRIKchains[i].DistanceIsWithinTolerance());
     }
 
     // now check the head object if it is declared

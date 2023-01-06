@@ -1,6 +1,4 @@
-﻿using System.Collections;
-using System.Collections.Generic;
-using UnityEngine;
+﻿using UnityEngine;
 
 /// <summary>
 /// Upper torso FABRIK.
@@ -107,8 +105,8 @@ public class UpperBodyFABRIK : MonoBehaviour
   {
     Vector3 vn3 = Vector3.zero;
     // adjust the rotation to face in the averaged relative forward vectors
-    vn3 += LeftArmFABRIKChain.chainSecond.TransformDirection(LeftArmFABRIKChain.myLocalRelativeForward);
-    vn3 += RightArmFABRIKChain.chainSecond.TransformDirection(RightArmFABRIKChain.myLocalRelativeForward);
+    vn3 += LeftArmFABRIKChain.ChainSecond.TransformDirection(LeftArmFABRIKChain.LocalRelativeForward);
+    vn3 += RightArmFABRIKChain.ChainSecond.TransformDirection(RightArmFABRIKChain.LocalRelativeForward);
 
     // determine if we tilt further forward or not
     float downQuotient = Vector3.Dot(Vector3.down, HeadObjectTransform.forward);
@@ -152,8 +150,8 @@ public class UpperBodyFABRIK : MonoBehaviour
     // initialize the return variable
     bool withinRange = true;
     // test both left and right arm
-    withinRange = (withinRange && LeftArmFABRIKChain.targetDistance_isWithinTolerance());
-    withinRange = (withinRange && RightArmFABRIKChain.targetDistance_isWithinTolerance());
+    withinRange = (withinRange && LeftArmFABRIKChain.DistanceIsWithinTolerance());
+    withinRange = (withinRange && RightArmFABRIKChain.DistanceIsWithinTolerance());
     // now check the head object if it is declared
     if (HeadObjectTransform != null) {
       if (lastHeadRotation != HeadObjectTransform.rotation) {
@@ -174,7 +172,7 @@ public class UpperBodyFABRIK : MonoBehaviour
   /// <param name="fabrikChain">Fabrik chain.</param>
   private void intializeFABRIKChain(FABRIKChain fabrikChain)
   {
-    Transform joint = fabrikChain.chainSecond;
+    Transform joint = fabrikChain.ChainSecond;
 
     float rt = Vector3.Dot(torso.forward, joint.right);
     float fwd = Vector3.Dot(torso.forward, joint.forward);
@@ -183,7 +181,7 @@ public class UpperBodyFABRIK : MonoBehaviour
     Vector3 v3 = new Vector3(rt, up, fwd);
 
     // set the two important variables on the FABRIK chain
-    fabrikChain.myLocalRelativeForward = v3;
-    fabrikChain.chainBase = torso;
+    fabrikChain.LocalRelativeForward = v3;
+    fabrikChain.ChainBase = torso;
   }
 }

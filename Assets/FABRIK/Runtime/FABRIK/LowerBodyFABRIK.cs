@@ -18,8 +18,8 @@ namespace Yohash.FABRIK
 
     // The left and right arm FRABRIK Chains
     [Header("Chains")]
-    public FABRIKChain LeftLegFABRIKChain;
-    public FABRIKChain RightLegFABRIKChain;
+    public FABRIKChain LeftLegFabrikChain;
+    public FABRIKChain RightLegFabrikChain;
 
     [Header("Foot Data")]
     public GameObject LeftFoot;
@@ -30,8 +30,10 @@ namespace Yohash.FABRIK
     public Vector3 LeftFootWorldPosition;
     public Vector3 RightFootWorldPosition;
 
-    private Vector3 leftFootDestination, leftFootStartPoint;
-    private Vector3 rightFootDestination, rightFootStartPoint;
+    private Vector3 leftFootDestination;
+    private Vector3 leftFootStartPoint;
+    private Vector3 rightFootDestination;
+    private Vector3 rightFootStartPoint;
 
     public foot_placement currentSteps = foot_placement.STANDING;
 
@@ -58,8 +60,8 @@ namespace Yohash.FABRIK
 
     void Start()
     {
-      intializeFABRIKChain(LeftLegFABRIKChain);
-      intializeFABRIKChain(RightLegFABRIKChain);
+      intializeFABRIKChain(LeftLegFabrikChain);
+      intializeFABRIKChain(RightLegFabrikChain);
     }
 
     // ****************************************************************
@@ -94,17 +96,17 @@ namespace Yohash.FABRIK
       // Check the targets are not within the range tolerance
       while (!allTargets_areWithinRange()) {
         // perform a backwards pass over both chains
-        LeftLegFABRIKChain.backward();
-        RightLegFABRIKChain.backward();
+        LeftLegFabrikChain.backward();
+        RightLegFabrikChain.backward();
 
         // using this position as the root, perform a forward pass
         // perform a forwards pass over all chains
-        LeftLegFABRIKChain.forward(waist.position);
-        RightLegFABRIKChain.forward(waist.position);
+        LeftLegFabrikChain.forward(waist.position);
+        RightLegFabrikChain.forward(waist.position);
 
         // physically move the chains
-        LeftLegFABRIKChain.moveChain();
-        RightLegFABRIKChain.moveChain();
+        LeftLegFabrikChain.moveChain();
+        RightLegFabrikChain.moveChain();
 
         // check current iterations
         if (iter > maxIters)
@@ -126,8 +128,8 @@ namespace Yohash.FABRIK
       // initialize the return variable
       bool withinRange = true;
       // test both left and right arm
-      withinRange = (withinRange && LeftLegFABRIKChain.targetDistance_isWithinTolerance());
-      withinRange = (withinRange && RightLegFABRIKChain.targetDistance_isWithinTolerance());
+      withinRange = (withinRange && LeftLegFabrikChain.DistanceIsWithinTolerance());
+      withinRange = (withinRange && RightLegFabrikChain.DistanceIsWithinTolerance());
 
       return withinRange;
     }
@@ -140,17 +142,17 @@ namespace Yohash.FABRIK
     /// <param name="fabrikChain">Fabrik chain.</param>
     private void intializeFABRIKChain(FABRIKChain fabrikChain)
     {
-      Transform joint = fabrikChain.chainSecond;
+      var joint = fabrikChain.ChainSecond;
 
       float rt = Vector3.Dot(waist.forward, joint.right);
       float fwd = Vector3.Dot(waist.forward, joint.forward);
       float up = Vector3.Dot(waist.forward, joint.up);
 
-      Vector3 v3 = new Vector3(rt, up, fwd);
+      var v3 = new Vector3(rt, up, fwd);
 
       // set the two important variables on the FABRIK chain
-      fabrikChain.myLocalRelativeForward = v3;
-      fabrikChain.chainBase = waist;
+      fabrikChain.LocalRelativeForward = v3;
+      fabrikChain.ChainBase = waist;
     }
 
     // ****************************************************************
@@ -231,11 +233,11 @@ namespace Yohash.FABRIK
       // initilize left foot step data
       leftFootStartPoint = LeftFootWorldPosition;
       // get the relative direction for the footfall
-      Vector3 target = waist.TransformPoint(DefaultLeftOffset) + mechCurrentVelocity * stepMaxTime / 2f;
-      Vector3 direction = target - waist.position;
+      var target = waist.TransformPoint(DefaultLeftOffset) + mechCurrentVelocity * stepMaxTime / 2f;
+      var direction = target - waist.position;
 
       // build raycast data
-      Ray ray = new Ray(waist.position, direction * 2f);
+      var ray = new Ray(waist.position, direction * 2f);
       int layerMask = 1 << 8;
       RaycastHit hit;
       // perform raycast
@@ -255,11 +257,11 @@ namespace Yohash.FABRIK
       rightFootStartPoint = RightFootWorldPosition;
 
       // get the relative direction for the footfall
-      Vector3 target = waist.TransformPoint(DefaultRightOffset) + mechCurrentVelocity * stepMaxTime / 2f;
-      Vector3 direction = target - waist.position;
+      var target = waist.TransformPoint(DefaultRightOffset) + mechCurrentVelocity * stepMaxTime / 2f;
+      var direction = target - waist.position;
 
       // build raycast data
-      Ray ray = new Ray(waist.position, direction * 2f);
+      var ray = new Ray(waist.position, direction * 2f);
       int layerMask = 1 << 8;
       RaycastHit hit;
       // perform raycast

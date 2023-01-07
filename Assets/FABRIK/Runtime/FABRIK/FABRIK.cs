@@ -29,11 +29,6 @@ public class FABRIK : MonoBehaviour
     for (int i = 1; i < chain.Count; i++) {
       chain[i].setupFABRIKChain(chain[i - 1].transform);
     }
-
-    //float d;
-    //for (int i = 0; i < FABRIKChain.Count; i++) {
-    //	d = FABRIKChain [i].startOffsetDistance;
-    //}
   }
 
   void Update()
@@ -78,18 +73,32 @@ public class FABRIK : MonoBehaviour
     }
   }
 
+  private void backward()
+  {
+    // compute each new position in the backward-step
+    // initialize by setting the last joint to the target position
+    var v = target.position;
+    newGlobalPos[newGlobalPos.Count - 1] = v;
+    // cascade in the backward direction, upgrading each joint in 'newLocals' along the way
+    for (int i = newGlobalPos.Count - 1; i > 0; i--) {
+      // get the new point by moving BACKWARD from current point, i, towards i-1 point
+      var displace = newGlobalPos[i - 1] - newGlobalPos[i];
+      v = newGlobalPos[i] + displace.normalized * chain[i].StartOffsetDistance;
+      // save that new position in this forwward step
+      newGlobalPos[i - 1] = v;
+    }
+  }
+
   private void forward()
   {
     // compute each new position in the forward-step
-    Vector3 v;
-    Vector3 displace;
     // initialize by setting the first joint back to its origin
-    v = parentTR.position;
+    var v = parentTR.position;
     newGlobalPos[0] = v;
     // cascade in the forward direction, upgrading each joint in 'newLocals' along the way
     for (int i = 0; i < newGlobalPos.Count - 1; i++) {
       // get the new point by moving FORWARD from current point, i, towards i+1 point
-      displace = newGlobalPos[i + 1] - newGlobalPos[i];
+      var displace = newGlobalPos[i + 1] - newGlobalPos[i];
       v = newGlobalPos[i] + displace.normalized * chain[i + 1].StartOffsetDistance;
       // verify the new point is a valid rotation
       v = chain[i].constrainPoint(v, newGlobalPos[i]);
@@ -97,25 +106,6 @@ public class FABRIK : MonoBehaviour
       newGlobalPos[i + 1] = v;
     }
   }
-
-  private void backward()
-  {
-    // compute each new position in the backward-step
-    Vector3 v;
-    Vector3 displace;
-    // initialize by setting the last joint to the target position
-    v = target.position;
-    newGlobalPos[newGlobalPos.Count - 1] = v;
-    // cascade in the backward direction, upgrading each joint in 'newLocals' along the way
-    for (int i = newGlobalPos.Count - 1; i > 0; i--) {
-      // get the new point by moving BACKWARD from current point, i, towards i-1 point
-      displace = newGlobalPos[i - 1] - newGlobalPos[i];
-      v = newGlobalPos[i] + displace.normalized * chain[i].StartOffsetDistance;
-      // save that new position in this forwward step
-      newGlobalPos[i - 1] = v;
-    }
-  }
-
 
   private void moveChain()
   {

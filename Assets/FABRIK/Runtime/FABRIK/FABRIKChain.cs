@@ -80,15 +80,13 @@ public class FABRIKChain : MonoBehaviour
     }
 
     // compute each new position in the backward-step
-    Vector3 v;
-    Vector3 displace;
     // initialize by setting the last joint to the target position
-    v = target.position;
+    var v = target.position;
     NewGlobalPos[NewGlobalPos.Count - 1] = v;
     // cascade in the backward direction, upgrading each joint in 'newLocals' along the way
     for (int i = NewGlobalPos.Count - 1; i > 0; i--) {
       // get the new point by moving BACKWARD from current point, i, towards i-1 point
-      displace = NewGlobalPos[i - 1] - NewGlobalPos[i];
+      var displace = NewGlobalPos[i - 1] - NewGlobalPos[i];
       v = NewGlobalPos[i] + displace.normalized * chain[i].StartOffsetDistance;
       // save that new position in this forwward step
       NewGlobalPos[i - 1] = v;
@@ -98,15 +96,13 @@ public class FABRIKChain : MonoBehaviour
   public void forward(Vector3 basePos)
   {
     // compute each new position in the forward-step
-    Vector3 v;
-    Vector3 displace;
     // initialize by setting the first joint back to its origin
-    v = basePos;
+    var v = basePos;
     NewGlobalPos[0] = v;
     // cascade in the forward direction, upgrading each joint in 'newLocals' along the way
     for (int i = 0; i < NewGlobalPos.Count - 1; i++) {
       // get the new point by moving FORWARD from current point, i, towards i+1 point
-      displace = NewGlobalPos[i + 1] - NewGlobalPos[i];
+      var displace = NewGlobalPos[i + 1] - NewGlobalPos[i];
 
       // vector 'displace' should give us enough info to determine conic constraints
       v = chain[i].constrainPoint(NewGlobalPos[i] + displace, NewGlobalPos[i]);

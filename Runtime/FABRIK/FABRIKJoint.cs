@@ -103,7 +103,7 @@ public class FABRIKJoint : MonoBehaviour
 
   public Vector3 constrainPoint(Vector3 newGlobalPosition, Vector3 oldGlobalPosition)
   {
-    Vector3 modGlobalPosition = newGlobalPosition;
+    var modGlobalPosition = newGlobalPosition;
     // first, we see if this joint has constrained movement, and refit the desired position to
     // the outisde of the conic section in our plane of movement
     if (applyConstraints) {
@@ -131,16 +131,8 @@ public class FABRIKJoint : MonoBehaviour
       float scale = Mathf.Abs(h) / LinkLength;
 
       // determine quadrant
-      float xBnd, yBnd;
-      if (xPart > 0)
-        xBnd = coneRight * scale;
-      else
-        xBnd = -coneLeft * scale;
-
-      if (yPart > 0)
-        yBnd = coneTop * scale;
-      else
-        yBnd = -coneBot * scale;
+      var xBnd = xPart > 0 ? coneRight * scale : -coneLeft * scale;
+      var yBnd = yPart > 0 ? coneTop * scale : -coneBot * scale;
 
       // test to see if the point is in bounds of the ellipse
       float ellipse = (xPart * xPart) / (xBnd * xBnd) + (yPart * yPart) / (yBnd * yBnd);
@@ -361,14 +353,7 @@ public class FABRIKJoint : MonoBehaviour
     }
 
     // see if we had to swap axes before computation
-    Vector2 v;
-    if (swap) {
-      // swap x1 and y1 in our returned vector
-      v = new Vector2(y1, x1);
-    } else {
-      // assemble the final vector2 containing the nearest point on the ellipse
-      v = new Vector2(x1, y1);
-    }
+    var v = swap ? new Vector2(y1, x1) : new Vector2(x1, y1);
     return v;
   }
 
@@ -389,8 +374,9 @@ public class FABRIKJoint : MonoBehaviour
 
     // s1 is the magnitude of this vector
     float s1 = (new Vector2(n0, z1)).magnitude - 1;
-    if (g < 0)
+    if (g < 0) {
       s1 = 0;
+    }
 
     float s = 0;
 
@@ -405,12 +391,13 @@ public class FABRIKJoint : MonoBehaviour
 
       g = (ratio0 * ratio0) + (ratio1 * ratio1) - 1f;
 
-      if (g > 0)
+      if (g > 0) {
         s0 = s;
-      else if (g < 0)
+      } else if (g < 0) {
         s1 = s;
-      else
+      } else {
         break;
+      }
     }
 
     return s;

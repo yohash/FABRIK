@@ -5,17 +5,26 @@ http://andreasaristidou.com/FABRIK.html
 
 This original implementation is derived from the source material.
 
-This repository is positioned as a Unity project with a Unity Package Manager (UPM) folder positioned within. 
-You can access the package from the [upm](https://github.com/yohash/FABRIK/tree/upm) branch.
-In Unity's Package window, access by targeting: 
+## Unity Package Manager support /#upm
 
+Add to your project via the Unity Package Manager. 
+1. In the Package Manger, select "Add package from Git URL..."
+2. Type in 
+```
 https://github.com/yohash/FABRIK.git#upm
+```
 
-### Dependencies
+The `upm` branch is maintained us a current subtree via:
+```
+git subtree split --prefix=Assets/ContinuumCrowds --branch upm
+```
 
-This package has a dependency on another custom package container bezier tools. To allow for automatic installion of both FABRIK, and its dependencies, 
-please first install the [mob-sakai/GitDependencyResolverForUnity](https://github.com/mob-sakai/GitDependencyResolverForUnity).
+## Dependencies
 
-The git dependency resolver can be installed easily in the Unity package manager with this direct git link:
+This package has a dependency on another custom package. To allow for automatic installion of dependencies
+- [yohash.bezier](https://github.com/yohash/Bezier)
 
+Please first install the [mob-sakai/GitDependencyResolverForUnity](https://github.com/mob-sakai/GitDependencyResolverForUnity). The git dependency resolver can be installed in the Unity package manager with this direct git link:
+```
 https://github.com/mob-sakai/GitDependencyResolverForUnity.git
+```

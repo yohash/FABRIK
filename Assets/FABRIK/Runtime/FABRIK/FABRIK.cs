@@ -1,12 +1,12 @@
 ﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class FABRIK : MonoBehaviour
+public class Fabrik : MonoBehaviour
 {
   [Header("Assign in Inspector")]
   [SerializeField] private Transform parentTR;
 
-  [SerializeField] private List<FABRIKJoint> chain;
+  [SerializeField] private List<FabrikJoint> chain;
   [SerializeField] private List<Vector3> newGlobalPos;
 
   [SerializeField] private float locationTolerance = 0.05f;
@@ -14,10 +14,6 @@ public class FABRIK : MonoBehaviour
 
   [Header("Target")]
   [SerializeField] private Transform target;
-
-  // debugging var: remove
-  [SerializeField] private float distanceFromTarget;
-
 
   void Start()
   {
@@ -33,18 +29,15 @@ public class FABRIK : MonoBehaviour
 
   void Update()
   {
-    distanceFromTarget = (parentTR.position - target.position).magnitude;
     solve();
   }
 
   // ****************************************************************
   //		SOLVING THE IK
   // ****************************************************************
-  public float DIFFSQ;
   private void solve()
   {
-    Vector3 localTargetDir = target.position - parentTR.position;
-    float dSQ = localTargetDir.sqrMagnitude;
+    var localTargetDir = target.position - parentTR.position;
 
     // get the current positions of all components into newLocals
     newGlobalPos.Clear();
@@ -55,7 +48,6 @@ public class FABRIK : MonoBehaviour
     int iter = 0;
     // loop over FABRIK algorithm
     float diffSq = (chain[chain.Count - 1].transform.position - target.position).sqrMagnitude;
-    DIFFSQ = diffSq;
     while (diffSq > (locationTolerance * locationTolerance)) {
       // perform backward pass
       backward();

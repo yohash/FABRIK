@@ -21,7 +21,11 @@
     {
       "displayName": "Setup for Custom IK",
       "description": "The Custom IK scripts will perform IK by iteratively testing rotations. This sample scene shows you how to set up a basic robot limb with Custom IK",
-      "path": "Samples~/SetupCustomIK"
+      "path": "Samples~/CustomIK"
+    },    {
+      "displayName": "Setup for Upper Body FABRIK",
+      "description": "The Upper Torso script allows hands+head IK. This sample scene shows you how to set up a floating upper torso.",
+      "path": "Samples~/UpperBodyIK"
     }
   ],
   "author": {

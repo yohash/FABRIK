@@ -2076,7 +2076,7 @@ GameObject:
   - component: {fileID: 4896273124649314}
   - component: {fileID: 114994016626848494}
   m_Layer: 0
-  m_Name: SpiderFABRIK_prefab
+  m_Name: SpiderFabrik_prefab
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

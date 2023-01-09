@@ -2,7 +2,7 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-public class SpiderFABRIK : MonoBehaviour
+public class SpiderFabrik : MonoBehaviour
 {
 
   public Transform centralHub;
@@ -10,7 +10,7 @@ public class SpiderFABRIK : MonoBehaviour
 
   // all the information for each chain the SpiderFABRIK
   [Header("Chains")]
-  public List<FABRIKChain> theFABRIKchains;
+  public List<FabrikChain> theFABRIKchains;
   public List<Vector3> chainForwards;
   public List<bool> useChain_toCenterHub;
 
@@ -116,7 +116,7 @@ public class SpiderFABRIK : MonoBehaviour
     //		2) a 'head' object is declared and it has rotated
     while (!allTargets_areWithinRange()) {
       // declare a variable to track initial position
-      Vector3 newSub = Vector3.zero;
+      var newSub = Vector3.zero;
       // perform a backwards pass over all chains
       for (int i = 0; i < theFABRIKchains.Count; i++) {
         theFABRIKchains[i].backward();
@@ -156,7 +156,7 @@ public class SpiderFABRIK : MonoBehaviour
 
   private void adjustHubRotation()
   {
-    Vector3 vn3 = Vector3.zero;
+    var vn3 = Vector3.zero;
     // adjust the rotation to face in the averaged relative forward vectors
     for (int i = 0; i < useChain_toCenterHub.Count; i++) {
       if (useChain_toCenterHub[i]) {
@@ -170,18 +170,13 @@ public class SpiderFABRIK : MonoBehaviour
 
     // get quaternion to rotate our forward to said new forward
     if (vn3 != Vector3.zero) {
-      Quaternion toQuat = Quaternion.LookRotation(vn3);
+      var toQuat = Quaternion.LookRotation(vn3);
 
-      Vector3 roteEuler = toQuat.eulerAngles;
+      var roteEuler = toQuat.eulerAngles;
 
-      if (XAxisRotationIgnore)
-        roteEuler.x = 0f;
-
-      if (YAxisRotationIgnore)
-        roteEuler.y = 0f;
-
-      if (ZAxisRotationIgnore)
-        roteEuler.z = 0f;
+      if (XAxisRotationIgnore) { roteEuler.x = 0f; }
+      if (YAxisRotationIgnore) { roteEuler.y = 0f; }
+      if (ZAxisRotationIgnore) { roteEuler.z = 0f; }
 
       toQuat = Quaternion.Euler(roteEuler);
 

@@ -10,7 +10,7 @@ namespace Yohash.FABRIK
     RIGHT_FOOT_STEPPING,
   }
 
-  public class LowerBodyFABRIK : MonoBehaviour
+  public class LowerBodyFabrik : MonoBehaviour
   {
     // this script is placed on the waist
     private Transform waist;
@@ -18,8 +18,8 @@ namespace Yohash.FABRIK
 
     // The left and right arm FRABRIK Chains
     [Header("Chains")]
-    public FABRIKChain LeftLegFabrikChain;
-    public FABRIKChain RightLegFabrikChain;
+    public FabrikChain LeftLegFabrikChain;
+    public FabrikChain RightLegFabrikChain;
 
     [Header("Foot Data")]
     public GameObject LeftFoot;
@@ -30,22 +30,24 @@ namespace Yohash.FABRIK
     public Vector3 LeftFootWorldPosition;
     public Vector3 RightFootWorldPosition;
 
-    private Vector3 leftFootDestination;
-    private Vector3 leftFootStartPoint;
-    private Vector3 rightFootDestination;
-    private Vector3 rightFootStartPoint;
+    [Header("Private vars")]
+    // private vars
+    [SerializeField] private Vector3 leftFootDestination;
+    [SerializeField] private Vector3 leftFootStartPoint;
+    [SerializeField] private Vector3 rightFootDestination;
+    [SerializeField] private Vector3 rightFootStartPoint;
 
-    public foot_placement currentSteps = foot_placement.STANDING;
+    [SerializeField] private foot_placement currentSteps = foot_placement.STANDING;
 
-    public float MaxFootDelta = 0.25f;
-    public float stepMaxTime = 1f;
+    [SerializeField] private float maxFootDelta = 0.25f;
+    [SerializeField] private float stepMaxTime = 1f;
 
-    public Vector3 mechCurrentVelocity = Vector3.zero;
+    [SerializeField] private Vector3 mechCurrentVelocity = Vector3.zero;
 
-    private float timeStepStarted;
+    [SerializeField] private float timeStepStarted;
 
-    public Vector3 DefaultLeftOffset = new Vector3(-0.25f, -1f, 0f);
-    public Vector3 DefaultRightOffset = new Vector3(0.25f, -1f, 0f);
+    [SerializeField] private Vector3 DefaultLeftOffset = new Vector3(-0.25f, -1f, 0f);
+    [SerializeField] private Vector3 DefaultRightOffset = new Vector3(0.25f, -1f, 0f);
 
     [Header("Upper Torso Tracking Point")]
     public Transform UpperTorso;
@@ -140,7 +142,7 @@ namespace Yohash.FABRIK
     ///   (2) a reference to the central hub
     /// </summary>
     /// <param name="fabrikChain">Fabrik chain.</param>
-    private void intializeFABRIKChain(FABRIKChain fabrikChain)
+    private void intializeFABRIKChain(FabrikChain fabrikChain)
     {
       var joint = fabrikChain.ChainSecond;
 
@@ -212,7 +214,7 @@ namespace Yohash.FABRIK
       float heightDelta = (1f - waist.localPosition.y);
 
       if ((LeftFootWorldPosition - waist.TransformPoint(DefaultLeftOffset + Vector3.up * heightDelta)).sqrMagnitude
-                > (MaxFootDelta * MaxFootDelta)) {
+                > (maxFootDelta * maxFootDelta)) {
         return false;
       }
       return true;
@@ -222,7 +224,7 @@ namespace Yohash.FABRIK
       float heightDelta = (1f - waist.localPosition.y);
 
       if ((RightFootWorldPosition - waist.TransformPoint(DefaultRightOffset + Vector3.up * heightDelta)).sqrMagnitude
-                > (MaxFootDelta * MaxFootDelta)) {
+                > (maxFootDelta * maxFootDelta)) {
         return false;
       }
       return true;

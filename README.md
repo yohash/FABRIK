@@ -16,7 +16,7 @@ https://github.com/yohash/FABRIK.git#upm
 
 The `upm` branch is maintained us a current subtree via:
 ```
-git subtree split --prefix=Assets/ContinuumCrowds --branch upm
+git subtree split --prefix=Assets/FABRIK --branch upm
 ```
 
 ## Dependencies

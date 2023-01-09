@@ -1,8 +1,7 @@
-﻿using System.Collections;
-using System.Collections.Generic;
+﻿using System.Collections.Generic;
 using UnityEngine;
 
-public class FABRIKChain : MonoBehaviour
+public class FabrikChain : MonoBehaviour
 {
   [Header("Public References")]
   public Transform ChainBase;
@@ -14,16 +13,15 @@ public class FABRIKChain : MonoBehaviour
   public List<Vector3> NewGlobalPos;
 
   [Header("Assign the Chain")]
-  [SerializeField] private List<FABRIKJoint> chain;
+  [SerializeField] private List<FabrikJoint> chain;
 
   [Header("Assign Tolerances")]
   [SerializeField] private float locationTolerance = 0.005f;
-  [SerializeField] private float locationTolSq;
+  private float locationTolSq;
   [SerializeField] private int maxIterations = 10;
 
   [Header("Tracking Target")]
   [SerializeField] private Transform target;
-
   [SerializeField] private Transform chainEnd;
 
   // ****************************************************************

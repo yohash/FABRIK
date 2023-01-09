@@ -7,44 +7,41 @@
 /// Optionally a head may be declared, and if so, will contribute
 /// to the rotation of the torso.
 /// </summary>
-public class UpperBodyFABRIK : MonoBehaviour
+public class UpperBodyFabrik : MonoBehaviour
 {
   // this script is placed on the central hub
-  private Transform torso;
-  public int maxIters = 10;
+  [SerializeField] private int maxIters = 10;
 
   // The left and right arm FRABRIK Chains
   [Header("Left and Right Arm Chains")]
-  public FABRIKChain LeftArmFABRIKChain;
-  public FABRIKChain RightArmFABRIKChain;
+  [SerializeField] private FabrikChain leftArmFABRIKChain;
+  [SerializeField] private FabrikChain rightArmFABRIKChain;
 
   // if we want to override any axis of the torso's rotation
   [Header("Torso Rotation Overrides")]
-  public bool XAxisRotationIgnore;
-  public bool YAxisRotationIgnore;
-  public bool ZAxisRotationIgnore;
+  [SerializeField] private bool xAxisRotationIgnore;
+  [SerializeField] private bool yAxisRotationIgnore;
+  [SerializeField] private bool zAxisRotationIgnore;
 
   // for the 'head'
   [Header("Head")]
-  public Transform HeadObjectTransform;
-  public Transform HeadBaseOffsetReference;
-  public float HeadVerticalOffset = -0.35f;
+  [SerializeField] private Transform headObjectTransform;
+  [SerializeField] private Transform headBaseOffsetReference;
+  [SerializeField] private float headVerticalOffset = -0.35f;
 
   // cached variables
   private Quaternion lastHeadRotation;
 
-  // ****************************************************************
-  //    MONOBEHAVIOURS
-  // ****************************************************************
-  void Awake()
-  {
-    torso = transform;
-  }
 
   void Start()
   {
-    intializeFABRIKChain(LeftArmFABRIKChain);
-    intializeFABRIKChain(RightArmFABRIKChain);
+    intializeFABRIKChain(leftArmFABRIKChain);
+    intializeFABRIKChain(rightArmFABRIKChain);
+  }
+
+  private void Update()
+  {
+    SolveIK();
   }
 
   // ****************************************************************
@@ -54,8 +51,8 @@ public class UpperBodyFABRIK : MonoBehaviour
   {
     solve();
 
-    if (HeadObjectTransform != null) {
-      lastHeadRotation = HeadObjectTransform.rotation;
+    if (headObjectTransform != null) {
+      lastHeadRotation = headObjectTransform.rotation;
     }
   }
 
@@ -72,28 +69,27 @@ public class UpperBodyFABRIK : MonoBehaviour
     //    2) a 'head' object is declared and it has rotated
     while (!allTargets_areWithinRange()) {
       // Place the torso center directly below the head-tracker
-      Vector3 newTorsoPosition = HeadBaseOffsetReference.position + Vector3.up * HeadVerticalOffset;
+      Vector3 newTorsoPosition = headBaseOffsetReference.position + Vector3.up * headVerticalOffset;
 
       // perform a backwards pass over both chains
-      LeftArmFABRIKChain.backward();
-      RightArmFABRIKChain.backward();
+      leftArmFABRIKChain.backward();
+      rightArmFABRIKChain.backward();
 
       // move the torso after the backward phase is complete
-      torso.position = newTorsoPosition;
+      transform.position = newTorsoPosition;
 
       // adjust the rotation of the central hub at its new position
       adjustHubRotation();
       // using this position as the root, perform a forward pass
       // perform a forwards pass over all chains
-      LeftArmFABRIKChain.forward(newTorsoPosition);
-      RightArmFABRIKChain.forward(newTorsoPosition);
+      leftArmFABRIKChain.forward(newTorsoPosition);
+      rightArmFABRIKChain.forward(newTorsoPosition);
       // physically move the chains
-      LeftArmFABRIKChain.moveChain();
-      RightArmFABRIKChain.moveChain();
+      leftArmFABRIKChain.moveChain();
+      rightArmFABRIKChain.moveChain();
 
       // check current iterations
-      if (iter > maxIters)
-        return;
+      if (iter > maxIters) { return; }
       iter += 1;
     }
   }
@@ -103,19 +99,19 @@ public class UpperBodyFABRIK : MonoBehaviour
   /// </summary>
   private void adjustHubRotation()
   {
-    Vector3 vn3 = Vector3.zero;
+    var vn3 = Vector3.zero;
     // adjust the rotation to face in the averaged relative forward vectors
-    vn3 += LeftArmFABRIKChain.ChainSecond.TransformDirection(LeftArmFABRIKChain.LocalRelativeForward);
-    vn3 += RightArmFABRIKChain.ChainSecond.TransformDirection(RightArmFABRIKChain.LocalRelativeForward);
+    vn3 += leftArmFABRIKChain.ChainSecond.TransformDirection(leftArmFABRIKChain.LocalRelativeForward);
+    vn3 += rightArmFABRIKChain.ChainSecond.TransformDirection(rightArmFABRIKChain.LocalRelativeForward);
 
     // determine if we tilt further forward or not
-    float downQuotient = Vector3.Dot(Vector3.down, HeadObjectTransform.forward);
+    float downQuotient = Vector3.Dot(Vector3.down, headObjectTransform.forward);
     if (downQuotient < 0) {
       // just use the half
-      vn3 += HeadObjectTransform.forward / 2f;
+      vn3 += headObjectTransform.forward / 2f;
     } else {
       // we are looking down, bend further
-      vn3 += HeadObjectTransform.forward * (Mathf.Clamp(downQuotient * 2f, 0.5f, 2f));
+      vn3 += headObjectTransform.forward * (Mathf.Clamp(downQuotient * 2f, 0.5f, 2f));
     }
 
     // get quaternion to rotate our forward to said new forward
@@ -125,16 +121,13 @@ public class UpperBodyFABRIK : MonoBehaviour
       Vector3 roteEuler = toQuat.eulerAngles;
 
       // apply rotational axes filters
-      if (XAxisRotationIgnore)
-        roteEuler.x = 0f;
-      if (YAxisRotationIgnore)
-        roteEuler.y = 0f;
-      if (ZAxisRotationIgnore)
-        roteEuler.z = 0f;
+      if (xAxisRotationIgnore) { roteEuler.x = 0f; }
+      if (yAxisRotationIgnore) { roteEuler.y = 0f; }
+      if (zAxisRotationIgnore) { roteEuler.z = 0f; }
 
       toQuat = Quaternion.Euler(roteEuler);
 
-      torso.rotation = toQuat;
+      transform.rotation = toQuat;
     }
   }
 
@@ -150,13 +143,11 @@ public class UpperBodyFABRIK : MonoBehaviour
     // initialize the return variable
     bool withinRange = true;
     // test both left and right arm
-    withinRange = (withinRange && LeftArmFABRIKChain.DistanceIsWithinTolerance());
-    withinRange = (withinRange && RightArmFABRIKChain.DistanceIsWithinTolerance());
+    withinRange &= leftArmFABRIKChain.DistanceIsWithinTolerance();
+    withinRange &= rightArmFABRIKChain.DistanceIsWithinTolerance();
     // now check the head object if it is declared
-    if (HeadObjectTransform != null) {
-      if (lastHeadRotation != HeadObjectTransform.rotation) {
-        withinRange = false;
-      }
+    if (headObjectTransform != null && lastHeadRotation != headObjectTransform.rotation) {
+      withinRange = false;
     }
 
     return withinRange;
@@ -170,18 +161,18 @@ public class UpperBodyFABRIK : MonoBehaviour
   ///
   /// </summary>
   /// <param name="fabrikChain">Fabrik chain.</param>
-  private void intializeFABRIKChain(FABRIKChain fabrikChain)
+  private void intializeFABRIKChain(FabrikChain fabrikChain)
   {
-    Transform joint = fabrikChain.ChainSecond;
+    var joint = fabrikChain.ChainSecond;
 
-    float rt = Vector3.Dot(torso.forward, joint.right);
-    float fwd = Vector3.Dot(torso.forward, joint.forward);
-    float up = Vector3.Dot(torso.forward, joint.up);
+    float rt = Vector3.Dot(transform.forward, joint.right);
+    float fwd = Vector3.Dot(transform.forward, joint.forward);
+    float up = Vector3.Dot(transform.forward, joint.up);
 
-    Vector3 v3 = new Vector3(rt, up, fwd);
+    var v3 = new Vector3(rt, up, fwd);
 
     // set the two important variables on the FABRIK chain
     fabrikChain.LocalRelativeForward = v3;
-    fabrikChain.ChainBase = torso;
+    fabrikChain.ChainBase = transform;
   }
 }

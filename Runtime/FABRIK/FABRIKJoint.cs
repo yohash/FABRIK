@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-public class FABRIKJoint : MonoBehaviour
+public class FabrikJoint : MonoBehaviour
 {
   [SerializeField] private Vector3 startOffset;
   public float StartOffsetDistance;
@@ -40,12 +40,12 @@ public class FABRIKJoint : MonoBehaviour
   [SerializeField] private Transform lookAt_PreferredTransform;
   [SerializeField] private Vector3 lookAt_PreferredRelativeVector = Vector3.forward;
 
-  [SerializeField] private float coneTop;
-  [SerializeField] private float coneBot;
-  [SerializeField] private float coneRight;
-  [SerializeField] private float coneLeft;
+  private float coneTop;
+  private float coneBot;
+  private float coneRight;
+  private float coneLeft;
 
-  [SerializeField] private float largestDelta;
+  private float largestDelta;
 
   [Header("DEBUG")]
   public bool DEBUG_SHOWCONE;

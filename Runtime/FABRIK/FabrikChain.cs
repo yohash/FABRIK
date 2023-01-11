@@ -27,6 +27,13 @@ public class FabrikChain : MonoBehaviour
   // ****************************************************************
   //		MONOBEHAVIOURS
   // ****************************************************************
+  void Awake()
+  {
+    // if the chain is shorter than 2 elements ([0] and [1]) it is not a chain
+    ChainHead = chain[0].transform;
+    ChainSecond = chain[1].transform;
+  }
+
   void Start()
   {
     // setup chain in a downstream direction

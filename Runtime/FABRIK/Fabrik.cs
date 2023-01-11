@@ -7,8 +7,10 @@ public class Fabrik : MonoBehaviour
   [SerializeField] private Transform parentTR;
 
   [SerializeField] private List<FabrikJoint> chain;
-  [SerializeField] private List<Vector3> newGlobalPos;
 
+  [SerializeField] private List<Vector3> positions;
+
+  [Header("Assign constants")]
   [SerializeField] private float locationTolerance = 0.05f;
   [SerializeField] private int maxIterations = 10;
 
@@ -21,9 +23,9 @@ public class Fabrik : MonoBehaviour
     for (int i = 0; i < chain.Count - 1; i++) {
       chain[i].LinkLength = chain[i + 1].StartOffsetDistance;
     }
-    chain[0].setupFABRIKChain(parentTR);
+    chain[0].SetupFabrikChain(parentTR);
     for (int i = 1; i < chain.Count; i++) {
-      chain[i].setupFABRIKChain(chain[i - 1].transform);
+      chain[i].SetupFabrikChain(chain[i - 1].transform);
     }
   }
 
@@ -40,9 +42,9 @@ public class Fabrik : MonoBehaviour
     var localTargetDir = target.position - parentTR.position;
 
     // get the current positions of all components into newLocals
-    newGlobalPos.Clear();
+    positions.Clear();
     for (int i = 0; i < chain.Count; i++) {
-      newGlobalPos.Add(chain[i].transform.position);
+      positions.Add(chain[i].transform.position);
     }
 
     int iter = 0;
@@ -70,14 +72,14 @@ public class Fabrik : MonoBehaviour
     // compute each new position in the backward-step
     // initialize by setting the last joint to the target position
     var v = target.position;
-    newGlobalPos[newGlobalPos.Count - 1] = v;
+    positions[positions.Count - 1] = v;
     // cascade in the backward direction, upgrading each joint in 'newLocals' along the way
-    for (int i = newGlobalPos.Count - 1; i > 0; i--) {
+    for (int i = positions.Count - 1; i > 0; i--) {
       // get the new point by moving BACKWARD from current point, i, towards i-1 point
-      var displace = newGlobalPos[i - 1] - newGlobalPos[i];
-      v = newGlobalPos[i] + displace.normalized * chain[i].StartOffsetDistance;
+      var displace = positions[i - 1] - positions[i];
+      v = positions[i] + displace.normalized * chain[i].StartOffsetDistance;
       // save that new position in this forwward step
-      newGlobalPos[i - 1] = v;
+      positions[i - 1] = v;
     }
   }
 
@@ -86,25 +88,25 @@ public class Fabrik : MonoBehaviour
     // compute each new position in the forward-step
     // initialize by setting the first joint back to its origin
     var v = parentTR.position;
-    newGlobalPos[0] = v;
+    positions[0] = v;
     // cascade in the forward direction, upgrading each joint in 'newLocals' along the way
-    for (int i = 0; i < newGlobalPos.Count - 1; i++) {
+    for (int i = 0; i < positions.Count - 1; i++) {
       // get the new point by moving FORWARD from current point, i, towards i+1 point
-      var displace = newGlobalPos[i + 1] - newGlobalPos[i];
-      v = newGlobalPos[i] + displace.normalized * chain[i + 1].StartOffsetDistance;
+      var displace = positions[i + 1] - positions[i];
+      v = positions[i] + displace.normalized * chain[i + 1].StartOffsetDistance;
       // verify the new point is a valid rotation
-      v = chain[i].constrainPoint(v, newGlobalPos[i]);
+      v = chain[i].ConstrainPoint(v, positions[i]);
       // save that new position in this forwward step
-      newGlobalPos[i + 1] = v;
+      positions[i + 1] = v;
     }
   }
 
   private void moveChain()
   {
     // set every other joint relative to the one prior
-    for (int i = 0; i < newGlobalPos.Count - 1; i++) {
-      chain[i].transform.position = newGlobalPos[i];
-      chain[i].transform.LookAt(newGlobalPos[i + 1]);
+    for (int i = 0; i < positions.Count - 1; i++) {
+      chain[i].transform.position = positions[i];
+      chain[i].transform.LookAt(positions[i + 1]);
     }
     chain[chain.Count - 1].transform.LookAt(target.transform);
   }

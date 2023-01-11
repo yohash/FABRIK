@@ -27,13 +27,6 @@ public class FabrikChain : MonoBehaviour
   // ****************************************************************
   //		MONOBEHAVIOURS
   // ****************************************************************
-  void Awake()
-  {
-    // if the chain is shorter than 2 elements ([0] and [1]) it is not a chain
-    ChainHead = chain[0].transform;
-    ChainSecond = chain[1].transform;
-  }
-
   void Start()
   {
     // setup chain in a downstream direction
@@ -45,15 +38,16 @@ public class FabrikChain : MonoBehaviour
       }
     }
     // send the variables for constraint checking in an upstream direction
-    chain[0].setupFABRIKChain(transform);
+    chain[0].SetupFabrikChain(transform);
     for (int i = 1; i < chain.Count; i++) {
-      chain[i].setupFABRIKChain(chain[i - 1].transform);
+      chain[i].SetupFabrikChain(chain[i - 1].transform);
     }
 
     locationTolSq = locationTolerance * locationTolerance;
 
     chainEnd = chain[chain.Count - 1].transform;
   }
+
 
   // ****************************************************************
   //		PUBLIC ACCESSORS TO SOLVE THE IK
@@ -103,7 +97,7 @@ public class FabrikChain : MonoBehaviour
       var displace = NewGlobalPos[i + 1] - NewGlobalPos[i];
 
       // vector 'displace' should give us enough info to determine conic constraints
-      v = chain[i].constrainPoint(NewGlobalPos[i] + displace, NewGlobalPos[i]);
+      v = chain[i].ConstrainPoint(NewGlobalPos[i] + displace, NewGlobalPos[i]);
 
       // v is the new global point, so we can now interpolate between
       //   <currentPosition> = newGlobalPos[i], and 'v', by weight, to add 'sluggishness' to the joint

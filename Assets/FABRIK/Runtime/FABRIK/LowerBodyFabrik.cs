@@ -111,8 +111,7 @@ namespace Yohash.FABRIK
         RightLegFabrikChain.moveChain();
 
         // check current iterations
-        if (iter > maxIters)
-          return;
+        if (iter > maxIters) { return; }
         iter += 1;
       }
     }

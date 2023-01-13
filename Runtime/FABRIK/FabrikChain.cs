@@ -17,7 +17,6 @@ public class FabrikChain : MonoBehaviour
 
   [Header("Assign Tolerances")]
   [SerializeField] private float locationTolerance = 0.005f;
-  private float locationTolSq;
   [SerializeField] private int maxIterations = 10;
 
   [Header("Tracking Target")]
@@ -38,19 +37,14 @@ public class FabrikChain : MonoBehaviour
   {
     // setup chain in a downstream direction
     for (int i = 0; i < chain.Count - 1; i++) {
-      chain[i].LinkLength = chain[i + 1].StartOffsetDistance;
-      // set up the chain's preferred direction vectors
-      if (chain[i].HasPreferredDirection) {
-        chain[i].PreferredActualForward = chain[i].PreferredRelativeForward * chain[i].LinkLength;
-      }
-    }
-    // send the variables for constraint checking in an upstream direction
-    chain[0].SetupFabrikChain(transform);
-    for (int i = 1; i < chain.Count; i++) {
-      chain[i].SetupFabrikChain(chain[i - 1].transform);
+      chain[i].SetupDownstream(chain[i + 1]);
     }
 
-    locationTolSq = locationTolerance * locationTolerance;
+    // send the variables for constraint checking in an upstream direction
+    chain[0].SetupUpstream(transform);
+    for (int i = 1; i < chain.Count; i++) {
+      chain[i].SetupUpstream(chain[i - 1].transform);
+    }
 
     chainEnd = chain[chain.Count - 1].transform;
   }
@@ -62,7 +56,7 @@ public class FabrikChain : MonoBehaviour
   public bool DistanceIsWithinTolerance()
   {
     var distanceFromTargetSq = (chainEnd.position - target.position).sqrMagnitude;
-    if (distanceFromTargetSq <= locationTolSq) {
+    if (distanceFromTargetSq <= locationTolerance * locationTolerance) {
       return true;
     }
     return false;

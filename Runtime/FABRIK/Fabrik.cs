@@ -19,13 +19,15 @@ public class Fabrik : MonoBehaviour
 
   void Start()
   {
-    // setup chain
+    // store chain joint distances in a downstream fashion
     for (int i = 0; i < chain.Count - 1; i++) {
-      chain[i].LinkLength = chain[i + 1].StartOffsetDistance;
+      chain[i].SetupDownstream(chain[i + 1]);
     }
-    chain[0].SetupFabrikChain(parentTR);
+
+    // setup fabrik chain by passing each joint its upstream joint
+    chain[0].SetupUpstream(parentTR);
     for (int i = 1; i < chain.Count; i++) {
-      chain[i].SetupFabrikChain(chain[i - 1].transform);
+      chain[i].SetupUpstream(chain[i - 1].transform);
     }
   }
 

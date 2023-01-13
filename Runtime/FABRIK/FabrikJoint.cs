@@ -2,12 +2,12 @@
 
 public class FabrikJoint : MonoBehaviour
 {
-  [SerializeField] private Vector3 startOffset;
-  public float StartOffsetDistance;
+  [Header("Define joint characteristics")]
+  [Range(0, 1)]
+  [SerializeField] private float jointWeight = 1f;
+  public float JointWeight { get { return jointWeight; } }
 
-  public float LinkLength;
-
-  [Header("Conic Rotational constraints")]
+  [Header("Define Conic Rotational constraints")]
   [SerializeField] private bool applyConstraints = false;
   // rotate clockise about Y (Y=up), move right
   [Range(0, 189)]
@@ -22,24 +22,28 @@ public class FabrikJoint : MonoBehaviour
   [Range(-189, 0)]
   [SerializeField] private float roteDown = -89f;
 
-  [SerializeField] private Transform upchain;
-  [Range(0, 1)]
-  public float JointWeight = 1f;
+  [Header("Define Preferred Direction")]
+  [SerializeField] private bool hasPreferredDirection = false;
+  [SerializeField] private Vector3 preferredRelativeForward;
 
-  [Header("Preferred Direction")]
-  public bool HasPreferredDirection = false;
-
-  public Vector3 PreferredRelativeForward;
-  public Vector3 PreferredActualForward;
+  private Vector3 computedActualForward;
 
   [Range(0, 0.9f)]
   [SerializeField] private float springAlpha = 0.3f;
 
-  [Header("Preferred LookAt Direction")]
+  [Header("Define Preferred LookAt Direction")]
   [SerializeField] private bool hasLookAt_PreferredDirection = false;
   [SerializeField] private Transform lookAt_PreferredTransform;
   [SerializeField] private Vector3 lookAt_PreferredRelativeVector = Vector3.forward;
 
+  [Header("Cached chain data")]
+  [SerializeField] private Transform upchain;
+  private Vector3 startOffset;
+  private float linkLength;
+
+  public float StartOffsetDistance { get; private set; }
+
+  // compute the distance of the axes of each conic section
   private float coneTop;
   private float coneBot;
   private float coneRight;
@@ -47,6 +51,7 @@ public class FabrikJoint : MonoBehaviour
 
   private float largestDelta;
 
+  // TODO - offload all debugging stuff into an editor script
   [Header("DEBUG")]
   public bool DEBUG_SHOWCONE;
   public bool DEBUG_SHOWDIR;
@@ -59,10 +64,8 @@ public class FabrikJoint : MonoBehaviour
   void Awake()
   {
     startOffset = transform.localPosition;
-
     StartOffsetDistance = startOffset.magnitude;
-
-    PreferredRelativeForward.Normalize();
+    preferredRelativeForward.Normalize();
   }
 
   void Update()
@@ -94,16 +97,27 @@ public class FabrikJoint : MonoBehaviour
   // ****************************************************************
   //    necessary inputs for constrained movements
   // ****************************************************************
-  public void SetupFabrikChain(Transform joint)
+  public void SetupDownstream(FabrikJoint joint)
+  {
+    linkLength = joint.StartOffsetDistance;
+
+    // set up the chain's preferred direction vectors
+    if (hasPreferredDirection) {
+      computedActualForward = preferredRelativeForward * this.linkLength;
+    }
+  }
+
+  public void SetupUpstream(Transform joint)
   {
     upchain = joint;
 
-    coneTop = LinkLength * Mathf.Tan(roteUp * Mathf.Deg2Rad);
-    coneBot = LinkLength * Mathf.Tan(roteDown * Mathf.Deg2Rad);
-    coneRight = LinkLength * Mathf.Tan(roteRight * Mathf.Deg2Rad);
-    coneLeft = LinkLength * Mathf.Tan(roteLeft * Mathf.Deg2Rad);
+    // precompute the cone axes lengths
+    coneTop = linkLength * Mathf.Tan(roteUp * Mathf.Deg2Rad);
+    coneBot = linkLength * Mathf.Tan(roteDown * Mathf.Deg2Rad);
+    coneRight = linkLength * Mathf.Tan(roteRight * Mathf.Deg2Rad);
+    coneLeft = linkLength * Mathf.Tan(roteLeft * Mathf.Deg2Rad);
 
-    largestDelta = Mathf.Max((Mathf.Abs(coneTop) + Mathf.Abs(coneBot)), (Mathf.Abs(coneLeft) + Mathf.Abs(coneRight)));
+    largestDelta = Mathf.Max(Mathf.Abs(coneTop) + Mathf.Abs(coneBot), Mathf.Abs(coneLeft) + Mathf.Abs(coneRight));
   }
 
   public Vector3 ConstrainPoint(Vector3 newGlobalPosition, Vector3 oldGlobalPosition)
@@ -118,7 +132,7 @@ public class FabrikJoint : MonoBehaviour
 
     // next, we see if this joint has a preferred relative position, and further constrain
     // the point to prefer this relative position
-    if (HasPreferredDirection) {
+    if (hasPreferredDirection) {
       modified = applyPreferredDirectionConstraints(modified, oldGlobalPosition);
     }
 
@@ -148,11 +162,11 @@ public class FabrikJoint : MonoBehaviour
     //float yPart = Vector3.Dot (globalProjection, upchainTR.up);
 
     // scale length for conic cross section scalar
-    float scale = Mathf.Abs(h) / LinkLength;
+    float scale = Mathf.Abs(h) / linkLength;
 
     // transform  our preferred direction to our current relative forward
     // and scale it to the length of the requested global
-    var globalPreferred = upchain.TransformDirection(PreferredActualForward) * scale;
+    var globalPreferred = upchain.TransformDirection(computedActualForward) * scale;
 
     // now, we need the projection of preferred Direction on the plane
     var globalPreferredProjection = Vector3.ProjectOnPlane(globalPreferred, upchain.forward);
@@ -167,18 +181,18 @@ public class FabrikJoint : MonoBehaviour
     // get the scalar for this distance
     float delta = (oldGlobalPosition - mod).magnitude;
     // normalized to the largest delta, scaled
-    delta /= (largestDelta);
+    delta /= largestDelta;
 
     // adjust the global
     var tempGlob = mod + d_spring * delta;
     mod = tempGlob;
 
     if (DEBUG_SHOWPREF) {
-      Debug.DrawRay(transform.position, upchain.forward * LinkLength, Color.yellow);
+      Debug.DrawRay(transform.position, upchain.forward * linkLength, Color.yellow);
       Debug.DrawRay(transform.position, globalPreferred, Color.red);
       Debug.DrawRay(transform.position, globalDirection, Color.blue);
-      Debug.DrawRay(transform.position + upchain.forward * LinkLength, globalProjection, Color.magenta);
-      Debug.DrawRay(transform.position + upchain.forward * LinkLength, globalPreferredProjection, Color.cyan);
+      Debug.DrawRay(transform.position + upchain.forward * linkLength, globalProjection, Color.magenta);
+      Debug.DrawRay(transform.position + upchain.forward * linkLength, globalPreferredProjection, Color.cyan);
       Debug.DrawRay(transform.position, (tempGlob - transform.position), Color.green);
     }
 
@@ -208,7 +222,7 @@ public class FabrikJoint : MonoBehaviour
     float yPart = Vector3.Dot(globalProjection, upchain.up);
 
     // scale length for conic cross section scalar
-    float scale = Mathf.Abs(h) / LinkLength;
+    float scale = Mathf.Abs(h) / linkLength;
 
     // determine quadrant
     var xBnd = xPart > 0 ? coneRight * scale : -coneLeft * scale;
@@ -238,7 +252,7 @@ public class FabrikJoint : MonoBehaviour
         var dtx = (xb / scale) * Mathf.Cos(theta);
         var dty = (yb / scale) * Mathf.Sin(theta);
 
-        Debug.DrawRay(transform.position, (upchain.forward * LinkLength + (upchain.right * dtx + upchain.up * dty)).normalized * LinkLength, Color.white);
+        Debug.DrawRay(transform.position, (upchain.forward * linkLength + (upchain.right * dtx + upchain.up * dty)).normalized * linkLength, Color.white);
       }
     }
 
@@ -257,7 +271,7 @@ public class FabrikJoint : MonoBehaviour
     // convert point to 3d space
     var adjusted = new Vector3(dx, dy, h);
     // extend the length of this link
-    adjusted = adjusted.normalized * LinkLength;
+    adjusted = adjusted.normalized * linkLength;
     // rotate to world space
     var rotated = upchain.right * adjusted.x + upchain.up * adjusted.y + upchain.forward * adjusted.z;
     // add the rotated, scaled direction to adjusted

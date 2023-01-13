@@ -26,8 +26,6 @@ public class FabrikJoint : MonoBehaviour
   [SerializeField] private bool hasPreferredDirection = false;
   [SerializeField] private Vector3 preferredRelativeForward;
 
-  private Vector3 computedActualForward;
-
   [Range(0, 0.9f)]
   [SerializeField] private float springAlpha = 0.3f;
 
@@ -97,19 +95,14 @@ public class FabrikJoint : MonoBehaviour
   // ****************************************************************
   //    necessary inputs for constrained movements
   // ****************************************************************
-  public void SetupDownstream(FabrikJoint joint)
+  public void SetupDownstream(FabrikJoint downstream)
   {
-    linkLength = joint.StartOffsetDistance;
-
-    // set up the chain's preferred direction vectors
-    if (hasPreferredDirection) {
-      computedActualForward = preferredRelativeForward * this.linkLength;
-    }
+    linkLength = downstream.StartOffsetDistance;
   }
 
-  public void SetupUpstream(Transform joint)
+  public void SetupUpstream(Transform upstream)
   {
-    upchain = joint;
+    upchain = upstream;
 
     // precompute the cone axes lengths
     coneTop = linkLength * Mathf.Tan(roteUp * Mathf.Deg2Rad);
@@ -166,7 +159,7 @@ public class FabrikJoint : MonoBehaviour
 
     // transform  our preferred direction to our current relative forward
     // and scale it to the length of the requested global
-    var globalPreferred = upchain.TransformDirection(computedActualForward) * scale;
+    var globalPreferred = upchain.TransformDirection(preferredRelativeForward * linkLength) * scale;
 
     // now, we need the projection of preferred Direction on the plane
     var globalPreferredProjection = Vector3.ProjectOnPlane(globalPreferred, upchain.forward);

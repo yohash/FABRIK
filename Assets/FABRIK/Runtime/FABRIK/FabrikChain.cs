@@ -90,15 +90,14 @@ public class FabrikChain : MonoBehaviour
 
     // compute each new position in the backward-step
     // initialize by setting the last joint to the target position
-    var v = target.position;
-    Positions[Positions.Count - 1] = v;
+    Positions[Positions.Count - 1] = target.position;
     // cascade in the backward direction, upgrading each joint in 'newLocals' along the way
     for (int i = Positions.Count - 1; i > 0; i--) {
       // get the new point by moving BACKWARD from current point, i, towards i-1 point
       var displace = Positions[i - 1] - Positions[i];
-      v = Positions[i] + displace.normalized * chain[i].StartOffsetDistance;
+      var final = Positions[i] + displace.normalized * chain[i].StartOffsetDistance;
       // save that new position in this forwward step
-      Positions[i - 1] = v;
+      Positions[i - 1] = final;
     }
   }
 
@@ -115,16 +114,14 @@ public class FabrikChain : MonoBehaviour
       var constrained = chain[i].ConstrainPoint(Positions[i] + displace, Positions[i]);
       // v is the new global point, so we can now interpolate between
       //   <currentPosition> = newGlobalPos[i], and 'v', by weight, to add 'sluggishness' to the joint
-      if (chain[i].JointWeight < 1) {
-        // joint weight is not one, apply the weight
-        constrained = Vector3.Lerp(Positions[i], constrained, chain[i].JointWeight);
-      }
-      // get a new displacement vector to the constrained point
-      var newDisplace = constrained - Positions[i];
-      // normalize and scale this vector, adding to our current location
-      var final = Positions[i] + newDisplace.normalized * chain[i + 1].StartOffsetDistance;
+      var weighted = Vector3.Lerp(Positions[i], constrained, chain[i].JointWeight);
 
-      // save that new position in this forwward step
+      // get a new displacement vector to the constrained point
+      // then, normalize and scale this vector, adding to our current location
+      var finalDirection = weighted - Positions[i];
+      var final = Positions[i] + finalDirection.normalized * chain[i + 1].StartOffsetDistance;
+
+      // finally save that new position in this forwward step
       Positions[i + 1] = final;
     }
   }

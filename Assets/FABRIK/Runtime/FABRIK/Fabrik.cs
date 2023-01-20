@@ -70,13 +70,12 @@ public class Fabrik : MonoBehaviour
   {
     // compute each new position in the backward-step
     // initialize by setting the last joint to the target position
-    var v = target.position;
-    positions[positions.Count - 1] = v;
+    positions[positions.Count - 1] = target.position;
     // cascade in the backward direction, upgrading each joint in 'newLocals' along the way
     for (int i = positions.Count - 1; i > 0; i--) {
       // get the new point by moving BACKWARD from current point, i, towards i-1 point
       var displace = positions[i - 1] - positions[i];
-      v = positions[i] + displace.normalized * chain[i].StartOffsetDistance;
+      var v = positions[i] + displace.normalized * chain[i].StartOffsetDistance;
       // save that new position in this forwward step
       positions[i - 1] = v;
     }
@@ -86,17 +85,16 @@ public class Fabrik : MonoBehaviour
   {
     // compute each new position in the forward-step
     // initialize by setting the first joint back to its origin
-    var v = parentTR.position;
-    positions[0] = v;
+    positions[0] = parentTR.position;
     // cascade in the forward direction, upgrading each joint in 'newLocals' along the way
     for (int i = 0; i < positions.Count - 1; i++) {
       // get the new point by moving FORWARD from current point, i, towards i+1 point
       var displace = positions[i + 1] - positions[i];
-      v = positions[i] + displace.normalized * chain[i + 1].StartOffsetDistance;
-      // verify the new point is a valid rotation
-      v = chain[i].ConstrainPoint(v, positions[i]);
-      // save that new position in this forwward step
-      positions[i + 1] = v;
+      var unconstrained = positions[i] + displace.normalized * chain[i + 1].StartOffsetDistance;
+      // constrain the new point based on any rules the current FabrikJoint may have
+      // then, save that new position in this forwward step
+      var constrained = chain[i].ConstrainPoint(unconstrained, positions[i]);
+      positions[i + 1] = constrained;
     }
   }
 

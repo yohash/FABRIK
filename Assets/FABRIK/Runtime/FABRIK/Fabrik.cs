@@ -41,8 +41,6 @@ public class Fabrik : MonoBehaviour
   // ****************************************************************
   private void solve()
   {
-    var localTargetDir = target.position - parentTR.position;
-
     // get the current positions of all components into newLocals
     positions.Clear();
     for (int i = 0; i < chain.Count; i++) {
@@ -53,19 +51,18 @@ public class Fabrik : MonoBehaviour
     // loop over FABRIK algorithm
     float diffSq = (chain[chain.Count - 1].transform.position - target.position).sqrMagnitude;
     while (diffSq > (locationTolerance * locationTolerance)) {
-      // perform backward pass
+      // perform the FABRIK algorithm. A backward pass, followed by a forward pass,
+      // finally closed by movin the chain and computing tolerances
       backward();
-      // perform forward pass
       forward();
-      // move
-      moveChain();
+      move();
+
       // re-capture positions
       diffSq = (chain[chain.Count - 1].transform.position - target.position).sqrMagnitude;
-      // break if over the limit
+
+      // break if over the iteration limit
+      if (iter > maxIterations) { break; }
       iter += 1;
-      if (iter > maxIterations) {
-        break;
-      }
     }
   }
 
@@ -103,7 +100,7 @@ public class Fabrik : MonoBehaviour
     }
   }
 
-  private void moveChain()
+  private void move()
   {
     // set every other joint relative to the one prior
     for (int i = 0; i < positions.Count - 1; i++) {

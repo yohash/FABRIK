@@ -95,22 +95,12 @@ namespace Yohash.FABRIK
       LeftFoot.transform.rotation = Quaternion.Euler(0f, waist.rotation.eulerAngles.y, 0f);
       RightFoot.transform.rotation = Quaternion.Euler(0f, waist.rotation.eulerAngles.y, 0f);
 
-      // Check the targets are not within the range tolerance
+      // solve the FABRIK algorithm for each leg
       while (!allTargets_areWithinRange()) {
-        // perform a backwards pass over both chains
-        LeftLegFabrikChain.backward();
-        RightLegFabrikChain.backward();
+        LeftLegFabrikChain.Solve(waist.position);
+        RightLegFabrikChain.Solve(waist.position);
 
-        // using this position as the root, perform a forward pass
-        // perform a forwards pass over all chains
-        LeftLegFabrikChain.forward(waist.position);
-        RightLegFabrikChain.forward(waist.position);
-
-        // physically move the chains
-        LeftLegFabrikChain.moveChain();
-        RightLegFabrikChain.moveChain();
-
-        // check current iterations
+        // break if over the current iterations
         if (iter > maxIters) { return; }
         iter += 1;
       }
@@ -128,9 +118,9 @@ namespace Yohash.FABRIK
     {
       // initialize the return variable
       bool withinRange = true;
-      // test both left and right arm
-      withinRange = (withinRange && LeftLegFabrikChain.DistanceIsWithinTolerance());
-      withinRange = (withinRange && RightLegFabrikChain.DistanceIsWithinTolerance());
+      // test all limbs
+      withinRange &= LeftLegFabrikChain.DistanceIsWithinTolerance;
+      withinRange &= RightLegFabrikChain.DistanceIsWithinTolerance;
 
       return withinRange;
     }
@@ -153,7 +143,6 @@ namespace Yohash.FABRIK
 
       // set the two important variables on the FABRIK chain
       fabrikChain.LocalRelativeForward = v3;
-      fabrikChain.ChainBase = waist;
     }
 
     // ****************************************************************

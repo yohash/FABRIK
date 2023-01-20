@@ -4,13 +4,12 @@ using UnityEngine;
 
 public class SpiderFabrik : MonoBehaviour
 {
-
   public Transform centralHub;
   public int maxIters = 10;
 
   // all the information for each chain the SpiderFABRIK
   [Header("Chains")]
-  public List<FabrikChain> theFABRIKchains;
+  public List<FabrikChain> chains;
   public List<Vector3> chainForwards;
   public List<bool> useChain_toCenterHub;
 
@@ -45,15 +44,14 @@ public class SpiderFabrik : MonoBehaviour
     float fwd, rt, up;
     Vector3 v3;
     // find the forward-vector for each joint, relative to the centralHub forwad
-    for (int i = 0; i < theFABRIKchains.Count; i++) {
-      joint = theFABRIKchains[i].ChainSecond;
+    for (int i = 0; i < chains.Count; i++) {
+      joint = chains[i].ChainSecond;
       rt = Vector3.Dot(centralHub.forward, joint.right);
       fwd = Vector3.Dot(centralHub.forward, joint.forward);
       up = Vector3.Dot(centralHub.forward, joint.up);
       v3 = new Vector3(rt, up, fwd);
       chainForwards.Add(v3);
-      theFABRIKchains[i].LocalRelativeForward = v3;
-      theFABRIKchains[i].ChainBase = centralHub;
+      chains[i].LocalRelativeForward = v3;
     }
   }
 
@@ -67,8 +65,11 @@ public class SpiderFabrik : MonoBehaviour
       for (int i = 0; i < useChain_toCenterHub.Count; i++) {
         if (useChain_toCenterHub[i]) {
           // draw its relative forward
-          Debug.DrawRay(theFABRIKchains[i].ChainSecond.position,
-            theFABRIKchains[i].ChainSecond.TransformDirection(chainForwards[i]), Color.red);
+          Debug.DrawRay(
+            chains[i].ChainSecond.position,
+            chains[i].ChainSecond.TransformDirection(chainForwards[i]),
+            Color.red
+          );
         }
       }
     }
@@ -77,14 +78,14 @@ public class SpiderFabrik : MonoBehaviour
       for (int i = 0; i < useChain_toCenterHub.Count; i++) {
         if (useChain_toCenterHub[i]) {
           // record its relative forward
-          v += theFABRIKchains[i].ChainSecond.TransformDirection(chainForwards[i]);
+          v += chains[i].ChainSecond.TransformDirection(chainForwards[i]);
         }
 
         if (headObjectTransform != null) {
           Debug.DrawRay(headObjectTransform.position, headObjectTransform.forward, Color.red);
         }
       }
-      v /= theFABRIKchains.Count;
+      v /= chains.Count;
       Debug.DrawRay(centralHub.position, v * 2f, Color.yellow);
     }
     if (DEBUG_SHOWFORWARD) {
@@ -118,18 +119,18 @@ public class SpiderFabrik : MonoBehaviour
       // declare a variable to track initial position
       var newSub = Vector3.zero;
       // perform a backwards pass over all chains
-      for (int i = 0; i < theFABRIKchains.Count; i++) {
-        theFABRIKchains[i].backward();
+      for (int i = 0; i < chains.Count; i++) {
+        chains[i].Backward();
         // update the base node
-        newSub += theFABRIKchains[i].NewGlobalPos[0];
+        newSub += chains[i].Positions[0];
       }
       // get the average of newSub
-      newSub /= theFABRIKchains.Count;
+      newSub /= chains.Count;
 
       if (override_HubCentering) {
         // we are to override centering the hub, instead using the
         // provided index.
-        newSub = theFABRIKchains[manualCenter_chainIndex].NewGlobalPos[0];
+        newSub = chains[manualCenter_chainIndex].Positions[0];
       }
 
       if (override_HubAtLocalZero) {
@@ -142,9 +143,9 @@ public class SpiderFabrik : MonoBehaviour
       adjustHubRotation();
       // using this position as the root, perform a forward pass
       // perform a forwards pass over all chains
-      for (int i = 0; i < theFABRIKchains.Count; i++) {
-        theFABRIKchains[i].forward(newSub);
-        theFABRIKchains[i].moveChain();
+      for (int i = 0; i < chains.Count; i++) {
+        chains[i].Forward(newSub);
+        chains[i].Move();
       }
 
       // check current iterations
@@ -161,7 +162,7 @@ public class SpiderFabrik : MonoBehaviour
     for (int i = 0; i < useChain_toCenterHub.Count; i++) {
       if (useChain_toCenterHub[i]) {
         // get vector sum of all fabChain, 2nd-chain relativelocalfowards
-        vn3 += theFABRIKchains[i].ChainSecond.TransformDirection(theFABRIKchains[i].LocalRelativeForward);
+        vn3 += chains[i].ChainSecond.TransformDirection(chains[i].LocalRelativeForward);
       }
     }
     if (headObjectTransform != null) {
@@ -190,8 +191,8 @@ public class SpiderFabrik : MonoBehaviour
     //		1) the targets are not within the range tolerance
     //		2) a 'head' object is declared and it has rotated
     bool withingRange = true;
-    for (int i = 0; i < theFABRIKchains.Count; i++) {
-      withingRange = (withingRange && theFABRIKchains[i].DistanceIsWithinTolerance());
+    for (int i = 0; i < chains.Count; i++) {
+      withingRange = (withingRange && chains[i].DistanceIsWithinTolerance);
     }
 
     // now check the head object if it is declared

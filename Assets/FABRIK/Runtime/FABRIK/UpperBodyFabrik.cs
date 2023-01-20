@@ -68,25 +68,25 @@ public class UpperBodyFabrik : MonoBehaviour
     //    1) the targets are not within the range tolerance
     //    2) a 'head' object is declared and it has rotated
     while (!allTargets_areWithinRange()) {
+      // manually step through the FABRIK algorithm. After performing our backward
+      // pass, we'll re-position the torso under the head base. Then, we'll call
+      // the forward pass with this new torso position, and move the chain.
+      leftArmFABRIKChain.Backward();
+      rightArmFABRIKChain.Backward();
+
       // Place the torso center directly below the head-tracker
-      Vector3 newTorsoPosition = headBaseOffsetReference.position + Vector3.up * headVerticalOffset;
-
-      // perform a backwards pass over both chains
-      leftArmFABRIKChain.backward();
-      rightArmFABRIKChain.backward();
-
-      // move the torso after the backward phase is complete
+      var newTorsoPosition = headBaseOffsetReference.position + Vector3.up * headVerticalOffset;
       transform.position = newTorsoPosition;
 
       // adjust the rotation of the central hub at its new position
       adjustHubRotation();
       // using this position as the root, perform a forward pass
       // perform a forwards pass over all chains
-      leftArmFABRIKChain.forward(newTorsoPosition);
-      rightArmFABRIKChain.forward(newTorsoPosition);
+      leftArmFABRIKChain.Forward(newTorsoPosition);
+      rightArmFABRIKChain.Forward(newTorsoPosition);
       // physically move the chains
-      leftArmFABRIKChain.moveChain();
-      rightArmFABRIKChain.moveChain();
+      leftArmFABRIKChain.Move();
+      rightArmFABRIKChain.Move();
 
       // check current iterations
       if (iter > maxIters) { return; }
@@ -143,8 +143,8 @@ public class UpperBodyFabrik : MonoBehaviour
     // initialize the return variable
     bool withinRange = true;
     // test both left and right arm
-    withinRange &= leftArmFABRIKChain.DistanceIsWithinTolerance();
-    withinRange &= rightArmFABRIKChain.DistanceIsWithinTolerance();
+    withinRange &= leftArmFABRIKChain.DistanceIsWithinTolerance;
+    withinRange &= rightArmFABRIKChain.DistanceIsWithinTolerance;
     // now check the head object if it is declared
     if (headObjectTransform != null && lastHeadRotation != headObjectTransform.rotation) {
       withinRange = false;
@@ -173,6 +173,5 @@ public class UpperBodyFabrik : MonoBehaviour
 
     // set the two important variables on the FABRIK chain
     fabrikChain.LocalRelativeForward = v3;
-    fabrikChain.ChainBase = transform;
   }
 }

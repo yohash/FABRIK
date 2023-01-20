@@ -4,13 +4,11 @@ using UnityEngine;
 public class FabrikChain : MonoBehaviour
 {
   [Header("Public References")]
-  public Transform ChainBase;
-  public Transform ChainHead;
   public Transform ChainSecond;
 
   public Vector3 LocalRelativeForward;
 
-  public List<Vector3> NewGlobalPos;
+  public List<Vector3> Positions;
 
   [Header("Assign the Chain")]
   [SerializeField] private List<FabrikJoint> chain;
@@ -18,6 +16,10 @@ public class FabrikChain : MonoBehaviour
   [Header("Assign Tolerances")]
   [SerializeField] private float locationTolerance = 0.005f;
   [SerializeField] private int maxIterations = 10;
+  public int MaxIterations {
+    get { return MaxIterations; }
+    set { maxIterations = value; }
+  }
 
   [Header("Tracking Target")]
   [SerializeField] private Transform target;
@@ -29,7 +31,6 @@ public class FabrikChain : MonoBehaviour
   void Awake()
   {
     // if the chain is shorter than 2 elements ([0] and [1]) it is not a chain
-    ChainHead = chain[0].transform;
     ChainSecond = chain[1].transform;
   }
 
@@ -53,77 +54,99 @@ public class FabrikChain : MonoBehaviour
   // ****************************************************************
   //		PUBLIC ACCESSORS TO SOLVE THE IK
   // ****************************************************************
-  public bool DistanceIsWithinTolerance()
-  {
-    var distanceFromTargetSq = (chainEnd.position - target.position).sqrMagnitude;
-    if (distanceFromTargetSq <= locationTolerance * locationTolerance) {
-      return true;
+  public bool DistanceIsWithinTolerance {
+    get {
+      return (chainEnd.position - target.position).sqrMagnitude
+        <= locationTolerance * locationTolerance;
     }
-    return false;
   }
 
-  public void backward()
+  public void Solve(Vector3 basePos)
   {
-    // the BACKWARD process always initiates the FABRIK process,
-    // so we will make a copy-array of our current positions to manipulate
-    // get the current positions of all components into newLocals
-    NewGlobalPos.Clear();
-    for (int i = 0; i < chain.Count; i++) {
-      NewGlobalPos.Add(chain[i].transform.position);
+    int iter = 0;
+    // loop over FABRIK algorithm
+    float diffSq = (chain[chain.Count - 1].transform.position - target.position).sqrMagnitude;
+    while (diffSq > (locationTolerance * locationTolerance)) {
+      // perform the FABRIK algorithm. A backward pass, followed by a forward pass,
+      // finally closed by movin the chain and computing tolerances
+      Backward();
+      Forward(basePos);
+      Move();
+
+      // re-capture positions
+      diffSq = (chain[chain.Count - 1].transform.position - target.position).sqrMagnitude;
+
+      // break if over the iteration limit
+      if (iter > maxIterations) { break; }
+      iter += 1;
     }
+  }
+
+  public void Backward()
+  {
+    // The backward process always initiates the FABRIK algorithm. 
+    // Initialize our positions array here
+    initSolver();
 
     // compute each new position in the backward-step
     // initialize by setting the last joint to the target position
     var v = target.position;
-    NewGlobalPos[NewGlobalPos.Count - 1] = v;
+    Positions[Positions.Count - 1] = v;
     // cascade in the backward direction, upgrading each joint in 'newLocals' along the way
-    for (int i = NewGlobalPos.Count - 1; i > 0; i--) {
+    for (int i = Positions.Count - 1; i > 0; i--) {
       // get the new point by moving BACKWARD from current point, i, towards i-1 point
-      var displace = NewGlobalPos[i - 1] - NewGlobalPos[i];
-      v = NewGlobalPos[i] + displace.normalized * chain[i].StartOffsetDistance;
+      var displace = Positions[i - 1] - Positions[i];
+      v = Positions[i] + displace.normalized * chain[i].StartOffsetDistance;
       // save that new position in this forwward step
-      NewGlobalPos[i - 1] = v;
+      Positions[i - 1] = v;
     }
   }
 
-  public void forward(Vector3 basePos)
+  public void Forward(Vector3 basePos)
   {
     // compute each new position in the forward-step
     // initialize by setting the first joint back to its origin
-    var v = basePos;
-    NewGlobalPos[0] = v;
+    Positions[0] = basePos;
     // cascade in the forward direction, upgrading each joint in 'newLocals' along the way
-    for (int i = 0; i < NewGlobalPos.Count - 1; i++) {
+    for (int i = 0; i < Positions.Count - 1; i++) {
       // get the new point by moving FORWARD from current point, i, towards i+1 point
-      var displace = NewGlobalPos[i + 1] - NewGlobalPos[i];
-
+      var displace = Positions[i + 1] - Positions[i];
       // vector 'displace' should give us enough info to determine conic constraints
-      v = chain[i].ConstrainPoint(NewGlobalPos[i] + displace, NewGlobalPos[i]);
-
+      var constrained = chain[i].ConstrainPoint(Positions[i] + displace, Positions[i]);
       // v is the new global point, so we can now interpolate between
       //   <currentPosition> = newGlobalPos[i], and 'v', by weight, to add 'sluggishness' to the joint
       if (chain[i].JointWeight < 1) {
         // joint weight is not one, apply the weight
-        v = Vector3.Lerp(NewGlobalPos[i], v, chain[i].JointWeight);
+        constrained = Vector3.Lerp(Positions[i], constrained, chain[i].JointWeight);
       }
-
       // get a new displacement vector to the constrained point
-      displace = v - NewGlobalPos[i];
+      var newDisplace = constrained - Positions[i];
       // normalize and scale this vector, adding to our current location
-      v = NewGlobalPos[i] + displace.normalized * chain[i + 1].StartOffsetDistance;
+      var final = Positions[i] + newDisplace.normalized * chain[i + 1].StartOffsetDistance;
 
       // save that new position in this forwward step
-      NewGlobalPos[i + 1] = v;
+      Positions[i + 1] = final;
     }
   }
 
-  public void moveChain()
+  public void Move()
   {
     // set every other joint relative to the one prior
-    for (int i = 0; i < NewGlobalPos.Count - 1; i++) {
-      chain[i].transform.position = NewGlobalPos[i];
-      chain[i].LookAt_NextJoint(NewGlobalPos[i + 1]);
+    for (int i = 0; i < Positions.Count - 1; i++) {
+      chain[i].transform.position = Positions[i];
+      chain[i].LookAt_NextJoint(Positions[i + 1]);
     }
     chain[chain.Count - 1].LookAt_NextJoint(target.position);
+  }
+
+  private void initSolver()
+  {
+    // initiates the FABRIK process,
+    // make a copy-array of our current positions to manipulate
+    // get the current positions of all components 
+    Positions.Clear();
+    for (int i = 0; i < chain.Count; i++) {
+      Positions.Add(chain[i].transform.position);
+    }
   }
 }

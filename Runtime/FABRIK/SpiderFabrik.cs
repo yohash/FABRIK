@@ -45,7 +45,7 @@ public class SpiderFabrik : MonoBehaviour
     Vector3 v3;
     // find the forward-vector for each joint, relative to the centralHub forwad
     for (int i = 0; i < chains.Count; i++) {
-      joint = chains[i].ChainSecond;
+      joint = chains[i].SecondLink;
       rt = Vector3.Dot(centralHub.forward, joint.right);
       fwd = Vector3.Dot(centralHub.forward, joint.forward);
       up = Vector3.Dot(centralHub.forward, joint.up);
@@ -66,8 +66,8 @@ public class SpiderFabrik : MonoBehaviour
         if (useChain_toCenterHub[i]) {
           // draw its relative forward
           Debug.DrawRay(
-            chains[i].ChainSecond.position,
-            chains[i].ChainSecond.TransformDirection(chainForwards[i]),
+            chains[i].SecondLink.position,
+            chains[i].SecondLink.TransformDirection(chainForwards[i]),
             Color.red
           );
         }
@@ -78,7 +78,7 @@ public class SpiderFabrik : MonoBehaviour
       for (int i = 0; i < useChain_toCenterHub.Count; i++) {
         if (useChain_toCenterHub[i]) {
           // record its relative forward
-          v += chains[i].ChainSecond.TransformDirection(chainForwards[i]);
+          v += chains[i].SecondLink.TransformDirection(chainForwards[i]);
         }
 
         if (headObjectTransform != null) {
@@ -162,7 +162,7 @@ public class SpiderFabrik : MonoBehaviour
     for (int i = 0; i < useChain_toCenterHub.Count; i++) {
       if (useChain_toCenterHub[i]) {
         // get vector sum of all fabChain, 2nd-chain relativelocalfowards
-        vn3 += chains[i].ChainSecond.TransformDirection(chains[i].LocalRelativeForward);
+        vn3 += chains[i].SecondLink.TransformDirection(chains[i].LocalRelativeForward);
       }
     }
     if (headObjectTransform != null) {

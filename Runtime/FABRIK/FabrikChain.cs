@@ -3,11 +3,18 @@ using UnityEngine;
 
 public class FabrikChain : MonoBehaviour
 {
-  [Header("Public References")]
-  public Transform ChainSecond;
+  public Transform SecondLink {
+    get {
+      // if the chain is shorter than 2 elements ([0] and [1]) it is not a chain
+      return chain[1].transform;
+    }
+  }
 
+  [Header("Public References")]
+  // TODO - this is freely assigned by external elements; write a better localized storage
   public Vector3 LocalRelativeForward;
 
+  // TODO - be nice to keep this var private; re-write SpiderFabrik to remove this dependence
   public List<Vector3> Positions;
 
   [Header("Assign the Chain")]
@@ -28,12 +35,6 @@ public class FabrikChain : MonoBehaviour
   // ****************************************************************
   //		MONOBEHAVIOURS
   // ****************************************************************
-  void Awake()
-  {
-    // if the chain is shorter than 2 elements ([0] and [1]) it is not a chain
-    ChainSecond = chain[1].transform;
-  }
-
   void Start()
   {
     // setup chain in a downstream direction
@@ -49,7 +50,6 @@ public class FabrikChain : MonoBehaviour
 
     chainEnd = chain[chain.Count - 1].transform;
   }
-
 
   // ****************************************************************
   //		PUBLIC ACCESSORS TO SOLVE THE IK
@@ -84,7 +84,7 @@ public class FabrikChain : MonoBehaviour
 
   public void Backward()
   {
-    // The backward process always initiates the FABRIK algorithm. 
+    // The backward process always initiates the FABRIK algorithm.
     // Initialize our positions array here
     initSolver();
 
@@ -140,7 +140,7 @@ public class FabrikChain : MonoBehaviour
   {
     // initiates the FABRIK process,
     // make a copy-array of our current positions to manipulate
-    // get the current positions of all components 
+    // get the current positions of all components
     Positions.Clear();
     for (int i = 0; i < chain.Count; i++) {
       Positions.Add(chain[i].transform.position);

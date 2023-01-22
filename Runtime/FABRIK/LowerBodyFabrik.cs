@@ -133,7 +133,7 @@ namespace Yohash.FABRIK
     /// <param name="fabrikChain">Fabrik chain.</param>
     private void intializeFABRIKChain(FabrikChain fabrikChain)
     {
-      var joint = fabrikChain.ChainSecond;
+      var joint = fabrikChain.SecondLink;
 
       float rt = Vector3.Dot(waist.forward, joint.right);
       float fwd = Vector3.Dot(waist.forward, joint.forward);

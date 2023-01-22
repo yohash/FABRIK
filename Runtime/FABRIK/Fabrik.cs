@@ -33,6 +33,7 @@ public class Fabrik : MonoBehaviour
 
   void Update()
   {
+    if (target == null) { return; }
     solve();
   }
 
@@ -42,10 +43,7 @@ public class Fabrik : MonoBehaviour
   private void solve()
   {
     // get the current positions of all components into newLocals
-    positions.Clear();
-    for (int i = 0; i < chain.Count; i++) {
-      positions.Add(chain[i].transform.position);
-    }
+    initSolver();
 
     int iter = 0;
     // loop over FABRIK algorithm
@@ -106,5 +104,16 @@ public class Fabrik : MonoBehaviour
       chain[i].transform.LookAt(positions[i + 1]);
     }
     chain[chain.Count - 1].transform.LookAt(target.transform);
+  }
+
+  private void initSolver()
+  {
+    // initiates the FABRIK process,
+    // make a copy-array of our current positions to manipulate
+    // get the current positions of all components
+    positions.Clear();
+    for (int i = 0; i < chain.Count; i++) {
+      positions.Add(chain[i].transform.position);
+    }
   }
 }

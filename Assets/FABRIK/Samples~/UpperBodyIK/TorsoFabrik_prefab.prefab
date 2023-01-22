@@ -110,23 +110,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7787d929441d3cc46b0dab0815e86042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startOffset: {x: 0, y: 0, z: 0}
-  StartOffsetDistance: 0
-  LinkLength: 0
+  jointWeight: 1
   applyConstraints: 1
   roteRight: 89
   roteLeft: -89
   roteUp: 89
   roteDown: -89
-  upchainTR: {fileID: 0}
-  JointWeight: 1
-  HasPreferredDirection: 1
-  PreferredRelativeForward: {x: 0, y: 0, z: 1}
-  PreferredActualForward: {x: 0, y: 0, z: 0}
+  hasPreferredDirection: 1
+  preferredRelativeForward: {x: 0, y: 0, z: 1}
   springAlpha: 0.3
-  hasLookAt_PreferredDirection: 0
+  hasLookAt_PreferredDirection: 1
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
+  upchain: {fileID: 0}
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -177,23 +173,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7787d929441d3cc46b0dab0815e86042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startOffset: {x: 0, y: 0, z: 0}
-  StartOffsetDistance: 0
-  LinkLength: 0
+  jointWeight: 1
   applyConstraints: 1
   roteRight: 2
   roteLeft: -2
   roteUp: 2
   roteDown: -2
-  upchainTR: {fileID: 0}
-  JointWeight: 1
-  HasPreferredDirection: 0
-  PreferredRelativeForward: {x: 0, y: 0, z: 0}
-  PreferredActualForward: {x: 0, y: 0, z: 0}
+  hasPreferredDirection: 0
+  preferredRelativeForward: {x: 0, y: 0, z: 0}
   springAlpha: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
+  upchain: {fileID: 0}
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -327,23 +319,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7787d929441d3cc46b0dab0815e86042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startOffset: {x: 0, y: 0, z: 0}
-  StartOffsetDistance: 0
-  LinkLength: 0
+  jointWeight: 1
   applyConstraints: 1
   roteRight: 2
   roteLeft: -2
   roteUp: 2
   roteDown: -2
-  upchainTR: {fileID: 0}
-  JointWeight: 1
-  HasPreferredDirection: 0
-  PreferredRelativeForward: {x: 0, y: 0, z: 0}
-  PreferredActualForward: {x: 0, y: 0, z: 0}
+  hasPreferredDirection: 0
+  preferredRelativeForward: {x: 0, y: 0, z: 0}
   springAlpha: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
+  upchain: {fileID: 0}
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -544,8 +532,8 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4917960016562528}
-  - {fileID: 4405682552293846}
   - {fileID: 4010322834275492}
+  - {fileID: 4405682552293846}
   m_Father: {fileID: 4482174465930100}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -562,8 +550,8 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   maxIters: 10
-  leftArmFABRIKChain: {fileID: 114305804781557736}
-  rightArmFABRIKChain: {fileID: 114666798973940414}
+  leftArm: {fileID: 114305804781557736}
+  rightArm: {fileID: 114666798973940414}
   xAxisRotationIgnore: 0
   yAxisRotationIgnore: 0
   zAxisRotationIgnore: 0
@@ -778,12 +766,12 @@ Transform:
   m_GameObject: {fileID: 1358756480843624}
   m_LocalRotation: {x: 0, y: -0.7071068, z: 0, w: 0.7071068}
   m_LocalPosition: {x: 0, y: 0, z: 0}
-  m_LocalScale: {x: 1.0000005, y: 1, z: 1.0000005}
+  m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
   - {fileID: 4447460694154214}
   m_Father: {fileID: 4274347637268766}
-  m_RootOrder: 2
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!114 &114305804781557736
 MonoBehaviour:
@@ -797,11 +785,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dc4ef3dbca87bf44801368654b22d98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChainBase: {fileID: 0}
-  ChainHead: {fileID: 0}
-  ChainSecond: {fileID: 0}
   LocalRelativeForward: {x: 0, y: 0, z: 0}
-  NewGlobalPos: []
+  Positions: []
   chain:
   - {fileID: 114704480191842092}
   - {fileID: 114788991796088236}
@@ -1322,23 +1307,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7787d929441d3cc46b0dab0815e86042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startOffset: {x: 0, y: 0, z: 0}
-  StartOffsetDistance: 0
-  LinkLength: 0
+  jointWeight: 1
   applyConstraints: 0
   roteRight: 85
   roteLeft: -10
   roteUp: 80
   roteDown: -80
-  upchainTR: {fileID: 0}
-  JointWeight: 1
-  HasPreferredDirection: 1
-  PreferredRelativeForward: {x: 1, y: 0, z: 1}
-  PreferredActualForward: {x: 0, y: 0, z: 0}
+  hasPreferredDirection: 1
+  preferredRelativeForward: {x: 1, y: 0, z: 1}
   springAlpha: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
+  upchain: {fileID: 0}
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -1457,7 +1438,7 @@ Transform:
   m_Children:
   - {fileID: 4092920807936250}
   m_Father: {fileID: 4274347637268766}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 90, z: 0}
 --- !u!114 &114666798973940414
 MonoBehaviour:
@@ -1471,11 +1452,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dc4ef3dbca87bf44801368654b22d98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  ChainBase: {fileID: 0}
-  ChainHead: {fileID: 0}
-  ChainSecond: {fileID: 0}
   LocalRelativeForward: {x: 0, y: 0, z: 0}
-  NewGlobalPos: []
+  Positions: []
   chain:
   - {fileID: 114924042834936328}
   - {fileID: 114950343855807866}
@@ -1532,23 +1510,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7787d929441d3cc46b0dab0815e86042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startOffset: {x: 0, y: 0, z: 0}
-  StartOffsetDistance: 0
-  LinkLength: 0
+  jointWeight: 1
   applyConstraints: 1
   roteRight: 80
   roteLeft: -80
   roteUp: 80
   roteDown: -80
-  upchainTR: {fileID: 0}
-  JointWeight: 1
-  HasPreferredDirection: 1
-  PreferredRelativeForward: {x: -0.3, y: -4, z: 0.5}
-  PreferredActualForward: {x: 0, y: 0, z: 0}
+  hasPreferredDirection: 1
+  preferredRelativeForward: {x: -0.3, y: -4, z: 0.5}
   springAlpha: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
+  upchain: {fileID: 0}
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -1599,23 +1573,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7787d929441d3cc46b0dab0815e86042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startOffset: {x: 0, y: 0, z: 0}
-  StartOffsetDistance: 0
-  LinkLength: 0
+  jointWeight: 1
   applyConstraints: 1
   roteRight: 89
   roteLeft: -89
   roteUp: 89
   roteDown: -89
-  upchainTR: {fileID: 0}
-  JointWeight: 1
-  HasPreferredDirection: 1
-  PreferredRelativeForward: {x: 0, y: 0, z: 1}
-  PreferredActualForward: {x: 0, y: 0, z: 0}
+  hasPreferredDirection: 1
+  preferredRelativeForward: {x: 0, y: 0, z: 1}
   springAlpha: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
+  upchain: {fileID: 0}
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -1999,23 +1969,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7787d929441d3cc46b0dab0815e86042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startOffset: {x: 0, y: 0, z: 0}
-  StartOffsetDistance: 0
-  LinkLength: 0
+  jointWeight: 1
   applyConstraints: 0
   roteRight: 5
   roteLeft: -85
   roteUp: 80
   roteDown: -80
-  upchainTR: {fileID: 0}
-  JointWeight: 1
-  HasPreferredDirection: 1
-  PreferredRelativeForward: {x: -1, y: 0, z: 1}
-  PreferredActualForward: {x: 0, y: 0, z: 0}
+  hasPreferredDirection: 1
+  preferredRelativeForward: {x: -1, y: 0, z: 1}
   springAlpha: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
+  upchain: {fileID: 0}
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -2131,23 +2097,19 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 7787d929441d3cc46b0dab0815e86042, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  startOffset: {x: 0, y: 0, z: 0}
-  StartOffsetDistance: 0
-  LinkLength: 0
+  jointWeight: 1
   applyConstraints: 1
   roteRight: 80
   roteLeft: -80
   roteUp: 80
   roteDown: -80
-  upchainTR: {fileID: 0}
-  JointWeight: 1
-  HasPreferredDirection: 1
-  PreferredRelativeForward: {x: 0.3, y: -4, z: 0.5}
-  PreferredActualForward: {x: 0, y: 0, z: 0}
+  hasPreferredDirection: 1
+  preferredRelativeForward: {x: 0.3, y: -4, z: 0.5}
   springAlpha: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
+  upchain: {fileID: 0}
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0

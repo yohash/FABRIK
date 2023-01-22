@@ -14,8 +14,8 @@ public class UpperBodyFabrik : MonoBehaviour
 
   // The left and right arm FRABRIK Chains
   [Header("Left and Right Arm Chains")]
-  [SerializeField] private FabrikChain leftArmFABRIKChain;
-  [SerializeField] private FabrikChain rightArmFABRIKChain;
+  [SerializeField] private FabrikChain leftArm;
+  [SerializeField] private FabrikChain rightArm;
 
   // if we want to override any axis of the torso's rotation
   [Header("Torso Rotation Overrides")]
@@ -35,8 +35,8 @@ public class UpperBodyFabrik : MonoBehaviour
 
   void Start()
   {
-    intializeFABRIKChain(leftArmFABRIKChain);
-    intializeFABRIKChain(rightArmFABRIKChain);
+    intializeFabrikChain(leftArm);
+    intializeFabrikChain(rightArm);
   }
 
   private void Update()
@@ -71,8 +71,8 @@ public class UpperBodyFabrik : MonoBehaviour
       // manually step through the FABRIK algorithm. After performing our backward
       // pass, we'll re-position the torso under the head base. Then, we'll call
       // the forward pass with this new torso position, and move the chain.
-      leftArmFABRIKChain.Backward();
-      rightArmFABRIKChain.Backward();
+      leftArm.Backward();
+      rightArm.Backward();
 
       // Place the torso center directly below the head-tracker
       var newTorsoPosition = headBaseOffsetReference.position + Vector3.up * headVerticalOffset;
@@ -82,11 +82,11 @@ public class UpperBodyFabrik : MonoBehaviour
       adjustHubRotation();
       // using this position as the root, perform a forward pass
       // perform a forwards pass over all chains
-      leftArmFABRIKChain.Forward(newTorsoPosition);
-      rightArmFABRIKChain.Forward(newTorsoPosition);
+      leftArm.Forward(newTorsoPosition);
+      rightArm.Forward(newTorsoPosition);
       // physically move the chains
-      leftArmFABRIKChain.Move();
-      rightArmFABRIKChain.Move();
+      leftArm.Move();
+      rightArm.Move();
 
       // check current iterations
       if (iter > maxIters) { return; }
@@ -101,8 +101,8 @@ public class UpperBodyFabrik : MonoBehaviour
   {
     var vn3 = Vector3.zero;
     // adjust the rotation to face in the averaged relative forward vectors
-    vn3 += leftArmFABRIKChain.ChainSecond.TransformDirection(leftArmFABRIKChain.LocalRelativeForward);
-    vn3 += rightArmFABRIKChain.ChainSecond.TransformDirection(rightArmFABRIKChain.LocalRelativeForward);
+    vn3 += leftArm.SecondLink.TransformDirection(leftArm.LocalRelativeForward);
+    vn3 += rightArm.SecondLink.TransformDirection(rightArm.LocalRelativeForward);
 
     // determine if we tilt further forward or not
     float downQuotient = Vector3.Dot(Vector3.down, headObjectTransform.forward);
@@ -141,10 +141,8 @@ public class UpperBodyFabrik : MonoBehaviour
   private bool allTargets_areWithinRange()
   {
     // initialize the return variable
-    bool withinRange = true;
-    // test both left and right arm
-    withinRange &= leftArmFABRIKChain.DistanceIsWithinTolerance;
-    withinRange &= rightArmFABRIKChain.DistanceIsWithinTolerance;
+    bool withinRange = leftArm.DistanceIsWithinTolerance
+        && rightArm.DistanceIsWithinTolerance;
     // now check the head object if it is declared
     if (headObjectTransform != null && lastHeadRotation != headObjectTransform.rotation) {
       withinRange = false;
@@ -160,10 +158,10 @@ public class UpperBodyFabrik : MonoBehaviour
   ///   (2) a reference to the central hub
   ///
   /// </summary>
-  /// <param name="fabrikChain">Fabrik chain.</param>
-  private void intializeFABRIKChain(FabrikChain fabrikChain)
+  /// <param name="chain">Fabrik chain.</param>
+  private void intializeFabrikChain(FabrikChain chain)
   {
-    var joint = fabrikChain.ChainSecond;
+    var joint = chain.SecondLink;
 
     float rt = Vector3.Dot(transform.forward, joint.right);
     float fwd = Vector3.Dot(transform.forward, joint.forward);
@@ -172,6 +170,6 @@ public class UpperBodyFabrik : MonoBehaviour
     var v3 = new Vector3(rt, up, fwd);
 
     // set the two important variables on the FABRIK chain
-    fabrikChain.LocalRelativeForward = v3;
+    chain.LocalRelativeForward = v3;
   }
 }

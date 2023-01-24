@@ -88,11 +88,19 @@ public class Fabrik : MonoBehaviour
     for (int i = 0; i < positions.Count - 1; i++) {
       // get the new point by moving FORWARD from current point, i, towards i+1 point
       var displace = positions[i + 1] - positions[i];
-      var unconstrained = positions[i] + displace.normalized * chain[i + 1].StartOffsetDistance;
-      // constrain the new point based on any rules the current FabrikJoint may have
-      // then, save that new position in this forwward step
-      var constrained = chain[i].ConstrainPoint(unconstrained, positions[i]);
-      positions[i + 1] = constrained;
+      // vector 'displace' should give us enough info to determine conic constraints
+      var constrained = chain[i].ConstrainPoint(positions[i] + displace, positions[i]);
+      // v is the new global point, so we can now interpolate between
+      //   <currentPosition> = newGlobalPos[i], and 'v', by weight, to add 'sluggishness' to the joint
+      var weighted = Vector3.Lerp(positions[i], constrained, chain[i].JointWeight);
+
+      // get a new displacement vector to the constrained point
+      // then, normalize and scale this vector, adding to our current location
+      var finalDirection = weighted - positions[i];
+      var final = positions[i] + finalDirection.normalized * chain[i + 1].StartOffsetDistance;
+
+      // finally save that new position in this forwward step
+      positions[i + 1] = final;
     }
   }
 

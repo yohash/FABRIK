@@ -35,6 +35,11 @@ public class SpiderFabrik : MonoBehaviour
   public bool DEBUG_SHOW2ndLINK_RelDir;
   public bool DEBUG_SHOWavg2ndLINK;
 
+  public Vector3 DEBUG_FWD = Vector3.zero;
+  public Vector3 DEBUG_PLANENORM = Vector3.up;
+  public Vector3 DEBUG_projection;
+
+
   // ****************************************************************
   //		MONOBEHAVIOURS
   // ****************************************************************
@@ -54,10 +59,6 @@ public class SpiderFabrik : MonoBehaviour
       chains[i].LocalRelativeForward = v3;
     }
   }
-
-  public Vector3 DEBUG_FWD = Vector3.zero;
-  public Vector3 DEBUG_PLANENORM = Vector3.up;
-  public Vector3 DEBUG_projection;
 
   void Update()
   {

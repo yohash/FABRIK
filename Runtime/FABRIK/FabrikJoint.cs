@@ -115,88 +115,31 @@ public class FabrikJoint : MonoBehaviour
 
   public Vector3 ConstrainPoint(Vector3 newGlobalPosition, Vector3 oldGlobalPosition)
   {
-    var modified = newGlobalPosition;
+    var final = newGlobalPosition;
 
     // first, we see if this joint has constrained movement, and refit the desired position to
     // the outisde of the conic section in our plane of movement
     if (applyConstraints) {
-      modified = applyRotationalConstraints(modified);
+      final = applyRotationalConstraints(final);
     }
 
     // next, we see if this joint has a preferred relative position, and further constrain
     // the point to prefer this relative position
     if (hasPreferredDirection) {
-      modified = applyPreferredDirectionConstraints(modified, oldGlobalPosition);
+      final = applyPreferredDirectionConstraints(final, oldGlobalPosition);
     }
 
-    return modified;
+    return final;
   }
 
   // ********************************************************************************************************************************
   //		FABRIK Joint functions
   // ********************************************************************************************************************************
-  private Vector3 applyPreferredDirectionConstraints(Vector3 mod, Vector3 oldGlobalPosition)
+  private Vector3 applyRotationalConstraints(Vector3 current)
   {
     // first off, we declare several important relevant variables
     // find the direction vector from this joint, to the new global position
-    var globalDirection = mod - transform.position;
-
-    // get the ratio of the respective heights and scale the cone to our current conic cross section
-    float h = Vector3.Dot(globalDirection, upchain.forward);
-
-    // make sure we can get a solution to our problem first
-    if (h <= 0) { return mod; }
-
-    // get the projection of this point on the plane
-    var globalProjection = Vector3.ProjectOnPlane(globalDirection, upchain.forward);
-    // only dampen if the point is facing front
-    // get components (local to upchainTR) in global values
-    //float xPart = Vector3.Dot (globalProjection, upchainTR.right);
-    //float yPart = Vector3.Dot (globalProjection, upchainTR.up);
-
-    // scale length for conic cross section scalar
-    float scale = Mathf.Abs(h) / linkLength;
-
-    // transform  our preferred direction to our current relative forward
-    // and scale it to the length of the requested global
-    var globalPreferred = upchain.TransformDirection(preferredRelativeForward * linkLength) * scale;
-
-    // now, we need the projection of preferred Direction on the plane
-    var globalPreferredProjection = Vector3.ProjectOnPlane(globalPreferred, upchain.forward);
-
-    // get the vector between the two points, this is the distance on which spring constant
-    // is enforced
-    var d_1 = globalPreferredProjection - globalProjection;
-    var d_spring = d_1 * springAlpha;
-
-    // get the distance that the target traveled
-
-    // get the scalar for this distance
-    float delta = (oldGlobalPosition - mod).magnitude;
-    // normalized to the largest delta, scaled
-    delta /= largestDelta;
-
-    // adjust the global
-    var tempGlob = mod + d_spring * delta;
-    mod = tempGlob;
-
-    if (DEBUG_SHOWPREF) {
-      Debug.DrawRay(transform.position, upchain.forward * linkLength, Color.yellow);
-      Debug.DrawRay(transform.position, globalPreferred, Color.red);
-      Debug.DrawRay(transform.position, globalDirection, Color.blue);
-      Debug.DrawRay(transform.position + upchain.forward * linkLength, globalProjection, Color.magenta);
-      Debug.DrawRay(transform.position + upchain.forward * linkLength, globalPreferredProjection, Color.cyan);
-      Debug.DrawRay(transform.position, (tempGlob - transform.position), Color.green);
-    }
-
-    return mod;
-  }
-
-  private Vector3 applyRotationalConstraints(Vector3 mod)
-  {
-    // first off, we declare several important relevant variables
-    // find the direction vector from this joint, to the new global position
-    var globalDirection = mod - transform.position;
+    var globalDirection = current - transform.position;
 
     // get the ratio of the respective heights and scale the cone to our current conic cross section
     float h = Vector3.Dot(globalDirection, upchain.forward);
@@ -224,10 +167,6 @@ public class FabrikJoint : MonoBehaviour
     // test to see if the point is in bounds of the ellipse
     float ellipse = (xPart * xPart) / (xBnd * xBnd) + (yPart * yPart) / (yBnd * yBnd);
 
-    if (ellipse > 1 || !inside90) {
-      // out of bounds, and not on ellipse; find the closest point to the requested
-      return solveEllipsePoint(xBnd, yBnd, xPart, yPart, h);
-    }
 
     if (DEBUG_SHOWCONE) {
       Debug.DrawRay(transform.position + (upchain.forward * h), globalProjection, Color.blue);
@@ -249,7 +188,69 @@ public class FabrikJoint : MonoBehaviour
       }
     }
 
-    return mod;
+
+    if (ellipse > 1 || !inside90) {
+      // out of bounds, and not on ellipse; find the closest point to the requested
+      return solveEllipsePoint(xBnd, yBnd, xPart, yPart, h);
+    }
+
+    return current;
+  }
+
+  private Vector3 applyPreferredDirectionConstraints(Vector3 current, Vector3 oldGlobalPosition)
+  {
+    // first off, we declare several important relevant variables
+    // find the direction vector from this joint, to the new global position
+    var globalDirection = current - transform.position;
+
+    // get the ratio of the respective heights and scale the cone to our current conic cross section
+    float h = Vector3.Dot(globalDirection, upchain.forward);
+
+    // make sure we can get a solution to our problem first
+    if (h <= 0) { return current; }
+
+    // get the projection of this point on the plane
+    var globalProjection = Vector3.ProjectOnPlane(globalDirection, upchain.forward);
+    // only dampen if the point is facing front
+    // get components (local to upchainTR) in global values
+    //float xPart = Vector3.Dot (globalProjection, upchain.right);
+    //float yPart = Vector3.Dot (globalProjection, upchain.up);
+
+    // scale length for conic cross section scalar
+    float scale = Mathf.Abs(h) / linkLength;
+
+    // transform  our preferred direction to our current relative forward
+    // and scale it to the length of the requested global
+    var globalPreferred = upchain.TransformDirection(preferredRelativeForward * linkLength) * scale;
+
+    // now, we need the projection of preferred Direction on the plane
+    var globalPreferredProjection = Vector3.ProjectOnPlane(globalPreferred, upchain.forward);
+
+    // get the vector between the two points, this is the distance on which spring constant
+    // is enforced
+    var d_1 = globalPreferredProjection - globalProjection;
+    var d_spring = d_1 * springAlpha;
+
+    // get the distance that the target traveled
+
+    // get the scalar for this distance
+    float delta = (oldGlobalPosition - current).magnitude;
+    // normalized to the largest delta, scaled
+    delta /= largestDelta;
+
+    // adjust the global
+    var newGlobal = current + d_spring * delta;
+
+    if (DEBUG_SHOWPREF) {
+      Debug.DrawRay(transform.position, upchain.forward * linkLength, Color.yellow);
+      Debug.DrawRay(transform.position, globalPreferred, Color.red);
+      Debug.DrawRay(transform.position, globalDirection, Color.blue);
+      Debug.DrawRay(transform.position + upchain.forward * linkLength, globalProjection, Color.magenta);
+      Debug.DrawRay(transform.position + upchain.forward * linkLength, globalPreferredProjection, Color.cyan);
+      Debug.DrawRay(transform.position, (newGlobal - transform.position), Color.green);
+    }
+
+    return newGlobal;
   }
 
   private Vector3 solveEllipsePoint(float a, float b, float x0, float y0, float h)

@@ -24,6 +24,11 @@
       "path": "Samples~/CustomIK"
     },
     {
+      "displayName": "Setup for FABRIK",
+      "description": "The basic FABRIK algorithm is showcased in this scene with two robotic arms of 7 segments. One arm applies constraints, while the other does not.",
+      "path": "Samples~/Fabrik"
+    },
+    {
       "displayName": "Setup for Upper Body FABRIK",
       "description": "The Upper Torso script allows hands+head IK. This sample scene shows you how to set up a floating upper torso.",
       "path": "Samples~/UpperBodyIK"

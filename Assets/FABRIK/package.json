@@ -10,7 +10,8 @@
   "licensesUrl": "https://example.com/licensing.html",
   "dependencies": { },
   "gitDependencies": {
-    "com.yohash.bezier": "https://github.com/yohash/Bezier.git#upm"
+    "com.yohash.bezier": "https://github.com/yohash/Bezier.git#upm",
+    "com.yohash.propulsion": "https://github.com/yohash/Propulsion.git#upm"
   },
   "keywords": [
     "inverse",

@@ -2,7 +2,8 @@
     "name": "yohash.fabrik.runtime",
     "rootNamespace": "",
     "references": [
-        "yohash.bezier.runtime"
+        "yohash.bezier.runtime",
+        "yohash.propulsion.runtime"
     ],
     "includePlatforms": [],
     "excludePlatforms": [],

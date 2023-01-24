@@ -16,7 +16,7 @@ namespace Yohash.FABRIK
     private Transform waist;
     public int maxIters = 10;
 
-    // The left and right arm FRABRIK Chains
+    // The left and right leg FRABRIK Chains
     [Header("Chains")]
     public FabrikChain LeftLegFabrikChain;
     public FabrikChain RightLegFabrikChain;

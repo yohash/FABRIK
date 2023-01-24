@@ -23,6 +23,7 @@ git subtree split --prefix=Assets/FABRIK --branch upm
 
 This package has a dependency on another custom package. To allow for automatic installion of dependencies
 - [yohash.bezier](https://github.com/yohash/Bezier)
+- [yohash.propulsion](https://github.com/yohash/Propulsion)
 
 Please first install the [mob-sakai/GitDependencyResolverForUnity](https://github.com/mob-sakai/GitDependencyResolverForUnity). The git dependency resolver can be installed in the Unity package manager with this direct git link:
 ```

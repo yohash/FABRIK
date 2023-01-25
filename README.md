@@ -21,7 +21,7 @@ git subtree split --prefix=Assets/FABRIK --branch upm
 
 ## Dependencies
 
-This package has a dependency on another custom package. To allow for automatic installion of dependencies
+This package has dependencies on other custom packages. To allow for automatic installion of dependencies
 - [yohash.bezier](https://github.com/yohash/Bezier)
 - [yohash.propulsion](https://github.com/yohash/Propulsion)
 

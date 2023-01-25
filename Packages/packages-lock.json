@@ -162,6 +162,13 @@
       "dependencies": {},
       "hash": "e53b01502e53726760fe1063c79851d89b781166"
     },
+    "com.yohash.propulsion": {
+      "version": "https://github.com/yohash/Propulsion.git#upm",
+      "depth": 0,
+      "source": "git",
+      "dependencies": {},
+      "hash": "ae929798bf6dcf5ad292b3e9aad583da8b4265e0"
+    },
     "com.unity.modules.ai": {
       "version": "1.0.0",
       "depth": 0,

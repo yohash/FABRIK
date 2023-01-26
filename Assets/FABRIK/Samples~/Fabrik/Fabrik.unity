@@ -426,6 +426,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2241600256357868665, guid: b1617ba5a5275b044919aa3389b1d851, type: 3}
+      propertyPath: constrainRotation
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2241600256357868665, guid: b1617ba5a5275b044919aa3389b1d851, type: 3}
       propertyPath: hasPreferredDirection
       value: 1
       objectReference: {fileID: 0}
@@ -474,6 +478,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2241600256855371659, guid: b1617ba5a5275b044919aa3389b1d851, type: 3}
+      propertyPath: constrainRotation
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2241600256855371659, guid: b1617ba5a5275b044919aa3389b1d851, type: 3}
       propertyPath: hasPreferredDirection
       value: 1
       objectReference: {fileID: 0}
@@ -515,6 +523,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2241600256888782526, guid: b1617ba5a5275b044919aa3389b1d851, type: 3}
       propertyPath: applyConstraints
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2241600256888782526, guid: b1617ba5a5275b044919aa3389b1d851, type: 3}
+      propertyPath: constrainRotation
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2241600256888782526, guid: b1617ba5a5275b044919aa3389b1d851, type: 3}
@@ -654,6 +666,10 @@ PrefabInstance:
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2241600257783282694, guid: b1617ba5a5275b044919aa3389b1d851, type: 3}
+      propertyPath: constrainRotation
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2241600257783282694, guid: b1617ba5a5275b044919aa3389b1d851, type: 3}
       propertyPath: hasPreferredDirection
       value: 1
       objectReference: {fileID: 0}
@@ -739,6 +755,10 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 2241600258373700227, guid: b1617ba5a5275b044919aa3389b1d851, type: 3}
       propertyPath: applyConstraints
+      value: 1
+      objectReference: {fileID: 0}
+    - target: {fileID: 2241600258373700227, guid: b1617ba5a5275b044919aa3389b1d851, type: 3}
+      propertyPath: constrainRotation
       value: 1
       objectReference: {fileID: 0}
     - target: {fileID: 2241600258373700227, guid: b1617ba5a5275b044919aa3389b1d851, type: 3}

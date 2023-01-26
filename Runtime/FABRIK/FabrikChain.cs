@@ -8,7 +8,7 @@ namespace Yohash.FABRIK
     public Transform SecondLink {
       get {
         // if the chain is shorter than 2 elements ([0] and [1]) it is not a chain
-        return chain[1].transform;
+        return chain[1].Transform();
       }
     }
 
@@ -20,7 +20,7 @@ namespace Yohash.FABRIK
     public List<Vector3> Positions;
 
     [Header("Assign the Chain")]
-    [SerializeField] private List<FabrikJoint> chain;
+    [SerializeField] private List<IJoint> chain;
 
     [Header("Assign Tolerances")]
     [SerializeField] private float locationTolerance = 0.005f;
@@ -39,6 +39,9 @@ namespace Yohash.FABRIK
     // ****************************************************************
     void Start()
     {
+      chain = new List<IJoint>();
+      chain.AddRange(GetComponentsInChildren<IJoint>());
+
       // setup chain in a downstream direction
       for (int i = 0; i < chain.Count - 1; i++) {
         chain[i].SetupDownstream(chain[i + 1]);
@@ -47,10 +50,10 @@ namespace Yohash.FABRIK
       // send the variables for constraint checking in an upstream direction
       chain[0].SetupUpstream(transform);
       for (int i = 1; i < chain.Count; i++) {
-        chain[i].SetupUpstream(chain[i - 1].transform);
+        chain[i].SetupUpstream(chain[i - 1].Transform());
       }
 
-      chainEnd = chain[chain.Count - 1].transform;
+      chainEnd = chain[chain.Count - 1].Transform();
     }
 
     // ****************************************************************
@@ -67,7 +70,7 @@ namespace Yohash.FABRIK
     {
       int iter = 0;
       // loop over FABRIK algorithm
-      float diffSq = (chain[chain.Count - 1].transform.position - target.position).sqrMagnitude;
+      float diffSq = (chain[chain.Count - 1].Transform().position - target.position).sqrMagnitude;
       while (diffSq > (locationTolerance * locationTolerance)) {
         // perform the FABRIK algorithm. A backward pass, followed by a forward pass,
         // finally closed by movin the chain and computing tolerances
@@ -76,7 +79,7 @@ namespace Yohash.FABRIK
         Move();
 
         // re-capture positions
-        diffSq = (chain[chain.Count - 1].transform.position - target.position).sqrMagnitude;
+        diffSq = (chain[chain.Count - 1].Transform().position - target.position).sqrMagnitude;
 
         // break if over the iteration limit
         if (iter > maxIterations) { break; }
@@ -97,7 +100,7 @@ namespace Yohash.FABRIK
       for (int i = Positions.Count - 1; i > 0; i--) {
         // get the new point by moving BACKWARD from current point, i, towards i-1 point
         var displace = Positions[i - 1] - Positions[i];
-        var final = Positions[i] + displace.normalized * chain[i].StartOffsetDistance;
+        var final = Positions[i] + displace.normalized * chain[i].StartOffsetDistance();
         // save that new position in this forwward step
         Positions[i - 1] = final;
       }
@@ -116,12 +119,12 @@ namespace Yohash.FABRIK
         var constrained = chain[i].ConstrainPoint(Positions[i] + displace, Positions[i]);
         // v is the new global point, so we can now interpolate between
         //   <currentPosition> = newGlobalPos[i], and 'v', by weight, to add 'sluggishness' to the joint
-        var weighted = Vector3.Lerp(Positions[i], constrained, chain[i].JointWeight);
+        var weighted = Vector3.Lerp(Positions[i], constrained, chain[i].JointWeight());
 
         // get a new displacement vector to the constrained point
         // then, normalize and scale this vector, adding to our current location
         var finalDirection = weighted - Positions[i];
-        var final = Positions[i] + finalDirection.normalized * chain[i + 1].StartOffsetDistance;
+        var final = Positions[i] + finalDirection.normalized * chain[i + 1].StartOffsetDistance();
 
         // finally save that new position in this forwward step
         Positions[i + 1] = final;
@@ -132,10 +135,10 @@ namespace Yohash.FABRIK
     {
       // set every other joint relative to the one prior
       for (int i = 0; i < Positions.Count - 1; i++) {
-        chain[i].transform.position = Positions[i];
-        chain[i].LookAt_NextJoint(Positions[i + 1]);
+        chain[i].AssignPosition(Positions[i]);
+        chain[i].LookAt(Positions[i + 1]);
       }
-      chain[chain.Count - 1].LookAt_NextJoint(target.position);
+      chain[chain.Count - 1].LookAt(target.position);
     }
 
     private void initSolver()
@@ -145,7 +148,7 @@ namespace Yohash.FABRIK
       // get the current positions of all components
       Positions.Clear();
       for (int i = 0; i < chain.Count; i++) {
-        Positions.Add(chain[i].transform.position);
+        Positions.Add(chain[i].Transform().position);
       }
     }
   }

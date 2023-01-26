@@ -2,12 +2,11 @@
 
 namespace Yohash.FABRIK
 {
-  public class FabrikJoint : MonoBehaviour
+  public class FabrikJoint : MonoBehaviour, IJoint
   {
     [Header("Define joint characteristics")]
     [Range(0, 1)]
     [SerializeField] private float jointWeight = 1f;
-    public float JointWeight { get { return jointWeight; } }
 
     [Header("Define Conic Rotational constraints")]
     [SerializeField] private bool constrainRotation = false;
@@ -38,10 +37,10 @@ namespace Yohash.FABRIK
 
     [Header("Cached chain data")]
     [SerializeField] private Transform upchain;
+
     private Vector3 startOffset;
     private float linkLength;
-
-    public float StartOffsetDistance { get; private set; }
+    private float _startOffsetDistance;
 
     // compute the distance of the axes of each conic section
     private float coneTop;
@@ -59,47 +58,26 @@ namespace Yohash.FABRIK
     public bool DEBUG_SHOWPREF;
 
     // ****************************************************************
-    //		MONOBEHAVIOURS
+    //		IJoint
     // ****************************************************************
-    void Awake()
+    public Transform Transform()
     {
-      startOffset = transform.localPosition;
-      StartOffsetDistance = startOffset.magnitude;
-      preferredRelativeForward.Normalize();
+      return transform;
     }
 
-    void Update()
+    public float JointWeight()
     {
-      if (DEBUG_SHOWDIR) {
-        Debug.DrawRay(transform.position, transform.right, Color.black);
-        Debug.DrawRay(transform.position, transform.up, Color.black);
-        Debug.DrawRay(transform.position, transform.forward, Color.black);
-      }
-      if (DEBUG_SHOWUPSTRM) {
-        Debug.DrawRay(upchain.position, upchain.right, Color.gray);
-        Debug.DrawRay(upchain.position, upchain.up, Color.gray);
-        Debug.DrawRay(upchain.position, upchain.forward, Color.gray);
-      }
+      return jointWeight;
     }
 
-    // ****************************************************************
-    //    PUBLIC ACCESSOR
-    // ****************************************************************
-    public void LookAt_NextJoint(Vector3 worldPosition)
+    public float StartOffsetDistance()
     {
-      if (hasLookAt_PreferredDirection && lookAt_PreferredTransform != null) {
-        transform.LookAt(worldPosition, lookAt_PreferredTransform.TransformDirection(lookAt_PreferredRelativeVector));
-      } else {
-        transform.LookAt(worldPosition);
-      }
+      return _startOffsetDistance;
     }
 
-    // ****************************************************************
-    //    necessary inputs for constrained movements
-    // ****************************************************************
-    public void SetupDownstream(FabrikJoint downstream)
+    public void SetupDownstream(IJoint downstream)
     {
-      linkLength = downstream.StartOffsetDistance;
+      linkLength = downstream.StartOffsetDistance();
     }
 
     public void SetupUpstream(Transform upstream)
@@ -132,6 +110,44 @@ namespace Yohash.FABRIK
       }
 
       return final;
+    }
+
+    public virtual void AssignPosition(Vector3 position)
+    {
+      transform.position = position;
+    }
+
+    public virtual void LookAt(Vector3 lookAtPosition)
+    {
+      if (hasLookAt_PreferredDirection && lookAt_PreferredTransform != null) {
+        transform.LookAt(lookAtPosition, lookAt_PreferredTransform.TransformDirection(lookAt_PreferredRelativeVector));
+      } else {
+        transform.LookAt(lookAtPosition);
+      }
+    }
+
+    // ****************************************************************
+    //		MONOBEHAVIOURS
+    // ****************************************************************
+    void Awake()
+    {
+      startOffset = transform.localPosition;
+      _startOffsetDistance = startOffset.magnitude;
+      preferredRelativeForward.Normalize();
+    }
+
+    void Update()
+    {
+      if (DEBUG_SHOWDIR) {
+        Debug.DrawRay(transform.position, transform.right, Color.black);
+        Debug.DrawRay(transform.position, transform.up, Color.black);
+        Debug.DrawRay(transform.position, transform.forward, Color.black);
+      }
+      if (DEBUG_SHOWUPSTRM) {
+        Debug.DrawRay(upchain.position, upchain.right, Color.gray);
+        Debug.DrawRay(upchain.position, upchain.up, Color.gray);
+        Debug.DrawRay(upchain.position, upchain.forward, Color.gray);
+      }
     }
 
     // ********************************************************************************************************************************

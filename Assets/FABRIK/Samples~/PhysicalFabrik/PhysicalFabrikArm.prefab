@@ -26,8 +26,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6738507010496562308}
-  m_LocalRotation: {x: 0.027908636, y: 0.07146258, z: -0.63814515, w: 0.76608425}
-  m_LocalPosition: {x: 0.000000040978193, y: 0.00000008381903, z: 0.20000084}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -55,8 +55,8 @@ MonoBehaviour:
   roteLeft: -89
   roteUp: 89
   roteDown: -89
-  hasPreferredDirection: 0
-  preferredRelativeForward: {x: 0, y: 0, z: 0}
+  hasPreferredDirection: 1
+  preferredRelativeForward: {x: 0, y: -0.1, z: 1}
   springAlpha: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
@@ -66,7 +66,7 @@ MonoBehaviour:
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
   DEBUG_SHOWPREF: 0
-  Power: 30
+  Power: 50
   RotationalPower: 8
   controllerX:
     proportionalGain: 2
@@ -154,8 +154,6 @@ MonoBehaviour:
   torque: {x: 0, y: 0, z: 0}
   target: {x: -0.11003776, y: 0.23083752, z: 0.87026733}
   lookAt: {x: -0.051508192, y: 0.29367158, z: 1.0508945}
-  RELATIVE_FORCE: 0
-  SHOW_THROTTLE: 0
 --- !u!54 &6738507010496562315
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -683,8 +681,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6738507010861687114}
-  m_LocalRotation: {x: 0.18654762, y: -0.5479541, z: -0.74681914, w: 0.32742578}
-  m_LocalPosition: {x: 0.000024368986, y: 0.0000015799887, z: 0.100199245}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.1}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -711,7 +709,7 @@ MonoBehaviour:
   roteUp: 89
   roteDown: -89
   hasPreferredDirection: 0
-  preferredRelativeForward: {x: 0, y: 0, z: 0}
+  preferredRelativeForward: {x: 0, y: 0, z: 1}
   springAlpha: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
@@ -809,8 +807,6 @@ MonoBehaviour:
   torque: {x: 0, y: 0, z: 0}
   target: {x: 0.027599994, y: 0.3974, z: 1.227}
   lookAt: {x: 0.0276, y: 0.3974, z: 1.227}
-  RELATIVE_FORCE: 0
-  SHOW_THROTTLE: 0
 --- !u!54 &6738507010861687091
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1144,8 +1140,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6738507010995958746}
-  m_LocalRotation: {x: -0.034504745, y: -0.090909444, z: 0.42350996, w: -0.90065765}
-  m_LocalPosition: {x: 0.00000005075708, y: 0.00000004004687, z: 0.12000048}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.12}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1173,8 +1169,8 @@ MonoBehaviour:
   roteLeft: -89
   roteUp: 89
   roteDown: -89
-  hasPreferredDirection: 0
-  preferredRelativeForward: {x: 0, y: 0, z: 0}
+  hasPreferredDirection: 1
+  preferredRelativeForward: {x: 0, y: 0, z: 1}
   springAlpha: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
@@ -1272,8 +1268,6 @@ MonoBehaviour:
   torque: {x: 0, y: 0, z: 0}
   target: {x: -0.013743691, y: 0.34479755, z: 1.1526785}
   lookAt: {x: 0.027599994, y: 0.3974, z: 1.227}
-  RELATIVE_FORCE: 0
-  SHOW_THROTTLE: 0
 --- !u!54 &6738507010995958723
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1412,8 +1406,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6738507011089101313}
-  m_LocalRotation: {x: -0.05102121, y: 0.07141548, z: -0.19011217, w: 0.9778313}
-  m_LocalPosition: {x: 0.000049762428, y: 0.000027477741, z: 0.4003311}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -1441,8 +1435,8 @@ MonoBehaviour:
   roteLeft: -89
   roteUp: 89
   roteDown: -89
-  hasPreferredDirection: 0
-  preferredRelativeForward: {x: 0, y: 0, z: 0}
+  hasPreferredDirection: 1
+  preferredRelativeForward: {x: 0, y: -0.5, z: 1}
   springAlpha: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
@@ -1452,7 +1446,7 @@ MonoBehaviour:
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
   DEBUG_SHOWPREF: 0
-  Power: 40
+  Power: 60
   RotationalPower: 8
   controllerX:
     proportionalGain: 2
@@ -1540,8 +1534,6 @@ MonoBehaviour:
   torque: {x: 0, y: 0, z: 0}
   target: {x: -0.15623067, y: 0.18462187, z: 0.68124264}
   lookAt: {x: -0.11003776, y: 0.23083752, z: 0.87026733}
-  RELATIVE_FORCE: 0
-  SHOW_THROTTLE: 0
 --- !u!54 &6738507011089101319
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2339,8 +2331,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6738507011735017225}
-  m_LocalRotation: {x: 0.038588874, y: -0.05104961, z: -0.65148306, w: -0.75595945}
-  m_LocalPosition: {x: 0.000035766512, y: 0.00003154576, z: 0.20053247}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.2}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2368,8 +2360,8 @@ MonoBehaviour:
   roteLeft: -89
   roteUp: 89
   roteDown: -89
-  hasPreferredDirection: 0
-  preferredRelativeForward: {x: 0, y: 0, z: 0}
+  hasPreferredDirection: 1
+  preferredRelativeForward: {x: 0, y: 0, z: 1}
   springAlpha: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
@@ -2379,7 +2371,7 @@ MonoBehaviour:
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
   DEBUG_SHOWPREF: 0
-  Power: 30
+  Power: 40
   RotationalPower: 8
   controllerX:
     proportionalGain: 2
@@ -2467,8 +2459,6 @@ MonoBehaviour:
   torque: {x: 0, y: 0, z: 0}
   target: {x: -0.051508192, y: 0.29367158, z: 1.0508945}
   lookAt: {x: -0.013743691, y: 0.34479755, z: 1.1526785}
-  RELATIVE_FORCE: 0
-  SHOW_THROTTLE: 0
 --- !u!54 &6738507011735017231
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2607,8 +2597,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6738507011754466551}
-  m_LocalRotation: {x: 0.0024940514, y: 0.53255546, z: 0.691614, w: -0.48790234}
-  m_LocalPosition: {x: -0.0004326105, y: 0.0015081242, z: 0.4003894}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0.4}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2636,8 +2626,8 @@ MonoBehaviour:
   roteLeft: -89
   roteUp: 89
   roteDown: -89
-  hasPreferredDirection: 0
-  preferredRelativeForward: {x: 0, y: 0, z: 0}
+  hasPreferredDirection: 1
+  preferredRelativeForward: {x: 0, y: -0.5, z: 1}
   springAlpha: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
@@ -2647,7 +2637,7 @@ MonoBehaviour:
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
   DEBUG_SHOWPREF: 0
-  Power: 40
+  Power: 80
   RotationalPower: 8
   controllerX:
     proportionalGain: 2
@@ -2735,8 +2725,6 @@ MonoBehaviour:
   torque: {x: 0, y: 0, z: 0}
   target: {x: -0.24034539, y: 0.12324549, z: 0.2950333}
   lookAt: {x: -0.15623067, y: 0.18462187, z: 0.68124264}
-  RELATIVE_FORCE: 0
-  SHOW_THROTTLE: 0
 --- !u!54 &6738507011754466552
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2972,8 +2960,8 @@ Transform:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 6738507012306339388}
-  m_LocalRotation: {x: -0.28640014, y: 0.32280597, z: 0.8352405, w: -0.34080017}
-  m_LocalPosition: {x: 0.014602192, y: -0.0065091737, z: 0.05148706}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
@@ -2982,7 +2970,7 @@ Transform:
   - {fileID: 6738507011754466550}
   m_Father: {fileID: 6738507011530746694}
   m_RootOrder: 0
-  m_LocalEulerAnglesHint: {x: -9, y: 66.265, z: 32.691}
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!114 &6738507012306339361
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -3001,8 +2989,8 @@ MonoBehaviour:
   roteLeft: -89
   roteUp: 89
   roteDown: -89
-  hasPreferredDirection: 0
-  preferredRelativeForward: {x: 0, y: 0, z: 0}
+  hasPreferredDirection: 1
+  preferredRelativeForward: {x: 0, y: 1, z: 1}
   springAlpha: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
@@ -3100,8 +3088,6 @@ MonoBehaviour:
   torque: {x: 0, y: 0, z: 1}
   target: {x: 0, y: 0, z: 0}
   lookAt: {x: -0.24034539, y: 0.12324549, z: 0.2950333}
-  RELATIVE_FORCE: 0
-  SHOW_THROTTLE: 0
 --- !u!54 &6738507012306339363
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3322,7 +3308,7 @@ GameObject:
   m_Component:
   - component: {fileID: 6738507012534583268}
   m_Layer: 0
-  m_Name: FabrikArm
+  m_Name: PhysicalFabrikArm
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0

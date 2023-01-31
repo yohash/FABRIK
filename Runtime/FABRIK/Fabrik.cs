@@ -7,9 +7,7 @@ namespace Yohash.FABRIK
   {
     [Header("Assign in Inspector")]
     [SerializeField] private Transform parentTR;
-
     [SerializeField] private List<IJoint> chain;
-
     [SerializeField] private List<Vector3> positions;
 
     [Header("Assign constants")]
@@ -18,6 +16,8 @@ namespace Yohash.FABRIK
 
     [Header("Target")]
     [SerializeField] private Transform target;
+
+    public bool DEBUG_SHOW_SOLUTION;
 
     void Start()
     {
@@ -40,6 +40,10 @@ namespace Yohash.FABRIK
     {
       if (target == null) { return; }
       solve();
+
+      if (DEBUG_SHOW_SOLUTION) {
+        drawSolution();
+      }
     }
 
     // ****************************************************************
@@ -116,6 +120,7 @@ namespace Yohash.FABRIK
         chain[i].AssignPosition(positions[i]);
         chain[i].LookAt(positions[i + 1]);
       }
+      chain[chain.Count - 1].AssignPosition(positions[positions.Count - 1]);
       chain[chain.Count - 1].LookAt(target.transform.position);
     }
 
@@ -127,6 +132,14 @@ namespace Yohash.FABRIK
       positions.Clear();
       for (int i = 0; i < chain.Count; i++) {
         positions.Add(chain[i].Transform().position);
+      }
+    }
+
+    private void drawSolution()
+    {
+      Debug.DrawRay(positions[0], parentTR.position - positions[0], Color.green);
+      for (int i = 1; i < positions.Count; i++) {
+        Debug.DrawRay(positions[i], positions[i - 1] - positions[i], Color.green);
       }
     }
   }

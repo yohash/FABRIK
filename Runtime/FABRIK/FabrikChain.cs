@@ -56,6 +56,26 @@ namespace Yohash.FABRIK
       chainEnd = chain[chain.Count - 1].Transform();
     }
 
+    /// <summary>
+    /// Intializes the FABRIK chain by setting the local relative forward
+    /// TODO - consider re-working this into a non-monobehaviour class that
+    ///         has the "Start()" and "Initialize" methods baked in to class
+    ///         instantiation
+    /// </summary>
+    public void Intialize(Pose parent)
+    {
+      var joint = SecondLink;
+
+      float rt = Vector3.Dot(parent.forward, joint.right);
+      float fwd = Vector3.Dot(parent.forward, joint.forward);
+      float up = Vector3.Dot(parent.forward, joint.up);
+
+      var v3 = new Vector3(rt, up, fwd);
+
+      // set the two important variables on the FABRIK chain
+      LocalRelativeForward = v3;
+    }
+
     // ****************************************************************
     //		PUBLIC ACCESSORS TO SOLVE THE IK
     // ****************************************************************

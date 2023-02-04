@@ -12,58 +12,60 @@ namespace Yohash.FABRIK
 
   public class LowerBodyFabrik : MonoBehaviour
   {
-    // this script is placed on the waist
-    private Transform waist;
     public int maxIters = 10;
 
+    [Header("Assign Torso Tracking Point")]
+    public Transform UpperTorso;
+
     // The left and right leg FRABRIK Chains
-    [Header("Chains")]
-    public FabrikChain LeftLegFabrikChain;
-    public FabrikChain RightLegFabrikChain;
+    [Header("Assign FABRIK Chains")]
+    [SerializeField] private FabrikChain leftLeg;
+    [SerializeField] private FabrikChain rightLeg;
 
-    [Header("Foot Data")]
-    public GameObject LeftFoot;
-    public GameObject RightFoot;
+    [Header("Assign Foot Targets")]
+    [SerializeField] private GameObject leftFoot;
+    [SerializeField] private GameObject rightFoot;
 
-    public float FootHeight = 0.2f;
-
-    public Vector3 LeftFootWorldPosition;
-    public Vector3 RightFootWorldPosition;
-
-    [Header("Private vars")]
-    // private vars
-    [SerializeField] private Vector3 leftFootDestination;
-    [SerializeField] private Vector3 leftFootStartPoint;
-    [SerializeField] private Vector3 rightFootDestination;
-    [SerializeField] private Vector3 rightFootStartPoint;
-
-    [SerializeField] private foot_placement currentSteps = foot_placement.STANDING;
-
+    [Header("Assign Variable values")]
+    [SerializeField] private float footHeight = 0.2f;
     [SerializeField] private float maxFootDelta = 0.25f;
     [SerializeField] private float stepMaxTime = 1f;
 
-    [SerializeField] private Vector3 mechCurrentVelocity = Vector3.zero;
+    [SerializeField] private Vector3 defaultLeftOffset = new Vector3(-0.25f, -1f, 0f);
+    [SerializeField] private Vector3 defaultRightOffset = new Vector3(0.25f, -1f, 0f);
 
-    [SerializeField] private float timeStepStarted;
+    [Header("Tracked private vars")]
+    [SerializeField] private Vector3 leftFootWorldPosition;
+    [SerializeField] private Vector3 rightFootWorldPosition;
+    [SerializeField] private foot_placement currentSteps = foot_placement.STANDING;
 
-    [SerializeField] private Vector3 DefaultLeftOffset = new Vector3(-0.25f, -1f, 0f);
-    [SerializeField] private Vector3 DefaultRightOffset = new Vector3(0.25f, -1f, 0f);
+    // private vars
+    private Vector3 leftFootDestination;
+    private Vector3 leftFootStartPoint;
+    private Vector3 rightFootDestination;
+    private Vector3 rightFootStartPoint;
 
-    [Header("Upper Torso Tracking Point")]
-    public Transform UpperTorso;
+    private Vector3 mechCurrentVelocity = Vector3.zero;
+    private float timeStepStarted;
+    private Vector3 lastPosition;
 
     // ****************************************************************
     //    MONOBEHAVIOURS
     // ****************************************************************
-    void Awake()
-    {
-      waist = transform;
-    }
-
     void Start()
     {
-      intializeFABRIKChain(LeftLegFabrikChain);
-      intializeFABRIKChain(RightLegFabrikChain);
+      var pose = transform.ToPose();
+      leftLeg.Intialize(pose);
+      rightLeg.Intialize(pose);
+    }
+
+    private void Update()
+    {
+      var dt = Time.deltaTime;
+      if (dt > 0) {
+        SolveIK((transform.position - lastPosition) / Time.deltaTime);
+      }
+      lastPosition = transform.position;
     }
 
     // ****************************************************************
@@ -85,20 +87,20 @@ namespace Yohash.FABRIK
       int iter = 0;
 
       // always update the waist node to pair with the torso
-      waist.position = UpperTorso.position;
+      transform.position = UpperTorso.position;
 
       // ensure both feet are postiioned at their world position
-      LeftFoot.transform.position = LeftFootWorldPosition;
-      RightFoot.transform.position = RightFootWorldPosition;
+      leftFoot.transform.position = leftFootWorldPosition;
+      rightFoot.transform.position = rightFootWorldPosition;
 
       // make sure both feet are aligned with the waist's forward
-      LeftFoot.transform.rotation = Quaternion.Euler(0f, waist.rotation.eulerAngles.y, 0f);
-      RightFoot.transform.rotation = Quaternion.Euler(0f, waist.rotation.eulerAngles.y, 0f);
+      leftFoot.transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
+      rightFoot.transform.rotation = Quaternion.Euler(0f, transform.rotation.eulerAngles.y, 0f);
 
       // solve the FABRIK algorithm for each leg
       while (!allTargets_areWithinRange()) {
-        LeftLegFabrikChain.Solve(waist.position);
-        RightLegFabrikChain.Solve(waist.position);
+        leftLeg.Solve(transform.position);
+        rightLeg.Solve(transform.position);
 
         // break if over the current iterations
         if (iter > maxIters) { return; }
@@ -106,43 +108,10 @@ namespace Yohash.FABRIK
       }
     }
 
-
-    /// <summary>
-    /// Determine if both arm targets are within range
-    /// Two conditions warrant a target being not within range
-    ///    1) the targets are not within the range tolerance
-    ///    2) a 'head' object is declared and it has rotated
-    /// </summary>
-    /// <returns><c>true</c>, if all targets are within range, <c>false</c> otherwise.</returns>
     private bool allTargets_areWithinRange()
     {
-      // initialize the return variable
-      bool withinRange = true;
-      // test all limbs
-      withinRange &= LeftLegFabrikChain.DistanceIsWithinTolerance;
-      withinRange &= RightLegFabrikChain.DistanceIsWithinTolerance;
-
-      return withinRange;
-    }
-
-    /// <summary>
-    /// Intializes the FABRIK chain by setting two necessary variables
-    ///   (1) the local relative forward (used to center the hub)
-    ///   (2) a reference to the central hub
-    /// </summary>
-    /// <param name="fabrikChain">Fabrik chain.</param>
-    private void intializeFABRIKChain(FabrikChain fabrikChain)
-    {
-      var joint = fabrikChain.SecondLink;
-
-      float rt = Vector3.Dot(waist.forward, joint.right);
-      float fwd = Vector3.Dot(waist.forward, joint.forward);
-      float up = Vector3.Dot(waist.forward, joint.up);
-
-      var v3 = new Vector3(rt, up, fwd);
-
-      // set the two important variables on the FABRIK chain
-      fabrikChain.LocalRelativeForward = v3;
+      return leftLeg.DistanceIsWithinTolerance
+          && rightLeg.DistanceIsWithinTolerance;
     }
 
     // ****************************************************************
@@ -199,19 +168,20 @@ namespace Yohash.FABRIK
 
     private bool leftFootProximityOK()
     {
-      float heightDelta = (1f - waist.localPosition.y);
+      float heightDelta = 1f - transform.localPosition.y;
 
-      if ((LeftFootWorldPosition - waist.TransformPoint(DefaultLeftOffset + Vector3.up * heightDelta)).sqrMagnitude
+      if ((leftFootWorldPosition - transform.TransformPoint(defaultLeftOffset + Vector3.up * heightDelta)).sqrMagnitude
                 > (maxFootDelta * maxFootDelta)) {
         return false;
       }
       return true;
     }
+
     private bool rightFootProximityOK()
     {
-      float heightDelta = (1f - waist.localPosition.y);
+      float heightDelta = 1f - transform.localPosition.y;
 
-      if ((RightFootWorldPosition - waist.TransformPoint(DefaultRightOffset + Vector3.up * heightDelta)).sqrMagnitude
+      if ((rightFootWorldPosition - transform.TransformPoint(defaultRightOffset + Vector3.up * heightDelta)).sqrMagnitude
                 > (maxFootDelta * maxFootDelta)) {
         return false;
       }
@@ -221,46 +191,45 @@ namespace Yohash.FABRIK
     private void initializeLeftFootStep()
     {
       // initilize left foot step data
-      leftFootStartPoint = LeftFootWorldPosition;
+      leftFootStartPoint = leftFootWorldPosition;
       // get the relative direction for the footfall
-      var target = waist.TransformPoint(DefaultLeftOffset) + mechCurrentVelocity * stepMaxTime / 2f;
-      var direction = target - waist.position;
+      var target = transform.TransformPoint(defaultLeftOffset) + mechCurrentVelocity * stepMaxTime / 2f;
+      var direction = target - transform.position;
 
       // build raycast data
-      var ray = new Ray(waist.position, direction * 2f);
+      var ray = new Ray(transform.position, direction * 2f);
       int layerMask = 1 << 8;
-      RaycastHit hit;
       // perform raycast
-      if (Physics.Raycast(ray, out hit, 2f, layerMask)) {
+      if (Physics.Raycast(ray, out var hit, 2f, layerMask)) {
         // we've hit terrain, move foot point here
-        leftFootDestination = hit.point + Vector3.up * FootHeight;
+        leftFootDestination = hit.point + Vector3.up * footHeight;
       } else {
         // no hit, place foot in a default location
-        leftFootDestination = waist.position + direction;
+        leftFootDestination = transform.position + direction;
       }
 
       timeStepStarted = Time.time;
     }
+
     private void initializeRightFootStep()
     {
       // initialize right foot destination data
-      rightFootStartPoint = RightFootWorldPosition;
+      rightFootStartPoint = rightFootWorldPosition;
 
       // get the relative direction for the footfall
-      var target = waist.TransformPoint(DefaultRightOffset) + mechCurrentVelocity * stepMaxTime / 2f;
-      var direction = target - waist.position;
+      var target = transform.TransformPoint(defaultRightOffset) + mechCurrentVelocity * stepMaxTime / 2f;
+      var direction = target - transform.position;
 
       // build raycast data
-      var ray = new Ray(waist.position, direction * 2f);
+      var ray = new Ray(transform.position, direction * 2f);
       int layerMask = 1 << 8;
-      RaycastHit hit;
       // perform raycast
-      if (Physics.Raycast(ray, out hit, 2f, layerMask)) {
+      if (Physics.Raycast(ray, out var hit, 2f, layerMask)) {
         // we've hit terrain, move foot point here
-        rightFootDestination = hit.point + Vector3.up * FootHeight;
+        rightFootDestination = hit.point + Vector3.up * footHeight;
       } else {
         // no hit, place foot in a default location
-        rightFootDestination = waist.position + direction;
+        rightFootDestination = transform.position + direction;
       }
 
       timeStepStarted = Time.time;
@@ -269,17 +238,18 @@ namespace Yohash.FABRIK
     private void updateLeftStep()
     {
       // bezier path
-      LeftFootWorldPosition = SimpleSpline.MoveAlong3PointCurve(
+      leftFootWorldPosition = SimpleSpline.MoveAlong3PointCurve(
         leftFootStartPoint,
         leftFootDestination,
         leftFootDestination + Vector3.up * 0.2f,
         (Time.time - timeStepStarted) / stepMaxTime
       );
     }
+
     private void updateRightStep()
     {
       // bezier path
-      RightFootWorldPosition = SimpleSpline.MoveAlong3PointCurve(
+      rightFootWorldPosition = SimpleSpline.MoveAlong3PointCurve(
         rightFootStartPoint,
         rightFootDestination,
         rightFootDestination + Vector3.up * 0.2f,

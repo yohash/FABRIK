@@ -111,7 +111,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  applyConstraints: 1
+  constrainRotation: 0
   roteRight: 89
   roteLeft: -89
   roteUp: 89
@@ -174,7 +174,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  applyConstraints: 1
+  constrainRotation: 1
   roteRight: 2
   roteLeft: -2
   roteUp: 2
@@ -320,7 +320,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  applyConstraints: 1
+  constrainRotation: 1
   roteRight: 2
   roteLeft: -2
   roteUp: 2
@@ -787,11 +787,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LocalRelativeForward: {x: 0, y: 0, z: 0}
   Positions: []
-  chain:
-  - {fileID: 114704480191842092}
-  - {fileID: 114788991796088236}
-  - {fileID: 114546959984172466}
-  - {fileID: 114222209359569568}
   locationTolerance: 0.005
   maxIterations: 10
   target: {fileID: 4558974548292714}
@@ -1308,7 +1303,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  applyConstraints: 0
+  constrainRotation: 0
   roteRight: 85
   roteLeft: -10
   roteUp: 80
@@ -1454,11 +1449,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   LocalRelativeForward: {x: 0, y: 0, z: 0}
   Positions: []
-  chain:
-  - {fileID: 114924042834936328}
-  - {fileID: 114950343855807866}
-  - {fileID: 114113931864395820}
-  - {fileID: 114215709509822792}
   locationTolerance: 0.005
   maxIterations: 10
   target: {fileID: 4612555307026234}
@@ -1511,7 +1501,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  applyConstraints: 1
+  constrainRotation: 1
   roteRight: 80
   roteLeft: -80
   roteUp: 80
@@ -1574,7 +1564,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  applyConstraints: 1
+  constrainRotation: 0
   roteRight: 89
   roteLeft: -89
   roteUp: 89
@@ -1970,7 +1960,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  applyConstraints: 0
+  constrainRotation: 0
   roteRight: 5
   roteLeft: -85
   roteUp: 80
@@ -2098,7 +2088,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  applyConstraints: 1
+  constrainRotation: 1
   roteRight: 80
   roteLeft: -80
   roteUp: 80

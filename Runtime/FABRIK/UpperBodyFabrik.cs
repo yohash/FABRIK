@@ -34,11 +34,11 @@ namespace Yohash.FABRIK
     // cached variables
     private Quaternion lastHeadRotation;
 
-
     void Start()
     {
-      intializeFabrikChain(leftArm);
-      intializeFabrikChain(rightArm);
+      var pose = transform.ToPose();
+      leftArm.Intialize(pose);
+      rightArm.Intialize(pose);
     }
 
     private void Update()
@@ -118,9 +118,9 @@ namespace Yohash.FABRIK
 
       // get quaternion to rotate our forward to said new forward
       if (vn3 != Vector3.zero) {
-        Quaternion toQuat = Quaternion.LookRotation(vn3);
+        var toQuat = Quaternion.LookRotation(vn3);
 
-        Vector3 roteEuler = toQuat.eulerAngles;
+        var roteEuler = toQuat.eulerAngles;
 
         // apply rotational axes filters
         if (xAxisRotationIgnore) { roteEuler.x = 0f; }
@@ -151,28 +151,6 @@ namespace Yohash.FABRIK
       }
 
       return withinRange;
-    }
-
-    /// <summary>
-    /// Intializes the FABRIK chain by setting two necessary variables
-    ///
-    ///   (1) the local relative forward (used to center the hub)
-    ///   (2) a reference to the central hub
-    ///
-    /// </summary>
-    /// <param name="chain">Fabrik chain.</param>
-    private void intializeFabrikChain(FabrikChain chain)
-    {
-      var joint = chain.SecondLink;
-
-      float rt = Vector3.Dot(transform.forward, joint.right);
-      float fwd = Vector3.Dot(transform.forward, joint.forward);
-      float up = Vector3.Dot(transform.forward, joint.up);
-
-      var v3 = new Vector3(rt, up, fwd);
-
-      // set the two important variables on the FABRIK chain
-      chain.LocalRelativeForward = v3;
     }
   }
 }

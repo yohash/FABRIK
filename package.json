@@ -30,9 +30,19 @@
       "path": "Samples~/Fabrik"
     },
     {
-      "displayName": "Setup for Upper Body FABRIK",
-      "description": "The Upper Torso script allows hands+head IK. This sample scene shows you how to set up a floating upper torso.",
+      "displayName": "Upper Body FABRIK example",
+      "description": "The Upper Torso script demonstrates how to implement hands+head IK using FABRIK. This sample scene shows you how to set up a floating upper torso.",
       "path": "Samples~/UpperBodyIK"
+    },
+    {
+      "displayName": "Lower Body FABRIK example",
+      "description": "The Lower body script demonstrates how to implement leg IK using FABRIK. The lower torso will match the model's waist at a provided position, and raycast to the ground to position feet. Combine with Upper Body FABRIK for a whole body!",
+      "path": "Samples~/LowerBodyIK"
+    },
+    {
+      "displayName": "Physics-based FABRIK",
+      "description": "This scene uses physical joints and PID controllers to move the FABRIK arm.",
+      "path": "Samples~/PhysicalFabrik"
     }
   ],
   "author": {

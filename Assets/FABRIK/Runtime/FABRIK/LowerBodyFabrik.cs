@@ -27,7 +27,7 @@ namespace Yohash.FABRIK
     [SerializeField] private GameObject rightFoot;
 
     [Header("Assign Variable values")]
-    [SerializeField] private float footHeight = 0.2f;
+    [SerializeField] private float footHeight = 0.1f;
     [SerializeField] private float maxFootDelta = 0.25f;
     [SerializeField] private float stepMaxTime = 1f;
 
@@ -88,6 +88,7 @@ namespace Yohash.FABRIK
 
       // always update the waist node to pair with the torso
       transform.position = UpperTorso.position;
+      transform.rotation = UpperTorso.rotation;
 
       // ensure both feet are postiioned at their world position
       leftFoot.transform.position = leftFootWorldPosition;
@@ -142,11 +143,11 @@ namespace Yohash.FABRIK
           // test step time
           if ((Time.time - timeStepStarted) > stepMaxTime) {
             // foot has arrived, check right foot
-            if (!rightFootProximityOK()) {
+            if (rightFootProximityOK()) {
+              currentSteps = foot_placement.STANDING;
+            } else {
               initializeRightFootStep();
               currentSteps = foot_placement.RIGHT_FOOT_STEPPING;
-            } else {
-              currentSteps = foot_placement.STANDING;
             }
           }
           break;
@@ -155,11 +156,11 @@ namespace Yohash.FABRIK
           // test step time
           if ((Time.time - timeStepStarted) > stepMaxTime) {
             // foot has arrived, check left foot
-            if (!leftFootProximityOK()) {
+            if (leftFootProximityOK()) {
+              currentSteps = foot_placement.STANDING;
+            } else {
               initializeLeftFootStep();
               currentSteps = foot_placement.LEFT_FOOT_STEPPING;
-            } else {
-              currentSteps = foot_placement.STANDING;
             }
           }
           break;
@@ -190,49 +191,38 @@ namespace Yohash.FABRIK
 
     private void initializeLeftFootStep()
     {
-      // initilize left foot step data
-      leftFootStartPoint = leftFootWorldPosition;
       // get the relative direction for the footfall
       var target = transform.TransformPoint(defaultLeftOffset) + mechCurrentVelocity * stepMaxTime / 2f;
       var direction = target - transform.position;
 
-      // build raycast data
-      var ray = new Ray(transform.position, direction * 2f);
-      int layerMask = 1 << 8;
-      // perform raycast
-      if (Physics.Raycast(ray, out var hit, 2f, layerMask)) {
-        // we've hit terrain, move foot point here
-        leftFootDestination = hit.point + Vector3.up * footHeight;
-      } else {
-        // no hit, place foot in a default location
-        leftFootDestination = transform.position + direction;
-      }
-
+      // initilize left foot data and store to locals
+      leftFootStartPoint = leftFootWorldPosition;
+      leftFootDestination = raycastToGround(direction);
       timeStepStarted = Time.time;
     }
 
     private void initializeRightFootStep()
     {
-      // initialize right foot destination data
-      rightFootStartPoint = rightFootWorldPosition;
-
       // get the relative direction for the footfall
       var target = transform.TransformPoint(defaultRightOffset) + mechCurrentVelocity * stepMaxTime / 2f;
       var direction = target - transform.position;
 
-      // build raycast data
+      // initialize right foot data and store to locals
+      rightFootStartPoint = rightFootWorldPosition;
+      rightFootDestination = raycastToGround(direction);
+      timeStepStarted = Time.time;
+    }
+
+    private Vector3 raycastToGround(Vector3 direction)
+    {
       var ray = new Ray(transform.position, direction * 2f);
-      int layerMask = 1 << 8;
-      // perform raycast
-      if (Physics.Raycast(ray, out var hit, 2f, layerMask)) {
-        // we've hit terrain, move foot point here
-        rightFootDestination = hit.point + Vector3.up * footHeight;
+      if (Physics.Raycast(ray, out var hit)) {
+        // we've hit something, move foot point here
+        return hit.point + Vector3.up * footHeight;
       } else {
         // no hit, place foot in a default location
-        rightFootDestination = transform.position + direction;
+        return transform.position + direction;
       }
-
-      timeStepStarted = Time.time;
     }
 
     private void updateLeftStep()

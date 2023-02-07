@@ -60,36 +60,20 @@ namespace Yohash.FABRIK
     // ****************************************************************
     //		IJoint
     // ****************************************************************
-    public Transform Transform()
-    {
-      return transform;
-    }
-
-    public float JointWeight()
-    {
-      return jointWeight;
-    }
-
-    public float StartOffsetDistance()
-    {
-      return _startOffsetDistance;
-    }
+    public Transform Transform => transform;
+    public float JointWeight => jointWeight;
+    public float StartOffsetDistance => _startOffsetDistance;
 
     public void SetupDownstream(IJoint downstream)
     {
-      linkLength = downstream.StartOffsetDistance();
+      linkLength = downstream.StartOffsetDistance;
     }
 
     public void SetupUpstream(Transform upstream)
     {
       upchain = upstream;
-
       // precompute the cone axes lengths
-      coneTop = linkLength * Mathf.Tan(roteUp * Mathf.Deg2Rad);
-      coneBot = linkLength * Mathf.Tan(roteDown * Mathf.Deg2Rad);
-      coneRight = linkLength * Mathf.Tan(roteRight * Mathf.Deg2Rad);
-      coneLeft = linkLength * Mathf.Tan(roteLeft * Mathf.Deg2Rad);
-
+      initConeLimits();
       largestDelta = Mathf.Max(Mathf.Abs(coneTop) + Mathf.Abs(coneBot), Mathf.Abs(coneLeft) + Mathf.Abs(coneRight));
     }
 
@@ -269,6 +253,14 @@ namespace Yohash.FABRIK
       }
 
       return newGlobal;
+    }
+
+    private void initConeLimits()
+    {
+      coneTop = linkLength * Mathf.Tan(roteUp * Mathf.Deg2Rad);
+      coneBot = linkLength * Mathf.Tan(roteDown * Mathf.Deg2Rad);
+      coneRight = linkLength * Mathf.Tan(roteRight * Mathf.Deg2Rad);
+      coneLeft = linkLength * Mathf.Tan(roteLeft * Mathf.Deg2Rad);
     }
 
     private Vector3 solveEllipsePoint(float a, float b, float x0, float y0, float h)

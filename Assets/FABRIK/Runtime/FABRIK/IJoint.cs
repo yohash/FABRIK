@@ -4,9 +4,9 @@ namespace Yohash.FABRIK
 {
   public interface IJoint
   {
-    Transform Transform();
-    float JointWeight();
-    float StartOffsetDistance();
+    Transform Transform { get; }
+    float JointWeight { get; }
+    float StartOffsetDistance { get; }
     void SetupDownstream(IJoint joint);
     void SetupUpstream(Transform joint);
     Vector3 ConstrainPoint(Vector3 newGlobalPosition, Vector3 oldGlobalPosition);

@@ -317,7 +317,7 @@ GameObject:
   - component: {fileID: 426162412}
   - component: {fileID: 426162411}
   m_Layer: 0
-  m_Name: Sphere
+  m_Name: UpperTorsoTracker
   m_TagString: Untagged
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
@@ -386,7 +386,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 0}
-  m_RootOrder: 3
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &678847336
 GameObject:
@@ -495,7 +495,7 @@ PrefabInstance:
       objectReference: {fileID: 0}
     - target: {fileID: 4941530474563881371, guid: 00b7a73525c09624f816e3af3dbbbad1, type: 3}
       propertyPath: m_RootOrder
-      value: 2
+      value: 3
       objectReference: {fileID: 0}
     - target: {fileID: 4941530474563881371, guid: 00b7a73525c09624f816e3af3dbbbad1, type: 3}
       propertyPath: m_LocalPosition.x

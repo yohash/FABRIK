@@ -12,7 +12,7 @@ GameObject:
   - component: {fileID: 8106876939253905766}
   - component: {fileID: 6481699656677375172}
   - component: {fileID: 8228324916483519747}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: FootModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -106,7 +106,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4939793838741369575}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: LeftFootTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -141,7 +141,7 @@ GameObject:
   - component: {fileID: 4941403708538954737}
   - component: {fileID: 4969101328411339409}
   - component: {fileID: 4959017273820444771}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Joint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -222,7 +222,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4941272511928030579}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: RightFootTarget
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -256,7 +256,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4939831323902347541}
   - component: {fileID: 4978595134100694557}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: upperLeg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -320,7 +320,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4939558606748569393}
   - component: {fileID: 4978153921392949677}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: hipAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -384,7 +384,7 @@ GameObject:
   - component: {fileID: 4939833951668322323}
   - component: {fileID: 4968726542450976505}
   - component: {fileID: 4960525860716274387}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Joint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -466,7 +466,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4939334269279564531}
   - component: {fileID: 4977739268708010939}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: rightLeg_chain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -487,7 +487,7 @@ Transform:
   m_Children:
   - {fileID: 4939558606748569393}
   m_Father: {fileID: 4939498011091341149}
-  m_RootOrder: 1
+  m_RootOrder: 2
   m_LocalEulerAnglesHint: {x: -180, y: -90, z: 0}
 --- !u!114 &4977739268708010939
 MonoBehaviour:
@@ -518,7 +518,7 @@ GameObject:
   - component: {fileID: 4941513444131797415}
   - component: {fileID: 4968899708609947803}
   - component: {fileID: 4958562014365298823}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Joint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -600,7 +600,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4939879141886111247}
   - component: {fileID: 4978049676912784741}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: lowerLeg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -638,11 +638,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  constrainRotation: 1
-  roteRight: 30
-  roteLeft: -30
-  roteUp: 10
-  roteDown: -85
+  constrainRotation: 0
+  roteRight: 89
+  roteLeft: -89
+  roteUp: 89
+  roteDown: -89
   hasPreferredDirection: 1
   preferredRelativeForward: {x: -5, y: 0, z: 1}
   springAlpha: 0.3
@@ -664,7 +664,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4939748313696800925}
   - component: {fileID: 4977780192923694999}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: lowerLeg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -702,7 +702,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  constrainRotation: 1
+  constrainRotation: 0
   roteRight: 89
   roteLeft: -89
   roteUp: 89
@@ -728,7 +728,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4939330503407471663}
   - component: {fileID: 4978624433570561309}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Ankle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -791,7 +791,7 @@ GameObject:
   - component: {fileID: 4939559462651035853}
   - component: {fileID: 4969038743366793853}
   - component: {fileID: 4958967459823492761}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: UpperLeg_Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -873,7 +873,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4939498011091341149}
   - component: {fileID: 4979508185489497753}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Waist
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -892,9 +892,9 @@ Transform:
   m_LocalScale: {x: 1, y: 1, z: 1}
   m_ConstrainProportionsScale: 0
   m_Children:
+  - {fileID: 7357126225386214613}
   - {fileID: 4939834386190170871}
   - {fileID: 4939334269279564531}
-  - {fileID: 7357126225386214613}
   m_Father: {fileID: 4941530474563881371}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
@@ -916,7 +916,7 @@ MonoBehaviour:
   rightLeg: {fileID: 4977739268708010939}
   leftFoot: {fileID: 4936488465146471367}
   rightFoot: {fileID: 4937081075356563309}
-  footHeight: 0.2
+  footHeight: 0.1
   maxFootDelta: 0.25
   stepMaxTime: 0.25
   defaultLeftOffset: {x: -0.25, y: -1, z: 0}
@@ -934,7 +934,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4939834386190170871}
   - component: {fileID: 4977609450791763951}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: leftLeg_chain
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -955,7 +955,7 @@ Transform:
   m_Children:
   - {fileID: 4941298328728970097}
   m_Father: {fileID: 4939498011091341149}
-  m_RootOrder: 0
+  m_RootOrder: 1
   m_LocalEulerAnglesHint: {x: 0, y: -90, z: 0}
 --- !u!114 &4977609450791763951
 MonoBehaviour:
@@ -985,7 +985,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4939352866369050211}
   - component: {fileID: 4977686722839478445}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: upperLeg
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1048,7 +1048,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 4941530474563881371}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: LowerBody
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1084,7 +1084,7 @@ GameObject:
   - component: {fileID: 4941082058408960113}
   - component: {fileID: 4969010514427697501}
   - component: {fileID: 4960563160124890361}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: LowerLeg_Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1167,7 +1167,7 @@ GameObject:
   - component: {fileID: 4941161003385458459}
   - component: {fileID: 4969124816286931407}
   - component: {fileID: 4958734526137099117}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Joint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1250,7 +1250,7 @@ GameObject:
   - component: {fileID: 4941521338427787787}
   - component: {fileID: 4968776660388315959}
   - component: {fileID: 4958985048377670937}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: UpperLeg_Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1333,7 +1333,7 @@ GameObject:
   - component: {fileID: 4939851781977488213}
   - component: {fileID: 4969484114193973499}
   - component: {fileID: 4958496750896054549}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Joint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1416,7 +1416,7 @@ GameObject:
   - component: {fileID: 4939544658484476945}
   - component: {fileID: 4968717393955067519}
   - component: {fileID: 4960301725756444573}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Joint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1499,7 +1499,7 @@ GameObject:
   - component: {fileID: 4939865269183110195}
   - component: {fileID: 4968777284597448291}
   - component: {fileID: 4960543083267321463}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: LowerLeg_Mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1581,7 +1581,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4941298328728970097}
   - component: {fileID: 4977712313171980959}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: hipAnchor
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1645,7 +1645,7 @@ GameObject:
   - component: {fileID: 4939819750175964957}
   - component: {fileID: 4969657781122786987}
   - component: {fileID: 4958807365196420985}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Joint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1728,7 +1728,7 @@ GameObject:
   - component: {fileID: 4941179041727157607}
   - component: {fileID: 4968736062576611749}
   - component: {fileID: 4958862820086651171}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Joint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1810,7 +1810,7 @@ GameObject:
   m_Component:
   - component: {fileID: 4939365275437575905}
   - component: {fileID: 4978606604643813899}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Ankle
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1873,7 +1873,7 @@ GameObject:
   - component: {fileID: 4941065371071654245}
   - component: {fileID: 4969713916788073643}
   - component: {fileID: 4959019957244224505}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Joint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -1956,7 +1956,7 @@ GameObject:
   - component: {fileID: 4941214340115071913}
   - component: {fileID: 4969682624963273849}
   - component: {fileID: 4958960178622772209}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: Joint
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2039,7 +2039,7 @@ GameObject:
   - component: {fileID: 7357126225386214613}
   - component: {fileID: 7896320530844513210}
   - component: {fileID: 4070943448786640801}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: pelvis_mesh
   m_TagString: Untagged
   m_Icon: {fileID: 0}
@@ -2059,7 +2059,7 @@ Transform:
   m_ConstrainProportionsScale: 0
   m_Children: []
   m_Father: {fileID: 4939498011091341149}
-  m_RootOrder: 2
+  m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!23 &7896320530844513210
 MeshRenderer:
@@ -2123,7 +2123,7 @@ GameObject:
   - component: {fileID: 5557527117899520120}
   - component: {fileID: 7757919880221353320}
   - component: {fileID: 8001876169860389370}
-  m_Layer: 0
+  m_Layer: 2
   m_Name: FootModel
   m_TagString: Untagged
   m_Icon: {fileID: 0}

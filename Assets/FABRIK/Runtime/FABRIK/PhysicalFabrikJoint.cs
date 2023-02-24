@@ -10,9 +10,9 @@ namespace Yohash.FABRIK
     [SerializeField] private float RotationalPower = 50f;
 
     [Header("3-axis PID controllers")]
-    [SerializeField] private PIDController controllerX;
-    [SerializeField] private PIDController controllerY;
-    [SerializeField] private PIDController controllerZ;
+    [SerializeField] private PidController controllerX;
+    [SerializeField] private PidController controllerY;
+    [SerializeField] private PidController controllerZ;
 
     [Header("3-axis rotational PID controller")]
     [SerializeField] private PidRotationController rotator;

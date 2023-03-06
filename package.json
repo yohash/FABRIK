@@ -43,6 +43,11 @@
       "displayName": "Physics-based FABRIK",
       "description": "This scene uses physical joints and PID controllers to move the FABRIK arm.",
       "path": "Samples~/PhysicalFabrik"
+    },
+    {
+      "displayName": "Physics-based Upper Body FABRIK example",
+      "description": "This scene uses physical joints and PID controllers to move a model of an upper body.",
+      "path": "Samples~/PhysicsBasedUpperBodyIK"
     }
   ],
   "author": {

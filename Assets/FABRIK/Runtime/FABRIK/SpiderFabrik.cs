@@ -194,7 +194,7 @@ namespace Yohash.FABRIK
       //		2) a 'head' object is declared and it has rotated
       bool withingRange = true;
       for (int i = 0; i < chains.Count; i++) {
-        withingRange = (withingRange && chains[i].DistanceIsWithinTolerance);
+        withingRange = (withingRange && chains[i].IsWithinTolerance);
       }
 
       // now check the head object if it is declared

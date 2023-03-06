@@ -24,15 +24,15 @@ namespace Yohash.FABRIK
       chain = new List<IJoint>();
       chain.AddRange(GetComponentsInChildren<IJoint>());
 
-      // store chain joint distances in a downstream fashion
-      for (int i = 0; i < chain.Count - 1; i++) {
-        chain[i].SetupDownstream(chain[i + 1]);
-      }
-
       // setup fabrik chain by passing each joint its upstream joint
       chain[0].SetupUpstream(parentTR);
       for (int i = 1; i < chain.Count; i++) {
         chain[i].SetupUpstream(chain[i - 1].Transform);
+      }
+
+      // store chain joint distances in a downstream fashion
+      for (int i = 0; i < chain.Count - 1; i++) {
+        chain[i].SetupDownstream(chain[i + 1]);
       }
     }
 
@@ -49,6 +49,14 @@ namespace Yohash.FABRIK
     // ****************************************************************
     //		SOLVING THE IK
     // ****************************************************************
+    private bool isWithinTolerance {
+      get {
+        return (chain[chain.Count - 1].Transform.position - target.position).sqrMagnitude
+          <= locationTolerance * locationTolerance
+          && chain[chain.Count - 1].Transform.rotation == target.rotation;
+      }
+    }
+
     private void solve()
     {
       // get the current positions of all components into newLocals
@@ -56,16 +64,12 @@ namespace Yohash.FABRIK
 
       int iter = 0;
       // loop over FABRIK algorithm
-      float diffSq = (chain[chain.Count - 1].Transform.position - target.position).sqrMagnitude;
-      while (diffSq > (locationTolerance * locationTolerance)) {
+      while (!isWithinTolerance) {
         // perform the FABRIK algorithm. A backward pass, followed by a forward pass,
         // finally closed by movin the chain and computing tolerances
         backward();
         forward();
         move();
-
-        // re-capture positions
-        diffSq = (chain[chain.Count - 1].Transform.position - target.position).sqrMagnitude;
 
         // break if over the iteration limit
         if (iter > maxIterations) { break; }
@@ -118,10 +122,12 @@ namespace Yohash.FABRIK
       // set every other joint relative to the one prior
       for (int i = 0; i < positions.Count - 1; i++) {
         chain[i].AssignPosition(positions[i]);
-        chain[i].LookAt(positions[i + 1]);
+        chain[i].LookAtPosition(positions[i + 1]);
+        chain[i].LookAtUp(Vector3.up);
       }
       chain[chain.Count - 1].AssignPosition(positions[positions.Count - 1]);
-      chain[chain.Count - 1].LookAt(target.transform.position);
+      chain[chain.Count - 1].LookAtPosition(target.position + target.forward);
+      chain[chain.Count - 1].LookAtUp(target.up);
     }
 
     private void initSolver()

@@ -11,6 +11,7 @@ namespace Yohash.FABRIK
     void SetupUpstream(Transform joint);
     Vector3 ConstrainPoint(Vector3 newGlobalPosition, Vector3 oldGlobalPosition);
     void AssignPosition(Vector3 position);
-    void LookAt(Vector3 lookAtPosition);
+    void LookAtPosition(Vector3 lookAtPosition);
+    void LookAtUp(Vector3 localUpDirection);
   }
 }

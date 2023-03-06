@@ -37,6 +37,7 @@ namespace Yohash.FABRIK
 
     [Header("Cached chain data")]
     [SerializeField] private Transform upchain;
+    [SerializeField] protected Vector3 _lookAtUp = Vector3.up;
 
     private Vector3 startOffset;
     private float linkLength;
@@ -67,14 +68,21 @@ namespace Yohash.FABRIK
     public void SetupDownstream(IJoint downstream)
     {
       linkLength = downstream.StartOffsetDistance;
+      // precompute the cone axes lengths
+      coneTop = linkLength * Mathf.Tan(roteUp * Mathf.Deg2Rad);
+      coneBot = linkLength * Mathf.Tan(roteDown * Mathf.Deg2Rad);
+      coneRight = linkLength * Mathf.Tan(roteRight * Mathf.Deg2Rad);
+      coneLeft = linkLength * Mathf.Tan(roteLeft * Mathf.Deg2Rad);
+      largestDelta = Mathf.Max(Mathf.Abs(coneTop) + Mathf.Abs(coneBot), Mathf.Abs(coneLeft) + Mathf.Abs(coneRight));
     }
 
     public void SetupUpstream(Transform upstream)
     {
       upchain = upstream;
-      // precompute the cone axes lengths
-      initConeLimits();
-      largestDelta = Mathf.Max(Mathf.Abs(coneTop) + Mathf.Abs(coneBot), Mathf.Abs(coneLeft) + Mathf.Abs(coneRight));
+      // precompute offsets
+      startOffset = upstream.position - transform.position;
+      _startOffsetDistance = startOffset.magnitude;
+      preferredRelativeForward.Normalize();
     }
 
     public Vector3 ConstrainPoint(Vector3 newGlobalPosition, Vector3 oldGlobalPosition)
@@ -101,7 +109,7 @@ namespace Yohash.FABRIK
       transform.position = position;
     }
 
-    public virtual void LookAt(Vector3 lookAtPosition)
+    public virtual void LookAtPosition(Vector3 lookAtPosition)
     {
       if (hasLookAt_PreferredDirection && lookAt_PreferredTransform != null) {
         transform.LookAt(lookAtPosition, lookAt_PreferredTransform.TransformDirection(lookAt_PreferredRelativeVector));
@@ -110,16 +118,14 @@ namespace Yohash.FABRIK
       }
     }
 
+    public virtual void LookAtUp(Vector3 up)
+    {
+      _lookAtUp = up;
+    }
+
     // ****************************************************************
     //		MONOBEHAVIOURS
     // ****************************************************************
-    void Awake()
-    {
-      startOffset = transform.localPosition;
-      _startOffsetDistance = startOffset.magnitude;
-      preferredRelativeForward.Normalize();
-    }
-
     void Update()
     {
       if (DEBUG_SHOWDIR) {
@@ -253,14 +259,6 @@ namespace Yohash.FABRIK
       }
 
       return newGlobal;
-    }
-
-    private void initConeLimits()
-    {
-      coneTop = linkLength * Mathf.Tan(roteUp * Mathf.Deg2Rad);
-      coneBot = linkLength * Mathf.Tan(roteDown * Mathf.Deg2Rad);
-      coneRight = linkLength * Mathf.Tan(roteRight * Mathf.Deg2Rad);
-      coneLeft = linkLength * Mathf.Tan(roteLeft * Mathf.Deg2Rad);
     }
 
     private Vector3 solveEllipsePoint(float a, float b, float x0, float y0, float h)

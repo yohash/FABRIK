@@ -28,9 +28,22 @@ namespace Yohash.FABRIK
     // cached variables
     private Quaternion lastHeadRotation;
 
+    [Header("Declare engine power")]
+    [SerializeField] private float Power = 10f;
+    [SerializeField] private float RotationalPower = 50f;
+
+    [Header("3-axis PID controllers")]
+    [SerializeField] private PidController controllerX;
+    [SerializeField] private PidController controllerY;
+    [SerializeField] private PidController controllerZ;
+
     [Header("Torso rotation controller")]
     [SerializeField] private BackwardsPdController rotator;
-    [SerializeField] private float RotationalPower = 50f;
+
+    [Header("Movement Force values")]
+    [SerializeField] private Vector3 throttle;
+    [SerializeField] private Vector3 torque;
+
     // cache the look at direction
     private Vector3 lookAt;
 
@@ -58,14 +71,7 @@ namespace Yohash.FABRIK
 
     private void FixedUpdate()
     {
-      //var torque = rotator.Update(
-      //   Time.fixedDeltaTime,
-      //   new Pose(transform.position, transform.rotation),
-      //   lookAt,
-      //   Vector3.up
-      // );
-
-      //torso.AddRelativeTorque(torque * RotationalPower);
+      moveTorso();
     }
 
     public void SolveIK()
@@ -95,8 +101,6 @@ namespace Yohash.FABRIK
         leftArm.Backward();
         rightArm.Backward();
 
-        // adjust the rotation of the central hub at its new position
-        moveTorso();
         // using this position as the root, perform a forward pass
         // perform a forwards pass over all chains
         leftArm.Forward(transform.position);
@@ -118,7 +122,17 @@ namespace Yohash.FABRIK
     {
       // Place the torso center directly below the head-tracker
       var newTorsoPosition = headBaseOffsetReference.position + Vector3.up * headVerticalOffset;
-      transform.position = newTorsoPosition;
+
+      float dt = Time.fixedDeltaTime;
+      // solve for translation motion, and store the force in Throttle
+      throttle = new Vector3(
+        controllerX.Update(dt, transform.position.x, newTorsoPosition.x),
+        controllerY.Update(dt, transform.position.y, newTorsoPosition.y),
+        controllerZ.Update(dt, transform.position.z, newTorsoPosition.z)
+      );
+
+      torso.AddForce(throttle * Power);
+      // transform.position = newTorsoPosition;
 
       lookAt = Vector3.zero;
       // adjust the rotation to face in the averaged relative forward vectors
@@ -134,6 +148,20 @@ namespace Yohash.FABRIK
         // we are looking down, bend further
         lookAt += headObjectTransform.forward * Mathf.Clamp(downQuotient * 2f, 0.5f, 2f);
       }
+
+      // determine rotation directions
+      var quat = Quaternion.LookRotation(lookAt, Vector3.up);
+      // solve for the desired torso rotation using the stable backwards PD rotation controller
+      torque = rotator.UpdateRotation(
+         dt,
+         quat,
+         transform.rotation,
+         torso.angularVelocity,
+         torso.inertiaTensorRotation,
+         torso.inertiaTensor
+       );
+
+      torso.AddTorque(torque * RotationalPower);
     }
 
     /// <summary>

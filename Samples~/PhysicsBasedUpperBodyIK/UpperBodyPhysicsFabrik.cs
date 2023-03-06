@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+using UnityEngine;
+using Yohash.Propulsion;
 
 namespace Yohash.FABRIK
 {
@@ -9,7 +10,7 @@ namespace Yohash.FABRIK
   /// Optionally a head may be declared, and if so, will contribute
   /// to the rotation of the torso.
   /// </summary>
-  public class UpperBodyFabrik : MonoBehaviour
+  public class UpperBodyPhysicsFabrik : MonoBehaviour
   {
     // this script is placed on the central hub
     [SerializeField] private int maxIters = 10;
@@ -19,20 +20,29 @@ namespace Yohash.FABRIK
     [SerializeField] private FabrikChain leftArm;
     [SerializeField] private FabrikChain rightArm;
 
-    // if we want to override any axis of the torso's rotation
-    [Header("Torso Rotation Overrides")]
-    [SerializeField] private bool xAxisRotationIgnore;
-    [SerializeField] private bool yAxisRotationIgnore;
-    [SerializeField] private bool zAxisRotationIgnore;
-
     // for the 'head'
     [Header("Head")]
     [SerializeField] private Transform headObjectTransform;
     [SerializeField] private Transform headBaseOffsetReference;
     [SerializeField] private float headVerticalOffset = -0.35f;
-
     // cached variables
     private Quaternion lastHeadRotation;
+
+    [Header("Torso rotation controller")]
+    [SerializeField] private BackwardsPdController rotator;
+    [SerializeField] private float RotationalPower = 50f;
+    // cache the look at direction
+    private Vector3 lookAt;
+
+    // cache the torse rigidbody
+    private Rigidbody torso;
+
+    private void Awake()
+    {
+      if (torso == null) {
+        torso = GetComponent<Rigidbody>();
+      }
+    }
 
     void Start()
     {
@@ -46,9 +56,18 @@ namespace Yohash.FABRIK
       SolveIK();
     }
 
-    // ****************************************************************
-    //    PUBLIC ACCESSORS
-    // ****************************************************************
+    private void FixedUpdate()
+    {
+      //var torque = rotator.Update(
+      //   Time.fixedDeltaTime,
+      //   new Pose(transform.position, transform.rotation),
+      //   lookAt,
+      //   Vector3.up
+      // );
+
+      //torso.AddRelativeTorque(torque * RotationalPower);
+    }
+
     public void SolveIK()
     {
       solve();
@@ -76,16 +95,12 @@ namespace Yohash.FABRIK
         leftArm.Backward();
         rightArm.Backward();
 
-        // Place the torso center directly below the head-tracker
-        var newTorsoPosition = headBaseOffsetReference.position + Vector3.up * headVerticalOffset;
-        transform.position = newTorsoPosition;
-
         // adjust the rotation of the central hub at its new position
-        adjustHubRotation();
+        moveTorso();
         // using this position as the root, perform a forward pass
         // perform a forwards pass over all chains
-        leftArm.Forward(newTorsoPosition);
-        rightArm.Forward(newTorsoPosition);
+        leftArm.Forward(transform.position);
+        rightArm.Forward(transform.position);
         // physically move the chains
         leftArm.Move();
         rightArm.Move();
@@ -97,39 +112,27 @@ namespace Yohash.FABRIK
     }
 
     /// <summary>
-    /// Adjusts the hub rotation.
+    /// Adjusts the hub/torso.
     /// </summary>
-    private void adjustHubRotation()
+    private void moveTorso()
     {
-      var vn3 = Vector3.zero;
+      // Place the torso center directly below the head-tracker
+      var newTorsoPosition = headBaseOffsetReference.position + Vector3.up * headVerticalOffset;
+      transform.position = newTorsoPosition;
+
+      lookAt = Vector3.zero;
       // adjust the rotation to face in the averaged relative forward vectors
-      vn3 += leftArm.SecondLink.TransformDirection(leftArm.LocalRelativeForward);
-      vn3 += rightArm.SecondLink.TransformDirection(rightArm.LocalRelativeForward);
+      lookAt += leftArm.SecondLink.TransformDirection(leftArm.LocalRelativeForward);
+      lookAt += rightArm.SecondLink.TransformDirection(rightArm.LocalRelativeForward);
 
       // determine if we tilt further forward or not
       float downQuotient = Vector3.Dot(Vector3.down, headObjectTransform.forward);
       if (downQuotient < 0) {
         // just use the half
-        vn3 += headObjectTransform.forward / 2f;
+        lookAt += headObjectTransform.forward / 2f;
       } else {
         // we are looking down, bend further
-        vn3 += headObjectTransform.forward * (Mathf.Clamp(downQuotient * 2f, 0.5f, 2f));
-      }
-
-      // get quaternion to rotate our forward to said new forward
-      if (vn3 != Vector3.zero) {
-        var toQuat = Quaternion.LookRotation(vn3);
-
-        var roteEuler = toQuat.eulerAngles;
-
-        // apply rotational axes filters
-        if (xAxisRotationIgnore) { roteEuler.x = 0f; }
-        if (yAxisRotationIgnore) { roteEuler.y = 0f; }
-        if (zAxisRotationIgnore) { roteEuler.z = 0f; }
-
-        toQuat = Quaternion.Euler(roteEuler);
-
-        transform.rotation = toQuat;
+        lookAt += headObjectTransform.forward * Mathf.Clamp(downQuotient * 2f, 0.5f, 2f);
       }
     }
 
@@ -143,7 +146,8 @@ namespace Yohash.FABRIK
     private bool allTargets_areWithinRange()
     {
       // initialize the return variable
-      bool withinRange = leftArm.IsWithinTolerance && rightArm.IsWithinTolerance;
+      bool withinRange = leftArm.IsWithinTolerance
+          && rightArm.IsWithinTolerance;
       // now check the head object if it is declared
       if (headObjectTransform != null && lastHeadRotation != headObjectTransform.rotation) {
         withinRange = false;

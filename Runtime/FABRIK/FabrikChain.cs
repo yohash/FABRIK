@@ -32,7 +32,24 @@ namespace Yohash.FABRIK
 
     [Header("Tracking Target")]
     [SerializeField] private Transform target;
-    [SerializeField] private Transform chainEnd;
+
+    public bool DEBUG_SHOW_SOLUTION;
+
+
+    void Update()
+    {
+      if (DEBUG_SHOW_SOLUTION) {
+        drawSolution();
+      }
+    }
+
+    private void drawSolution()
+    {
+      Debug.DrawRay(Positions[0], transform.position - Positions[0], Color.green);
+      for (int i = 1; i < Positions.Count; i++) {
+        Debug.DrawRay(Positions[i], Positions[i - 1] - Positions[i], Color.green);
+      }
+    }
 
     // ****************************************************************
     //		MONOBEHAVIOURS
@@ -42,18 +59,16 @@ namespace Yohash.FABRIK
       chain = new List<IJoint>();
       chain.AddRange(GetComponentsInChildren<IJoint>());
 
-      // setup chain in a downstream direction
-      for (int i = 0; i < chain.Count - 1; i++) {
-        chain[i].SetupDownstream(chain[i + 1]);
-      }
-
       // send the variables for constraint checking in an upstream direction
       chain[0].SetupUpstream(transform);
       for (int i = 1; i < chain.Count; i++) {
         chain[i].SetupUpstream(chain[i - 1].Transform);
       }
 
-      chainEnd = chain[chain.Count - 1].Transform;
+      // setup chain in a downstream direction
+      for (int i = 0; i < chain.Count - 1; i++) {
+        chain[i].SetupDownstream(chain[i + 1]);
+      }
     }
 
     /// <summary>
@@ -79,10 +94,11 @@ namespace Yohash.FABRIK
     // ****************************************************************
     //		PUBLIC ACCESSORS TO SOLVE THE IK
     // ****************************************************************
-    public bool DistanceIsWithinTolerance {
+    public bool IsWithinTolerance {
       get {
-        return (chainEnd.position - target.position).sqrMagnitude
-          <= locationTolerance * locationTolerance;
+        return (chain[chain.Count - 1].Transform.position - target.position).sqrMagnitude
+          <= locationTolerance * locationTolerance
+          && chain[chain.Count - 1].Transform.rotation == target.rotation;
       }
     }
 
@@ -90,16 +106,12 @@ namespace Yohash.FABRIK
     {
       int iter = 0;
       // loop over FABRIK algorithm
-      float diffSq = (chain[chain.Count - 1].Transform.position - target.position).sqrMagnitude;
-      while (diffSq > (locationTolerance * locationTolerance)) {
+      while (!IsWithinTolerance) {
         // perform the FABRIK algorithm. A backward pass, followed by a forward pass,
         // finally closed by movin the chain and computing tolerances
         Backward();
         Forward(basePos);
         Move();
-
-        // re-capture positions
-        diffSq = (chain[chain.Count - 1].Transform.position - target.position).sqrMagnitude;
 
         // break if over the iteration limit
         if (iter > maxIterations) { break; }
@@ -131,7 +143,7 @@ namespace Yohash.FABRIK
       // compute each new position in the forward-step
       // initialize by setting the first joint back to its origin
       Positions[0] = basePos;
-      // cascade in the forward direction, upgrading each joint in 'newLocals' along the way
+      // cascade in the forward direction, upgrading each joint along the way
       for (int i = 0; i < Positions.Count - 1; i++) {
         // get the new point by moving FORWARD from current point, i, towards i+1 point
         var displace = Positions[i + 1] - Positions[i];
@@ -156,10 +168,12 @@ namespace Yohash.FABRIK
       // set every other joint relative to the one prior
       for (int i = 0; i < Positions.Count - 1; i++) {
         chain[i].AssignPosition(Positions[i]);
-        chain[i].LookAt(Positions[i + 1]);
+        chain[i].LookAtPosition(Positions[i + 1]);
+        chain[i].LookAtUp(Vector3.up);
       }
       chain[chain.Count - 1].AssignPosition(Positions[Positions.Count - 1]);
-      chain[chain.Count - 1].LookAt(target.position);
+      chain[chain.Count - 1].LookAtPosition(target.position + target.forward);
+      chain[chain.Count - 1].LookAtUp(target.up);
     }
 
     private void initSolver()

@@ -111,8 +111,8 @@ namespace Yohash.FABRIK
 
     private bool allTargets_areWithinRange()
     {
-      return leftLeg.DistanceIsWithinTolerance
-          && rightLeg.DistanceIsWithinTolerance;
+      return leftLeg.IsWithinTolerance
+          && rightLeg.IsWithinTolerance;
     }
 
     // ****************************************************************

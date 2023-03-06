@@ -15,7 +15,8 @@ namespace Yohash.FABRIK
     [SerializeField] private PidController controllerZ;
 
     [Header("3-axis rotational PID controller")]
-    [SerializeField] private PidRotationController rotator;
+    [SerializeField] private bool ApplyRotationForce = false;
+    [SerializeField] private BackwardsPdController rotator;
 
     [Header("Final values")]
     [SerializeField] private Vector3 throttle;
@@ -23,7 +24,7 @@ namespace Yohash.FABRIK
 
     [Header("Internal vars")]
     [SerializeField] private Vector3 target;
-    [SerializeField] private Vector3 lookAt;
+    [SerializeField] private Vector3 lookAtPosition;
 
     private Rigidbody rb;
 
@@ -32,9 +33,14 @@ namespace Yohash.FABRIK
       target = position;
     }
 
-    public override void LookAt(Vector3 lookAtPosition)
+    public override void LookAtUp(Vector3 up)
     {
-      lookAt = lookAtPosition;
+      _lookAtUp = up;
+    }
+
+    public override void LookAtPosition(Vector3 lookAtPosition)
+    {
+      this.lookAtPosition = lookAtPosition;
     }
 
     private void FixedUpdate()
@@ -42,24 +48,34 @@ namespace Yohash.FABRIK
       if (rb == null) { rb = GetComponent<Rigidbody>(); }
 
       float dt = Time.fixedDeltaTime;
-      // solve translational motion
+
+      // solve for translation motion, and store the force in Throttle
       throttle = new Vector3(
-        controllerX.Update(dt, rb.position.x, target.x),
-        controllerY.Update(dt, rb.position.y, target.y),
-        controllerZ.Update(dt, rb.position.z, target.z)
+        controllerX.Update(dt, transform.position.x, target.x),
+        controllerY.Update(dt, transform.position.y, target.y),
+        controllerZ.Update(dt, transform.position.z, target.z)
       );
 
-      // solve rotational motion
-      torque = rotator.Update(
+      // determine rotation directions
+      var lookDir = lookAtPosition - transform.position;
+      var quat = Quaternion.LookRotation(lookDir, _lookAtUp);
+
+      // solve rotational torque needed to meet to look requirements using
+      // the stable backwards PD controller
+      torque = rotator.UpdateRotation(
         dt,
-        new Pose(transform.position, transform.rotation),
-        lookAt,
-        Vector3.up
+        quat,
+        transform.rotation,
+        rb.angularVelocity,
+        rb.inertiaTensorRotation,
+        rb.inertiaTensor
       );
 
-      // apply the forces
+      // finally, apply the forces
       rb.AddForce(throttle * Power);
-      rb.AddRelativeTorque(torque * RotationalPower);
+      if (ApplyRotationForce) {
+        rb.AddTorque(torque * RotationalPower);
+      }
     }
   }
 }

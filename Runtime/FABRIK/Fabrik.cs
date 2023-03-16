@@ -86,7 +86,7 @@ namespace Yohash.FABRIK
       for (int i = positions.Count - 1; i > 0; i--) {
         // get the new point by moving BACKWARD from current point, i, towards i-1 point
         var displace = positions[i - 1] - positions[i];
-        var v = positions[i] + displace.normalized * chain[i].StartOffsetDistance;
+        var v = positions[i] + displace.normalized * chain[i].UpstreamDistance;
         // save that new position in this forwward step
         positions[i - 1] = v;
       }
@@ -97,7 +97,7 @@ namespace Yohash.FABRIK
       // compute each new position in the forward-step
       // initialize by setting the first joint back to its origin
       positions[0] = parentTR.position;
-      // cascade in the forward direction, upgrading each joint in 'newLocals' along the way
+      // cascade in the forward direction, upgrading each joint along the way
       for (int i = 0; i < positions.Count - 1; i++) {
         // get the new point by moving FORWARD from current point, i, towards i+1 point
         var displace = positions[i + 1] - positions[i];
@@ -110,7 +110,7 @@ namespace Yohash.FABRIK
         // get a new displacement vector to the constrained point
         // then, normalize and scale this vector, adding to our current location
         var finalDirection = weighted - positions[i];
-        var final = positions[i] + finalDirection.normalized * chain[i + 1].StartOffsetDistance;
+        var final = positions[i] + finalDirection.normalized * chain[i + 1].UpstreamDistance;
 
         // finally save that new position in this forwward step
         positions[i + 1] = final;

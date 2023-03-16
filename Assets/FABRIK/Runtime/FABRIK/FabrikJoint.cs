@@ -28,7 +28,7 @@ namespace Yohash.FABRIK
     [SerializeField] private Vector3 preferredRelativeForward;
 
     [Range(0, 0.9f)]
-    [SerializeField] private float springAlpha = 0.3f;
+    [SerializeField] private float preferenceStrength = 0.3f;
 
     [Header("Define Preferred LookAt Direction")]
     [SerializeField] private bool hasLookAt_PreferredDirection = false;
@@ -38,10 +38,8 @@ namespace Yohash.FABRIK
     [Header("Cached chain data")]
     [SerializeField] private Transform upchain;
     [SerializeField] protected Vector3 _lookAtUp = Vector3.up;
-
-    private Vector3 startOffset;
-    private float linkLength;
-    private float _startOffsetDistance;
+    [SerializeField] private float downstreamDistance;
+    [SerializeField] private float upstreamDistance;
 
     // compute the distance of the axes of each conic section
     private float coneTop;
@@ -63,16 +61,17 @@ namespace Yohash.FABRIK
     // ****************************************************************
     public Transform Transform => transform;
     public float JointWeight => jointWeight;
-    public float StartOffsetDistance => _startOffsetDistance;
+    public float UpstreamDistance => upstreamDistance;
+    public float DownstreamDistance => downstreamDistance;
 
     public void SetupDownstream(IJoint downstream)
     {
-      linkLength = downstream.StartOffsetDistance;
+      downstreamDistance = downstream.UpstreamDistance;
       // precompute the cone axes lengths
-      coneTop = linkLength * Mathf.Tan(roteUp * Mathf.Deg2Rad);
-      coneBot = linkLength * Mathf.Tan(roteDown * Mathf.Deg2Rad);
-      coneRight = linkLength * Mathf.Tan(roteRight * Mathf.Deg2Rad);
-      coneLeft = linkLength * Mathf.Tan(roteLeft * Mathf.Deg2Rad);
+      coneTop = downstreamDistance * Mathf.Tan(roteUp * Mathf.Deg2Rad);
+      coneBot = downstreamDistance * Mathf.Tan(roteDown * Mathf.Deg2Rad);
+      coneRight = downstreamDistance * Mathf.Tan(roteRight * Mathf.Deg2Rad);
+      coneLeft = downstreamDistance * Mathf.Tan(roteLeft * Mathf.Deg2Rad);
       largestDelta = Mathf.Max(Mathf.Abs(coneTop) + Mathf.Abs(coneBot), Mathf.Abs(coneLeft) + Mathf.Abs(coneRight));
     }
 
@@ -80,14 +79,14 @@ namespace Yohash.FABRIK
     {
       upchain = upstream;
       // precompute offsets
-      startOffset = upstream.position - transform.position;
-      _startOffsetDistance = startOffset.magnitude;
+      var upstreamOffset = upstream.position - transform.position;
+      upstreamDistance = upstreamOffset.magnitude;
       preferredRelativeForward.Normalize();
     }
 
-    public Vector3 ConstrainPoint(Vector3 newGlobalPosition, Vector3 oldGlobalPosition)
+    public Vector3 ConstrainPoint(Vector3 newPosition, Vector3 oldPosition)
     {
-      var final = newGlobalPosition;
+      var final = newPosition;
 
       // first, we see if this joint has constrained movement, and refit the desired position to
       // the outisde of the conic section in our plane of movement
@@ -98,7 +97,7 @@ namespace Yohash.FABRIK
       // next, we see if this joint has a preferred relative position, and further constrain
       // the point to prefer this relative position
       if (hasPreferredDirection) {
-        final = applyPreferredDirectionConstraints(final, oldGlobalPosition);
+        final = applyPreferredDirectionConstraints(final, oldPosition);
       }
 
       return final;
@@ -143,30 +142,32 @@ namespace Yohash.FABRIK
     // ********************************************************************************************************************************
     //		FABRIK Joint functions
     // ********************************************************************************************************************************
-    private Vector3 applyRotationalConstraints(Vector3 current)
+    private Vector3 applyRotationalConstraints(Vector3 newPosition)
     {
       // first off, we declare several important relevant variables
-      // find the direction vector from this joint, to the new global position
-      var globalDirection = current - transform.position;
+      // find the direction vector from this joint, to the new position
+      var newDirection = newPosition - transform.position;
 
-      // get the ratio of the respective heights and scale the cone to our current conic cross section
-      float h = Vector3.Dot(globalDirection, upchain.forward);
+      // get the ratio of the respective heights and scale the cone to
+      // our current conic cross section
+      float h = Vector3.Dot(newDirection, upchain.forward);
 
-      // get the projection of this point on the plane
-      var globalProjection = Vector3.ProjectOnPlane(globalDirection, upchain.forward);
+      // get the projection of this point on the plane, for a plane with normal
+      // equal to the upchain's forward vector
+      var planarProjection = Vector3.ProjectOnPlane(newDirection, upchain.forward);
       bool inside90 = true;
       if (h < 0) {
-        // out of bounds
+        // the projection is facing "backwards"
         h = -h;
-        // TODO finsih the reverse case
+        // TODO finish the reverse case
         inside90 = false;
       }
       // get components (local to upchainTR) in global values
-      float xPart = Vector3.Dot(globalProjection, upchain.right);
-      float yPart = Vector3.Dot(globalProjection, upchain.up);
+      float xPart = Vector3.Dot(planarProjection, upchain.right);
+      float yPart = Vector3.Dot(planarProjection, upchain.up);
 
       // scale length for conic cross section scalar
-      float scale = Mathf.Abs(h) / linkLength;
+      float scale = h / downstreamDistance;
 
       // determine quadrant
       var xBnd = xPart > 0 ? coneRight * scale : -coneLeft * scale;
@@ -177,8 +178,8 @@ namespace Yohash.FABRIK
 
 
       if (DEBUG_SHOWCONE) {
-        Debug.DrawRay(transform.position + (upchain.forward * h), globalProjection, Color.blue);
-        Debug.DrawRay(transform.position, globalDirection, Color.yellow);
+        Debug.DrawRay(transform.position + (upchain.forward * h), planarProjection, Color.blue);
+        Debug.DrawRay(transform.position, newDirection, Color.yellow);
         Debug.DrawRay(transform.position, upchain.right * xPart, Color.magenta);
         Debug.DrawRay(transform.position, upchain.up * yPart, Color.magenta);
 
@@ -192,7 +193,7 @@ namespace Yohash.FABRIK
           var dtx = (xb / scale) * Mathf.Cos(theta);
           var dty = (yb / scale) * Mathf.Sin(theta);
 
-          Debug.DrawRay(transform.position, (upchain.forward * linkLength + (upchain.right * dtx + upchain.up * dty)).normalized * linkLength, Color.white);
+          Debug.DrawRay(transform.position, (upchain.forward * downstreamDistance + (upchain.right * dtx + upchain.up * dty)).normalized * downstreamDistance, Color.white);
         }
       }
 
@@ -202,63 +203,59 @@ namespace Yohash.FABRIK
         return solveEllipsePoint(xBnd, yBnd, xPart, yPart, h);
       }
 
-      return current;
+      return newPosition;
     }
 
-    private Vector3 applyPreferredDirectionConstraints(Vector3 current, Vector3 oldGlobalPosition)
+    private Vector3 applyPreferredDirectionConstraints(Vector3 newPosition, Vector3 oldPosition)
     {
       // first off, we declare several important relevant variables
       // find the direction vector from this joint, to the new global position
-      var globalDirection = current - transform.position;
+      var newDirection = newPosition - transform.position;
 
       // get the ratio of the respective heights and scale the cone to our current conic cross section
-      float h = Vector3.Dot(globalDirection, upchain.forward);
+      float h = Vector3.Dot(newDirection, upchain.forward);
 
       // make sure we can get a solution to our problem first
-      if (h <= 0) { return current; }
+      if (h <= 0) { return newPosition; }
 
       // get the projection of this point on the plane
-      var globalProjection = Vector3.ProjectOnPlane(globalDirection, upchain.forward);
-      // only dampen if the point is facing front
-      // get components (local to upchainTR) in global values
-      //float xPart = Vector3.Dot (globalProjection, upchain.right);
-      //float yPart = Vector3.Dot (globalProjection, upchain.up);
+      var planarProjection = Vector3.ProjectOnPlane(newDirection, upchain.forward);
 
       // scale length for conic cross section scalar
-      float scale = Mathf.Abs(h) / linkLength;
+      float scale = Mathf.Abs(h) / downstreamDistance;
 
       // transform  our preferred direction to our current relative forward
       // and scale it to the length of the requested global
-      var globalPreferred = upchain.TransformDirection(preferredRelativeForward * linkLength) * scale;
+      var globalPreferred = upchain.TransformDirection(preferredRelativeForward * downstreamDistance) * scale;
 
       // now, we need the projection of preferred Direction on the plane
       var globalPreferredProjection = Vector3.ProjectOnPlane(globalPreferred, upchain.forward);
 
       // get the vector between the two points, this is the distance on which spring constant
       // is enforced
-      var d_1 = globalPreferredProjection - globalProjection;
-      var d_spring = d_1 * springAlpha;
+      var d_1 = globalPreferredProjection - planarProjection;
+      var d_spring = d_1 * preferenceStrength;
 
       // get the distance that the target traveled
 
       // get the scalar for this distance
-      float delta = (oldGlobalPosition - current).magnitude;
+      float delta = (oldPosition - newPosition).magnitude;
       // normalized to the largest delta, scaled
       delta /= largestDelta;
 
       // adjust the global
-      var newGlobal = current + d_spring * delta;
+      var constrainedPosition = newPosition + d_spring * delta;
 
       if (DEBUG_SHOWPREF) {
-        Debug.DrawRay(transform.position, upchain.forward * linkLength, Color.yellow);
+        Debug.DrawRay(transform.position, upchain.forward * downstreamDistance, Color.yellow);
         Debug.DrawRay(transform.position, globalPreferred, Color.red);
-        Debug.DrawRay(transform.position, globalDirection, Color.blue);
-        Debug.DrawRay(transform.position + upchain.forward * linkLength, globalProjection, Color.magenta);
-        Debug.DrawRay(transform.position + upchain.forward * linkLength, globalPreferredProjection, Color.cyan);
-        Debug.DrawRay(transform.position, (newGlobal - transform.position), Color.green);
+        Debug.DrawRay(transform.position, newDirection, Color.blue);
+        Debug.DrawRay(transform.position + upchain.forward * downstreamDistance, planarProjection, Color.magenta);
+        Debug.DrawRay(transform.position + upchain.forward * downstreamDistance, globalPreferredProjection, Color.cyan);
+        Debug.DrawRay(transform.position, (constrainedPosition - transform.position), Color.green);
       }
 
-      return newGlobal;
+      return constrainedPosition;
     }
 
     private Vector3 solveEllipsePoint(float a, float b, float x0, float y0, float h)
@@ -273,7 +270,7 @@ namespace Yohash.FABRIK
       // convert point to 3d space
       var adjusted = new Vector3(dx, dy, h);
       // extend the length of this link
-      adjusted = adjusted.normalized * linkLength;
+      adjusted = adjusted.normalized * downstreamDistance;
       // rotate to world space
       var rotated = upchain.right * adjusted.x + upchain.up * adjusted.y + upchain.forward * adjusted.z;
       // add the rotated, scaled direction to adjusted

@@ -6,7 +6,8 @@ namespace Yohash.FABRIK
   {
     Transform Transform { get; }
     float JointWeight { get; }
-    float StartOffsetDistance { get; }
+    float UpstreamDistance { get; }
+    float DownstreamDistance { get; }
     void SetupDownstream(IJoint joint);
     void SetupUpstream(Transform joint);
     Vector3 ConstrainPoint(Vector3 newGlobalPosition, Vector3 oldGlobalPosition);

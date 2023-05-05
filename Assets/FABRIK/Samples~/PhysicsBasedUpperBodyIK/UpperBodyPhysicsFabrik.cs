@@ -14,46 +14,41 @@ namespace Yohash.FABRIK
   {
     // this script is placed on the central hub
     [SerializeField] private int maxIters = 10;
+    [SerializeField] private Transform torso;
 
     // The left and right arm FRABRIK Chains
     [Header("Left and Right Arm Chains")]
     [SerializeField] private FabrikChain leftArm;
     [SerializeField] private FabrikChain rightArm;
+    [SerializeField] private FabrikChain head;
 
     // for the 'head'
     [Header("Head")]
     [SerializeField] private Transform headObjectTransform;
-    [SerializeField] private Transform headBaseOffsetReference;
-    [SerializeField] private float headVerticalOffset = -0.35f;
     // cached variables
     private Quaternion lastHeadRotation;
 
-    [Header("Declare engine power")]
-    [SerializeField] private float Power = 10f;
-    [SerializeField] private float RotationalPower = 50f;
 
-    [Header("3-axis PID controllers")]
-    [SerializeField] private PidController controllerX;
-    [SerializeField] private PidController controllerY;
-    [SerializeField] private PidController controllerZ;
-
-    [Header("Torso rotation controller")]
+    [Header("Rotational PD controller")]
+    [SerializeField] private bool applyRotationForce = false;
     [SerializeField] private BackwardsPdController rotator;
-
-    [Header("Movement Force values")]
-    [SerializeField] private Vector3 throttle;
     [SerializeField] private Vector3 torque;
+
+    [Header("Translation PD controller")]
+    [SerializeField] private bool applyTranslationForce = false;
+    [SerializeField] private BackwardsPdController translator;
+    [SerializeField] private Vector3 throttle;
 
     // cache the look at direction
     private Vector3 lookAt;
 
     // cache the torse rigidbody
-    private Rigidbody torso;
+    private Rigidbody torsoRb;
 
     private void Awake()
     {
-      if (torso == null) {
-        torso = GetComponent<Rigidbody>();
+      if (torsoRb == null) {
+        torsoRb = torso.GetComponent<Rigidbody>();
       }
     }
 
@@ -64,17 +59,13 @@ namespace Yohash.FABRIK
       rightArm.Intialize(pose);
     }
 
-    private void Update()
-    {
-      SolveIK();
-    }
-
     private void FixedUpdate()
     {
       moveTorso();
+      solveIK();
     }
 
-    public void SolveIK()
+    private void solveIK()
     {
       solve();
 
@@ -100,14 +91,18 @@ namespace Yohash.FABRIK
         // the forward pass with this new torso position, and move the chain.
         leftArm.Backward();
         rightArm.Backward();
+        head.Backward();
 
         // using this position as the root, perform a forward pass
         // perform a forwards pass over all chains
-        leftArm.Forward(transform.position);
-        rightArm.Forward(transform.position);
+        leftArm.Forward();
+        rightArm.Forward();
+        head.Forward();
+
         // physically move the chains
         leftArm.Move();
         rightArm.Move();
+        head.Move();
 
         // check current iterations
         if (iter > maxIters) { return; }
@@ -120,25 +115,41 @@ namespace Yohash.FABRIK
     /// </summary>
     private void moveTorso()
     {
-      // Place the torso center directly below the head-tracker
-      var newTorsoPosition = headBaseOffsetReference.position + Vector3.up * headVerticalOffset;
-
       float dt = Time.fixedDeltaTime;
-      // solve for translation motion, and store the force in Throttle
-      throttle = new Vector3(
-        controllerX.Update(dt, transform.position.x, newTorsoPosition.x),
-        controllerY.Update(dt, transform.position.y, newTorsoPosition.y),
-        controllerZ.Update(dt, transform.position.z, newTorsoPosition.z)
+
+      // Place the torso center directly below the head-tracker
+      var newTorsoPosition = head.TargetPose.position - Vector3.up * head.ChainLength * 0.9f;
+
+      Debug.DrawLine(transform.position, newTorsoPosition, Color.red);
+
+      throttle = translator.UpdatePosition(
+        dt,
+        torso.position,
+        newTorsoPosition,
+        torsoRb.velocity
       );
 
-      torso.AddForce(throttle * Power);
+      if (applyTranslationForce) {
+        torsoRb.AddForce(throttle);
+      }
       // transform.position = newTorsoPosition;
 
       lookAt = Vector3.zero;
-      // adjust the rotation to face in the averaged relative forward vectors
-      lookAt += leftArm.SecondLink.TransformDirection(leftArm.LocalRelativeForward);
-      lookAt += rightArm.SecondLink.TransformDirection(rightArm.LocalRelativeForward);
+      if (leftArm.Positions.Count > 2) {
+        // adjust the rotation to face in the averaged relative forward vectors
+        var leftShoulderFacing = leftArm.Positions[2] - leftArm.Positions[1];
+        var leftContribution = -Vector3.Cross(leftShoulderFacing, Vector3.up);
+        var rightShoulderFacing = rightArm.Positions[2] - rightArm.Positions[1];
+        var rightContribution = Vector3.Cross(rightShoulderFacing, Vector3.up);
+        //var leftContribution = leftArm.SecondLink.TransformDirection(leftArm.LocalRelativeForward);
+        //var rightContribution = rightArm.SecondLink.TransformDirection(rightArm.LocalRelativeForward);
 
+        Debug.DrawRay(leftArm.SecondLink.transform.position, leftContribution.normalized * .5f, Color.yellow);
+        Debug.DrawRay(rightArm.SecondLink.transform.position, rightContribution.normalized * .5f, Color.yellow);
+
+        lookAt += leftContribution;
+        lookAt += rightContribution;
+      }
       // determine if we tilt further forward or not
       float downQuotient = Vector3.Dot(Vector3.down, headObjectTransform.forward);
       if (downQuotient < 0) {
@@ -151,17 +162,20 @@ namespace Yohash.FABRIK
 
       // determine rotation directions
       var quat = Quaternion.LookRotation(lookAt, Vector3.up);
+      Debug.DrawRay(torso.position, lookAt.normalized * .5f, Color.cyan);
       // solve for the desired torso rotation using the stable backwards PD rotation controller
       torque = rotator.UpdateRotation(
          dt,
          quat,
-         transform.rotation,
-         torso.angularVelocity,
-         torso.inertiaTensorRotation,
-         torso.inertiaTensor
+         torsoRb.rotation,
+         torsoRb.angularVelocity,
+         torsoRb.inertiaTensorRotation,
+         torsoRb.inertiaTensor
        );
 
-      torso.AddTorque(torque * RotationalPower);
+      if (applyRotationForce) {
+        torsoRb.AddTorque(torque);
+      }
     }
 
     /// <summary>

@@ -84,23 +84,23 @@ namespace Yohash.FABRIK
       preferredRelativeForward.Normalize();
     }
 
-    public Vector3 ConstrainPoint(Vector3 newPosition, Vector3 oldPosition)
+    public Vector3 ConstrainDownstreamPoint(Vector3 newDownstreamPosition)
     {
-      var final = newPosition;
-
-      // first, we see if this joint has constrained movement, and refit the desired position to
-      // the outisde of the conic section in our plane of movement
-      if (constrainRotation) {
-        final = applyRotationalConstraints(final);
-      }
+      var constrainedDownstream = newDownstreamPosition;
 
       // next, we see if this joint has a preferred relative position, and further constrain
       // the point to prefer this relative position
       if (hasPreferredDirection) {
-        final = applyPreferredDirectionConstraints(final, oldPosition);
+        constrainedDownstream = applyPreferredDirection(constrainedDownstream);
       }
 
-      return final;
+      // first, we see if this joint has constrained movement, and refit the desired position to
+      // the outisde of the conic section in our plane of movement
+      if (constrainRotation) {
+        constrainedDownstream = constrainToCone(constrainedDownstream);
+      }
+
+      return constrainedDownstream;
     }
 
     public virtual void AssignPosition(Vector3 position)
@@ -142,11 +142,11 @@ namespace Yohash.FABRIK
     // ********************************************************************************************************************************
     //		FABRIK Joint functions
     // ********************************************************************************************************************************
-    private Vector3 applyRotationalConstraints(Vector3 newPosition)
+    private Vector3 constrainToCone(Vector3 newDownstream)
     {
       // first off, we declare several important relevant variables
       // find the direction vector from this joint, to the new position
-      var newDirection = newPosition - transform.position;
+      var newDirection = newDownstream - transform.position;
 
       // get the ratio of the respective heights and scale the cone to
       // our current conic cross section
@@ -183,9 +183,15 @@ namespace Yohash.FABRIK
         Debug.DrawRay(transform.position, upchain.right * xPart, Color.magenta);
         Debug.DrawRay(transform.position, upchain.up * yPart, Color.magenta);
 
-        for (float theta = 0; theta < Mathf.PI * 2f; theta += Mathf.PI / 25f) {
+        for (float theta = 0; theta < Mathf.PI * 2f; theta += Mathf.PI / 100f) {
           var xp = Mathf.Sign(Mathf.Cos(theta));
           var yp = Mathf.Sign(Mathf.Sin(theta));
+
+          coneTop = downstreamDistance * Mathf.Tan(roteUp * Mathf.Deg2Rad);
+          coneBot = downstreamDistance * Mathf.Tan(roteDown * Mathf.Deg2Rad);
+          coneRight = downstreamDistance * Mathf.Tan(roteRight * Mathf.Deg2Rad);
+          coneLeft = downstreamDistance * Mathf.Tan(roteLeft * Mathf.Deg2Rad);
+          largestDelta = Mathf.Max(Mathf.Abs(coneTop) + Mathf.Abs(coneBot), Mathf.Abs(coneLeft) + Mathf.Abs(coneRight));
 
           var xb = xp > 0 ? coneRight * scale : -coneLeft * scale;
           var yb = yp > 0 ? coneTop * scale : -coneBot * scale;
@@ -193,20 +199,23 @@ namespace Yohash.FABRIK
           var dtx = (xb / scale) * Mathf.Cos(theta);
           var dty = (yb / scale) * Mathf.Sin(theta);
 
-          Debug.DrawRay(transform.position, (upchain.forward * downstreamDistance + (upchain.right * dtx + upchain.up * dty)).normalized * downstreamDistance, Color.white);
+          Debug.DrawRay(
+            transform.position,
+            (upchain.forward * downstreamDistance + (upchain.right * dtx + upchain.up * dty)).normalized * 0.1f,
+            Color.white
+          );
         }
       }
-
 
       if (ellipse > 1 || !inside90) {
         // out of bounds, and not on ellipse; find the closest point to the requested
         return solveEllipsePoint(xBnd, yBnd, xPart, yPart, h);
       }
 
-      return newPosition;
+      return newDownstream;
     }
 
-    private Vector3 applyPreferredDirectionConstraints(Vector3 newPosition, Vector3 oldPosition)
+    private Vector3 applyPreferredDirection(Vector3 newPosition)
     {
       // first off, we declare several important relevant variables
       // find the direction vector from this joint, to the new global position
@@ -239,7 +248,7 @@ namespace Yohash.FABRIK
       // get the distance that the target traveled
 
       // get the scalar for this distance
-      float delta = (oldPosition - newPosition).magnitude;
+      float delta = (transform.position - newPosition).magnitude;
       // normalized to the largest delta, scaled
       delta /= largestDelta;
 
@@ -247,13 +256,15 @@ namespace Yohash.FABRIK
       var constrainedPosition = newPosition + d_spring * delta;
 
       if (DEBUG_SHOWPREF) {
-        Debug.DrawRay(transform.position, upchain.forward * downstreamDistance, Color.yellow);
-        Debug.DrawRay(transform.position, globalPreferred, Color.red);
+        Debug.DrawRay(transform.position, upchain.TransformDirection(preferredRelativeForward), Color.cyan);
+        Debug.DrawRay(upchain.position, upchain.forward * downstreamDistance, Color.yellow);
         Debug.DrawRay(transform.position, newDirection, Color.blue);
         Debug.DrawRay(transform.position + upchain.forward * downstreamDistance, planarProjection, Color.magenta);
-        Debug.DrawRay(transform.position + upchain.forward * downstreamDistance, globalPreferredProjection, Color.cyan);
+        Debug.DrawRay(transform.position + upchain.forward * downstreamDistance, globalPreferredProjection, Color.red);
+        //Debug.DrawRay(transform.position + upchain.forward * downstreamDistance, globalPreferredProjection, Color.cyan);
         Debug.DrawRay(transform.position, (constrainedPosition - transform.position), Color.green);
       }
+
 
       return constrainedPosition;
     }

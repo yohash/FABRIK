@@ -118,11 +118,14 @@ MonoBehaviour:
   roteDown: -89
   hasPreferredDirection: 1
   preferredRelativeForward: {x: 0, y: 0, z: 1}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 1
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 0}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -181,11 +184,14 @@ MonoBehaviour:
   roteDown: -2
   hasPreferredDirection: 0
   preferredRelativeForward: {x: 0, y: 0, z: 0}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 0}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -327,11 +333,14 @@ MonoBehaviour:
   roteDown: -2
   hasPreferredDirection: 0
   preferredRelativeForward: {x: 0, y: 0, z: 0}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 0}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -789,8 +798,8 @@ MonoBehaviour:
   Positions: []
   locationTolerance: 0.005
   maxIterations: 10
-  target: {fileID: 4558974548292714}
-  chainEnd: {fileID: 0}
+  _target: {fileID: 4558974548292714}
+  DEBUG_SHOW_SOLUTION: 0
 --- !u!1 &1379489424894526
 GameObject:
   m_ObjectHideFlags: 0
@@ -1310,11 +1319,14 @@ MonoBehaviour:
   roteDown: -80
   hasPreferredDirection: 1
   preferredRelativeForward: {x: 1, y: 0, z: 1}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 0}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -1451,8 +1463,8 @@ MonoBehaviour:
   Positions: []
   locationTolerance: 0.005
   maxIterations: 10
-  target: {fileID: 4612555307026234}
-  chainEnd: {fileID: 0}
+  _target: {fileID: 4612555307026234}
+  DEBUG_SHOW_SOLUTION: 0
 --- !u!1 &1672083440493716
 GameObject:
   m_ObjectHideFlags: 0
@@ -1508,11 +1520,14 @@ MonoBehaviour:
   roteDown: -80
   hasPreferredDirection: 1
   preferredRelativeForward: {x: -0.3, y: -4, z: 0.5}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 0}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -1571,11 +1586,14 @@ MonoBehaviour:
   roteDown: -89
   hasPreferredDirection: 1
   preferredRelativeForward: {x: 0, y: 0, z: 1}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 0}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -1967,11 +1985,14 @@ MonoBehaviour:
   roteDown: -80
   hasPreferredDirection: 1
   preferredRelativeForward: {x: -1, y: 0, z: 1}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 0}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -2095,11 +2116,14 @@ MonoBehaviour:
   roteDown: -80
   hasPreferredDirection: 1
   preferredRelativeForward: {x: 0.3, y: -4, z: 0.5}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 0}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0

@@ -10,7 +10,7 @@ namespace Yohash.FABRIK
     float DownstreamDistance { get; }
     void SetupDownstream(IJoint joint);
     void SetupUpstream(Transform joint);
-    Vector3 ConstrainPoint(Vector3 newGlobalPosition, Vector3 oldGlobalPosition);
+    Vector3 ConstrainDownstreamPoint(Vector3 newDownstreamPosition);
     void AssignPosition(Vector3 position);
     void LookAtPosition(Vector3 lookAtPosition);
     void LookAtUp(Vector3 localUpDirection);

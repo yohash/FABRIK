@@ -1,4 +1,5 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
 using UnityEngine;
 
 namespace Yohash.FABRIK
@@ -19,8 +20,7 @@ namespace Yohash.FABRIK
     // TODO - be nice to keep this var private; re-write SpiderFabrik to remove this dependence
     public List<Vector3> Positions;
 
-    [Header("Assign the Chain")]
-    [SerializeField] private List<IJoint> chain;
+    private List<IJoint> chain;
 
     [Header("Assign Tolerances")]
     [SerializeField] private float locationTolerance = 0.005f;
@@ -31,10 +31,26 @@ namespace Yohash.FABRIK
     }
 
     [Header("Tracking Target")]
-    [SerializeField] private Transform target;
+    [SerializeField] private Transform _target;
+    public Transform Target {
+      get { return _target; }
+      set { _target = value; }
+    }
 
+    public Pose TargetPose {
+      get { return _target.ToPose(); }
+    }
+
+    public float ChainLength {
+      get {
+        return chain.Sum(link => link.DownstreamDistance);
+      }
+    }
+
+    // ****************************************************************
+    //		DEBUGGING TOOLS - build these into custom editor
+    // ****************************************************************
     public bool DEBUG_SHOW_SOLUTION;
-
 
     void Update()
     {
@@ -96,13 +112,13 @@ namespace Yohash.FABRIK
     // ****************************************************************
     public bool IsWithinTolerance {
       get {
-        return (chain[chain.Count - 1].Transform.position - target.position).sqrMagnitude
+        return (chain[chain.Count - 1].Transform.position - _target.position).sqrMagnitude
           <= locationTolerance * locationTolerance
-          && chain[chain.Count - 1].Transform.rotation == target.rotation;
+          && chain[chain.Count - 1].Transform.rotation == _target.rotation;
       }
     }
 
-    public void Solve(Vector3 basePos)
+    public void Solve()
     {
       int iter = 0;
       // loop over FABRIK algorithm
@@ -110,7 +126,7 @@ namespace Yohash.FABRIK
         // perform the FABRIK algorithm. A backward pass, followed by a forward pass,
         // finally closed by movin the chain and computing tolerances
         Backward();
-        Forward(basePos);
+        Forward();
         Move();
 
         // break if over the iteration limit
@@ -127,7 +143,7 @@ namespace Yohash.FABRIK
 
       // compute each new position in the backward-step
       // initialize by setting the last joint to the target position
-      Positions[Positions.Count - 1] = target.position;
+      Positions[Positions.Count - 1] = _target.position;
       // cascade in the backward direction, upgrading each joint along the way
       for (int i = Positions.Count - 1; i > 0; i--) {
         // get the new point by moving BACKWARD from current point, i, towards i-1 point
@@ -138,17 +154,18 @@ namespace Yohash.FABRIK
       }
     }
 
-    public void Forward(Vector3 basePos)
+    public void Forward()
     {
       // compute each new position in the forward-step
       // initialize by setting the first joint back to its origin
-      Positions[0] = basePos;
+      Positions[0] = transform.position;
       // cascade in the forward direction, upgrading each joint along the way
       for (int i = 0; i < Positions.Count - 1; i++) {
         // get the new point by moving FORWARD from current point, i, towards i+1 point
-        var displace = Positions[i + 1] - Positions[i];
-        // vector 'displace' should give us enough info to determine conic constraints
-        var constrained = chain[i].ConstrainPoint(Positions[i] + displace, Positions[i]);
+        // tell the chain at [i] to constrain this [i+1] (downstream) point by applying
+        // [i]th joint's-specific constraints, to include link length
+        var constrained = chain[i].ConstrainDownstreamPoint(Positions[i + 1]);
+
         // v is the new global point, so we can now interpolate between
         //   <currentPosition> = Positions[i], and 'constrained', by weight,
         //   to add 'sluggishness' to the joint
@@ -173,8 +190,8 @@ namespace Yohash.FABRIK
         chain[i].LookAtUp(Vector3.up);
       }
       chain[chain.Count - 1].AssignPosition(Positions[Positions.Count - 1]);
-      chain[chain.Count - 1].LookAtPosition(target.position + target.forward);
-      chain[chain.Count - 1].LookAtUp(target.up);
+      chain[chain.Count - 1].LookAtPosition(_target.position + _target.forward);
+      chain[chain.Count - 1].LookAtUp(_target.up);
     }
 
     private void initSolver()

@@ -785,6 +785,10 @@ PrefabInstance:
       propertyPath: lookAt_PreferredRelativeVector.x
       value: 1
       objectReference: {fileID: 0}
+    - target: {fileID: 9069234996379945688, guid: b1617ba5a5275b044919aa3389b1d851, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 20360763}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b1617ba5a5275b044919aa3389b1d851, type: 3}
 --- !u!1001 &2241600257363506033
@@ -846,5 +850,9 @@ PrefabInstance:
       propertyPath: m_Name
       value: FabrikArm
       objectReference: {fileID: 0}
+    - target: {fileID: 9069234996379945688, guid: b1617ba5a5275b044919aa3389b1d851, type: 3}
+      propertyPath: target
+      value: 
+      objectReference: {fileID: 20360763}
     m_RemovedComponents: []
   m_SourcePrefab: {fileID: 100100000, guid: b1617ba5a5275b044919aa3389b1d851, type: 3}

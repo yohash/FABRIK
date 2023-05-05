@@ -146,7 +146,8 @@ namespace Yohash.FABRIK
         // using this position as the root, perform a forward pass
         // perform a forwards pass over all chains
         for (int i = 0; i < chains.Count; i++) {
-          chains[i].Forward(newSub);
+          // TODO - FIX
+          //chains[i].Forward(newSub);
           chains[i].Move();
         }
 

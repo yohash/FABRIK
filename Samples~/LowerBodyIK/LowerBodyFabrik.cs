@@ -100,8 +100,8 @@ namespace Yohash.FABRIK
 
       // solve the FABRIK algorithm for each leg
       while (!allTargets_areWithinRange()) {
-        leftLeg.Solve(transform.position);
-        rightLeg.Solve(transform.position);
+        leftLeg.Solve();
+        rightLeg.Solve();
 
         // break if over the current iterations
         if (iter > maxIters) { return; }

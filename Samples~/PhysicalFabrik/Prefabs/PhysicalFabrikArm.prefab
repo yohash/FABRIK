@@ -49,7 +49,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce1fc54e575a7c34da62f344a9967cb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jointWeight: 1
+  jointWeight: 0.6
   constrainRotation: 0
   roteRight: 89
   roteLeft: -89
@@ -57,103 +57,35 @@ MonoBehaviour:
   roteDown: -89
   hasPreferredDirection: 1
   preferredRelativeForward: {x: 0, y: -0.1, z: 1}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 6738507011089101312}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
   DEBUG_SHOWPREF: 0
-  Power: 50
-  RotationalPower: 8
-  controllerX:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: -0.11190612
-    errorLast: 0.0018683597
-    integrationStored: -0.010124979
-    velocity: -0.00019259751
-    derivativeInitialized: 1
-  controllerY:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: 0.23147309
-    errorLast: -0.0006355643
-    integrationStored: 0.7335785
-    velocity: 0.00010728836
-    derivativeInitialized: 1
-  controllerZ:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: 0.8736904
-    errorLast: -0.0034230947
-    integrationStored: 0.32170886
-    velocity: 0.0001937151
-    derivativeInitialized: 1
+  applyRotationForce: 1
   rotator:
-    X: 0
-    Y: 0
-    Z: 0
-    controllerX:
-      proportionalGain: 1
-      integralGain: 1
-      derivativeGain: 1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: 0
-      errorLast: 0
-      integrationStored: 0
-      velocity: 0
-      derivativeInitialized: 0
-    controllerY:
-      proportionalGain: 1
-      integralGain: 1
-      derivativeGain: 1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: 0
-      errorLast: 0
-      integrationStored: 0
-      velocity: 0
-      derivativeInitialized: 0
-    controllerZ:
-      proportionalGain: 0.5
-      integralGain: 1
-      derivativeGain: 0.1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: -82.30219
-      errorLast: 82.30219
-      integrationStored: 1
-      velocity: -400.99985
-      derivativeInitialized: 1
-  throttle: {x: -0.0062919604, y: 0.73225373, z: 0.3147658}
+    damping: 1
+    frequency: 4
   torque: {x: 0, y: 0, z: 0}
+  applyTranslationForce: 1
+  matchVelocity: 0
+  translator:
+    damping: 8
+    frequency: 40
+  throttle: {x: -0.0062919604, y: 0.73225373, z: 0.3147658}
   target: {x: -0.11003776, y: 0.23083752, z: 0.87026733}
-  lookAt: {x: -0.051508192, y: 0.29367158, z: 1.0508945}
+  delta: 0
+  targetLast: {x: 0, y: 0, z: 0}
+  lookAtPosition: {x: 0, y: 0, z: 0}
+  SHOW_FORCE_DIR: 0
+  SHOW_TARGET_DIR: 0
 --- !u!54 &6738507010496562315
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -277,7 +209,6 @@ GameObject:
   - component: {fileID: 6738507010502008619}
   - component: {fileID: 6738507010502008620}
   - component: {fileID: 6738507010502008621}
-  - component: {fileID: 6738507010502008595}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -350,19 +281,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &6738507010502008595
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6738507010502008616}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.50000024
-  m_Center: {x: 0, y: 0, z: 0.0000019073486}
 --- !u!1 &6738507010581178712
 GameObject:
   m_ObjectHideFlags: 0
@@ -374,7 +292,6 @@ GameObject:
   - component: {fileID: 6738507010581178715}
   - component: {fileID: 6738507010581178716}
   - component: {fileID: 6738507010581178717}
-  - component: {fileID: 6738507010581178691}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -447,19 +364,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &6738507010581178691
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6738507010581178712}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.50000024
-  m_Center: {x: 0, y: 0, z: 0.00000667572}
 --- !u!1 &6738507010616501960
 GameObject:
   m_ObjectHideFlags: 0
@@ -471,7 +375,6 @@ GameObject:
   - component: {fileID: 6738507010616501963}
   - component: {fileID: 6738507010616501964}
   - component: {fileID: 6738507010616501965}
-  - component: {fileID: 6738507010616501939}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -544,19 +447,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &6738507010616501939
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6738507010616501960}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.50000024
-  m_Center: {x: 0, y: 0, z: 0.000009536743}
 --- !u!1 &6738507010709018058
 GameObject:
   m_ObjectHideFlags: 0
@@ -651,8 +541,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5000005
-  m_Height: 2.0000014
+  m_Radius: 0.5
+  m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0.000009536743, z: -0.00000008941067}
 --- !u!1 &6738507010861687114
@@ -710,103 +600,35 @@ MonoBehaviour:
   roteDown: -89
   hasPreferredDirection: 0
   preferredRelativeForward: {x: 0, y: 0, z: 1}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 6738507010995958749}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
   DEBUG_SHOWPREF: 0
-  Power: 30
-  RotationalPower: 8
-  controllerX:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: 0.029159127
-    errorLast: -0.0015591327
-    integrationStored: 0.04773606
-    velocity: 0.000042375177
-    derivativeInitialized: 1
-  controllerY:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: 0.39909607
-    errorLast: -0.00169608
-    integrationStored: 0.70719117
-    velocity: 0.000074505806
-    derivativeInitialized: 1
-  controllerZ:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: 1.2291516
-    errorLast: -0.0021516085
-    integrationStored: 0.056504603
-    velocity: 0.0000834465
-    derivativeInitialized: 1
+  applyRotationForce: 0
   rotator:
-    X: 0
-    Y: 0
-    Z: 0
-    controllerX:
-      proportionalGain: 1
-      integralGain: 1
-      derivativeGain: 1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: 0
-      errorLast: 0
-      integrationStored: 0
-      velocity: 0
-      derivativeInitialized: 0
-    controllerY:
-      proportionalGain: 1
-      integralGain: 1
-      derivativeGain: 1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: 0
-      errorLast: 0
-      integrationStored: 0
-      velocity: 0
-      derivativeInitialized: 0
-    controllerZ:
-      proportionalGain: 0.5
-      integralGain: 1
-      derivativeGain: 0.1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: -82.67576
-      errorLast: 82.67576
-      integrationStored: 1
-      velocity: -401.0704
-      derivativeInitialized: 1
-  throttle: {x: 0.044596605, y: 0.70376176, z: 0.052159663}
+    damping: 1
+    frequency: 4
   torque: {x: 0, y: 0, z: 0}
+  applyTranslationForce: 1
+  matchVelocity: 0
+  translator:
+    damping: 4
+    frequency: 140
+  throttle: {x: 0.044596605, y: 0.70376176, z: 0.052159663}
   target: {x: 0.027599994, y: 0.3974, z: 1.227}
-  lookAt: {x: 0.0276, y: 0.3974, z: 1.227}
+  delta: 0
+  targetLast: {x: 0, y: 0, z: 0}
+  lookAtPosition: {x: 0, y: 0, z: 0}
+  SHOW_FORCE_DIR: 0
+  SHOW_TARGET_DIR: 0
 --- !u!54 &6738507010861687091
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -930,7 +752,6 @@ GameObject:
   - component: {fileID: 6738507010923798861}
   - component: {fileID: 6738507010923798862}
   - component: {fileID: 6738507010923798863}
-  - component: {fileID: 6738507010923798860}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -1003,19 +824,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &6738507010923798860
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6738507010923798858}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.50000024
-  m_Center: {x: 0, y: 0, z: 0.000015258789}
 --- !u!1 &6738507010934242712
 GameObject:
   m_ObjectHideFlags: 0
@@ -1110,8 +918,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5000005
-  m_Height: 2.0000014
+  m_Radius: 0.5
+  m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0.0000011920929, z: -0.0000000894076}
 --- !u!1 &6738507010995958746
@@ -1163,7 +971,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce1fc54e575a7c34da62f344a9967cb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jointWeight: 1
+  jointWeight: 0.6
   constrainRotation: 0
   roteRight: 89
   roteLeft: -89
@@ -1171,103 +979,35 @@ MonoBehaviour:
   roteDown: -89
   hasPreferredDirection: 1
   preferredRelativeForward: {x: 0, y: 0, z: 1}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 6738507011735017224}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
   DEBUG_SHOWPREF: 0
-  Power: 24
-  RotationalPower: 8
-  controllerX:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: -0.013534008
-    errorLast: -0.00020968355
-    integrationStored: 0.03291223
-    velocity: 0.000056438148
-    derivativeInitialized: 1
-  controllerY:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: 0.345796
-    errorLast: -0.0009984374
-    integrationStored: 0.89176315
-    velocity: 0.000016391277
-    derivativeInitialized: 1
-  controllerZ:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: 1.1558282
-    errorLast: -0.0031497478
-    integrationStored: 0.19325574
-    velocity: 0.00011920929
-    derivativeInitialized: 1
+  applyRotationForce: 1
   rotator:
-    X: 0
-    Y: 0
-    Z: 0
-    controllerX:
-      proportionalGain: 1
-      integralGain: 1
-      derivativeGain: 1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: 0
-      errorLast: 0
-      integrationStored: 0
-      velocity: 0
-      derivativeInitialized: 0
-    controllerY:
-      proportionalGain: 1
-      integralGain: 1
-      derivativeGain: 1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: 0
-      errorLast: 0
-      integrationStored: 0
-      velocity: 0
-      derivativeInitialized: 0
-    controllerZ:
-      proportionalGain: 0.5
-      integralGain: 1
-      derivativeGain: 0.5
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: -114.38833
-      errorLast: 114.38833
-      integrationStored: 1
-      velocity: 401.4099
-      derivativeInitialized: 1
-  throttle: {x: 0.032464642, y: 0.8897581, z: 0.18689664}
+    damping: 1
+    frequency: 4
   torque: {x: 0, y: 0, z: 0}
+  applyTranslationForce: 1
+  matchVelocity: 0
+  translator:
+    damping: 8
+    frequency: 40
+  throttle: {x: 0.032464642, y: 0.8897581, z: 0.18689664}
   target: {x: -0.013743691, y: 0.34479755, z: 1.1526785}
-  lookAt: {x: 0.027599994, y: 0.3974, z: 1.227}
+  delta: 0
+  targetLast: {x: 0, y: 0, z: 0}
+  lookAtPosition: {x: 0, y: 0, z: 0}
+  SHOW_FORCE_DIR: 0
+  SHOW_TARGET_DIR: 0
 --- !u!54 &6738507010995958723
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1429,7 +1169,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce1fc54e575a7c34da62f344a9967cb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jointWeight: 1
+  jointWeight: 0.6
   constrainRotation: 0
   roteRight: 89
   roteLeft: -89
@@ -1437,103 +1177,35 @@ MonoBehaviour:
   roteDown: -89
   hasPreferredDirection: 1
   preferredRelativeForward: {x: 0, y: -0.5, z: 1}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 6738507011754466550}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
   DEBUG_SHOWPREF: 0
-  Power: 60
-  RotationalPower: 8
-  controllerX:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: -0.14677061
-    errorLast: -0.009460062
-    integrationStored: 0.1033942
-    velocity: 0.00015720725
-    derivativeInitialized: 1
-  controllerY:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: 0.18074086
-    errorLast: 0.0038810074
-    integrationStored: 0.56386
-    velocity: -0.000059604645
-    derivativeInitialized: 1
-  controllerZ:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: 0.68339866
-    errorLast: -0.0021560192
-    integrationStored: 0.61420685
-    velocity: 0.00017285347
-    derivativeInitialized: 1
+  applyRotationForce: 1
   rotator:
-    X: 0
-    Y: 0
-    Z: 0
-    controllerX:
-      proportionalGain: 1
-      integralGain: 1
-      derivativeGain: 1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: 0
-      errorLast: 0
-      integrationStored: 0
-      velocity: 0
-      derivativeInitialized: 0
-    controllerY:
-      proportionalGain: 1
-      integralGain: 1
-      derivativeGain: 1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: 0
-      errorLast: 0
-      integrationStored: 0
-      velocity: 0
-      derivativeInitialized: 0
-    controllerZ:
-      proportionalGain: 0.5
-      integralGain: 1
-      derivativeGain: 0.1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: -9.947124
-      errorLast: 9.947124
-      integrationStored: 1
-      velocity: -401.37167
-      derivativeInitialized: 1
-  throttle: {x: 0.084395476, y: 0.5716518, z: 0.6098084}
+    damping: 1
+    frequency: 4
   torque: {x: 0, y: 0, z: 0}
+  applyTranslationForce: 1
+  matchVelocity: 0
+  translator:
+    damping: 8
+    frequency: 40
+  throttle: {x: 0.084395476, y: 0.5716518, z: 0.6098084}
   target: {x: -0.15623067, y: 0.18462187, z: 0.68124264}
-  lookAt: {x: -0.11003776, y: 0.23083752, z: 0.87026733}
+  delta: 0
+  targetLast: {x: 0, y: 0, z: 0}
+  lookAtPosition: {x: 0, y: 0, z: 0}
+  SHOW_FORCE_DIR: 0
+  SHOW_TARGET_DIR: 0
 --- !u!54 &6738507011089101319
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -1740,8 +1412,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5000005
-  m_Height: 2.0000014
+  m_Radius: 0.5
+  m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0.000011444092, z: -0.00000008941067}
 --- !u!1 &6738507011334890293
@@ -1755,7 +1427,6 @@ GameObject:
   - component: {fileID: 6738507011334890292}
   - component: {fileID: 6738507011334890297}
   - component: {fileID: 6738507011334890294}
-  - component: {fileID: 6738507011334890296}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -1828,19 +1499,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &6738507011334890296
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6738507011334890293}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.50000024
-  m_Center: {x: 0, y: 0, z: 0.000015258789}
 --- !u!1 &6738507011511433144
 GameObject:
   m_ObjectHideFlags: 0
@@ -1935,8 +1593,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5000005
-  m_Height: 2.0000014
+  m_Radius: 0.5
+  m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0.00000047683716, z: -0.00000008940726}
 --- !u!1 &6738507011530746695
@@ -1983,22 +1641,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 6738507011530746695}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f86d6c0df433be41bd5fd83b29b7eaa, type: 3}
+  m_Script: {fileID: 11500000, guid: 5dc4ef3dbca87bf44801368654b22d98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentTR: {fileID: 6738507011530746694}
-  positions:
-  - {x: 0.014602192, y: -0.0065091737, z: 0.051487073}
-  - {x: -0.26420918, y: 0.13071994, z: 0.30396795}
-  - {x: -0.14676726, y: 0.1807397, z: 0.6834024}
-  - {x: -0.1119098, y: 0.23147547, z: 0.873695}
-  - {x: -0.050517492, y: 0.29418826, z: 1.0540041}
-  - {x: -0.013532452, y: 0.34579659, z: 1.1558315}
-  - {x: 0.029160358, y: 0.3990981, z: 1.2291541}
+  LocalRelativeForward: {x: 0, y: 0, z: 0}
+  Positions: []
   locationTolerance: 0.005
-  maxIterations: 50
-  target: {fileID: 0}
-  DEBUG_SHOW_SOLUTION: 1
+  maxIterations: 10
+  _target: {fileID: 0}
+  DEBUG_SHOW_SOLUTION: 0
 --- !u!54 &6738507011530746703
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2219,7 +1870,6 @@ GameObject:
   - component: {fileID: 6738507011635632550}
   - component: {fileID: 6738507011635632555}
   - component: {fileID: 6738507011635632552}
-  - component: {fileID: 6738507011635632559}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -2292,19 +1942,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &6738507011635632559
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6738507011635632551}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.50000024
-  m_Center: {x: 0, y: 0, z: 0.000005722046}
 --- !u!1 &6738507011735017225
 GameObject:
   m_ObjectHideFlags: 0
@@ -2354,7 +1991,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce1fc54e575a7c34da62f344a9967cb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jointWeight: 1
+  jointWeight: 0.6
   constrainRotation: 0
   roteRight: 89
   roteLeft: -89
@@ -2362,103 +1999,35 @@ MonoBehaviour:
   roteDown: -89
   hasPreferredDirection: 1
   preferredRelativeForward: {x: 0, y: 0, z: 1}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 6738507010496562311}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
   DEBUG_SHOWPREF: 0
-  Power: 40
-  RotationalPower: 8
-  controllerX:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: -0.050519567
-    errorLast: -0.000988625
-    integrationStored: 0.05758834
-    velocity: 0.000086054206
-    derivativeInitialized: 1
-  controllerY:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: 0.29418796
-    errorLast: -0.00051638484
-    integrationStored: 0.656562
-    velocity: 0.0000014901161
-    derivativeInitialized: 1
-  controllerZ:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: 1.0540011
-    errorLast: -0.003106594
-    integrationStored: 0.097544104
-    velocity: 0.00011920929
-    derivativeInitialized: 1
+  applyRotationForce: 1
   rotator:
-    X: 0
-    Y: 0
-    Z: 0
-    controllerX:
-      proportionalGain: 1
-      integralGain: 1
-      derivativeGain: 1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: 0
-      errorLast: 0
-      integrationStored: 0
-      velocity: 0
-      derivativeInitialized: 0
-    controllerY:
-      proportionalGain: 1
-      integralGain: 1
-      derivativeGain: 1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: 0
-      errorLast: 0
-      integrationStored: 0
-      velocity: 0
-      derivativeInitialized: 0
-    controllerZ:
-      proportionalGain: 0.5
-      integralGain: 1
-      derivativeGain: 0.1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: -54.648212
-      errorLast: 54.648212
-      integrationStored: 1
-      velocity: -400.99374
-      derivativeInitialized: 1
-  throttle: {x: 0.05556806, y: 0.6555284, z: 0.09127131}
+    damping: 1
+    frequency: 4
   torque: {x: 0, y: 0, z: 0}
+  applyTranslationForce: 1
+  matchVelocity: 0
+  translator:
+    damping: 8
+    frequency: 40
+  throttle: {x: 0.05556806, y: 0.6555284, z: 0.09127131}
   target: {x: -0.051508192, y: 0.29367158, z: 1.0508945}
-  lookAt: {x: -0.013743691, y: 0.34479755, z: 1.1526785}
+  delta: 0
+  targetLast: {x: 0, y: 0, z: 0}
+  lookAtPosition: {x: 0, y: 0, z: 0}
+  SHOW_FORCE_DIR: 0
+  SHOW_TARGET_DIR: 0
 --- !u!54 &6738507011735017231
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2620,7 +2189,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce1fc54e575a7c34da62f344a9967cb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jointWeight: 1
+  jointWeight: 0.6
   constrainRotation: 0
   roteRight: 89
   roteLeft: -89
@@ -2628,103 +2197,35 @@ MonoBehaviour:
   roteDown: -89
   hasPreferredDirection: 1
   preferredRelativeForward: {x: 0, y: -0.5, z: 1}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 6738507012306339391}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
   DEBUG_SHOWPREF: 0
-  Power: 80
-  RotationalPower: 8
-  controllerX:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: -0.26421034
-    errorLast: 0.023864955
-    integrationStored: 0.170552
-    velocity: 0.00006854534
-    derivativeInitialized: 1
-  controllerY:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: 0.13072564
-    errorLast: -0.0074801445
-    integrationStored: 0.097849436
-    velocity: -0.00028982759
-    derivativeInitialized: 1
-  controllerZ:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: 0.30396298
-    errorLast: -0.00892967
-    integrationStored: -1
-    velocity: 0.00023245811
-    derivativeInitialized: 1
+  applyRotationForce: 1
   rotator:
-    X: 0
-    Y: 0
-    Z: 0
-    controllerX:
-      proportionalGain: 1
-      integralGain: 1
-      derivativeGain: 1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: 0
-      errorLast: 0
-      integrationStored: 0
-      velocity: 0
-      derivativeInitialized: 0
-    controllerY:
-      proportionalGain: 1
-      integralGain: 1
-      derivativeGain: 1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: 0
-      errorLast: 0
-      integrationStored: 0
-      velocity: 0
-      derivativeInitialized: 0
-    controllerZ:
-      proportionalGain: 0.5
-      integralGain: 1
-      derivativeGain: 0.1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: 51.001858
-      errorLast: -51.001858
-      integrationStored: -1
-      velocity: -290.2794
-      derivativeInitialized: 1
-  throttle: {x: 0.21824764, y: 0.08303406, z: -1}
+    damping: 1
+    frequency: 4
   torque: {x: 0, y: 0, z: 0}
+  applyTranslationForce: 1
+  matchVelocity: 0
+  translator:
+    damping: 8
+    frequency: 40
+  throttle: {x: 0.21824764, y: 0.08303406, z: -1}
   target: {x: -0.24034539, y: 0.12324549, z: 0.2950333}
-  lookAt: {x: -0.15623067, y: 0.18462187, z: 0.68124264}
+  delta: 0
+  targetLast: {x: 0, y: 0, z: 0}
+  lookAtPosition: {x: 0, y: 0, z: 0}
+  SHOW_FORCE_DIR: 0
+  SHOW_TARGET_DIR: 0
 --- !u!54 &6738507011754466552
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -2848,7 +2349,6 @@ GameObject:
   - component: {fileID: 6738507012007420568}
   - component: {fileID: 6738507012007420573}
   - component: {fileID: 6738507012007420570}
-  - component: {fileID: 6738507012007420572}
   m_Layer: 0
   m_Name: Sphere
   m_TagString: Untagged
@@ -2921,19 +2421,6 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
---- !u!135 &6738507012007420572
-SphereCollider:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 6738507012007420569}
-  m_Material: {fileID: 0}
-  m_IsTrigger: 0
-  m_Enabled: 1
-  serializedVersion: 2
-  m_Radius: 0.50000024
-  m_Center: {x: 0, y: 0, z: 0}
 --- !u!1 &6738507012306339388
 GameObject:
   m_ObjectHideFlags: 0
@@ -2991,103 +2478,35 @@ MonoBehaviour:
   roteDown: -89
   hasPreferredDirection: 1
   preferredRelativeForward: {x: 0, y: 1, z: 1}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 6738507011530746694}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
   DEBUG_SHOWPREF: 0
-  Power: 40
-  RotationalPower: 80
-  controllerX:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: 0.014603309
-    errorLast: -0.014603309
-    integrationStored: 0.13553879
-    velocity: -0.000052899122
-    derivativeInitialized: 1
-  controllerY:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: -0.0065097734
-    errorLast: 0.0065097734
-    integrationStored: -0.015061913
-    velocity: 0.000027380884
-    derivativeInitialized: 1
-  controllerZ:
-    proportionalGain: 2
-    integralGain: 1
-    derivativeGain: 0.5
-    outputMin: -1
-    outputMax: 1
-    integralSaturation: 1
-    derivativeMeasurement: 0
-    valueLast: 0.051487766
-    errorLast: -0.051487766
-    integrationStored: -1
-    velocity: -0.000043585896
-    derivativeInitialized: 1
+  applyRotationForce: 0
   rotator:
-    X: 0
-    Y: 0
-    Z: 1
-    controllerX:
-      proportionalGain: 1
-      integralGain: 1
-      derivativeGain: 1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: 48.87486
-      errorLast: 3.415287
-      integrationStored: 1
-      velocity: 62.989235
-      derivativeInitialized: 1
-    controllerY:
-      proportionalGain: 1
-      integralGain: 1
-      derivativeGain: 1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: -56.4165
-      errorLast: 8.417759
-      integrationStored: 1
-      velocity: -33.337593
-      derivativeInitialized: 1
-    controllerZ:
-      proportionalGain: 0.5
-      integralGain: 1
-      derivativeGain: 0.1
-      outputMin: -1
-      outputMax: 1
-      integralSaturation: 1
-      derivativeMeasurement: 0
-      valueLast: -126.56121
-      errorLast: 126.56121
-      integrationStored: 1
-      velocity: 0.060653687
-      derivativeInitialized: 1
-  throttle: {x: 0.10635862, y: -0.0020560566, z: -1}
+    damping: 1
+    frequency: 4
   torque: {x: 0, y: 0, z: 1}
+  applyTranslationForce: 1
+  matchVelocity: 0
+  translator:
+    damping: 1
+    frequency: 40
+  throttle: {x: 0.10635862, y: -0.0020560566, z: -1}
   target: {x: 0, y: 0, z: 0}
-  lookAt: {x: -0.24034539, y: 0.12324549, z: 0.2950333}
+  delta: 0
+  targetLast: {x: 0, y: 0, z: 0}
+  lookAtPosition: {x: 0, y: 0, z: 0}
+  SHOW_FORCE_DIR: 0
+  SHOW_TARGET_DIR: 0
 --- !u!54 &6738507012306339363
 Rigidbody:
   m_ObjectHideFlags: 0
@@ -3294,8 +2713,8 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5000005
-  m_Height: 2.0000014
+  m_Radius: 0.5
+  m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0.0000038146973, z: -0.000000089408395}
 --- !u!1 &6738507012534583269
@@ -3307,6 +2726,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 6738507012534583268}
+  - component: {fileID: 1684501575011483898}
   m_Layer: 0
   m_Name: PhysicalFabrikArm
   m_TagString: Untagged
@@ -3331,6 +2751,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 90, y: 0, z: 0}
+--- !u!114 &1684501575011483898
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 6738507012534583269}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 00fc8edd86ce6bc47a4c9042daf449e0, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chain: {fileID: 6738507011530746697}
+  target: {fileID: 0}
 --- !u!1 &6738507012554780121
 GameObject:
   m_ObjectHideFlags: 0
@@ -3425,7 +2859,7 @@ CapsuleCollider:
   m_Material: {fileID: 0}
   m_IsTrigger: 0
   m_Enabled: 1
-  m_Radius: 0.5000005
-  m_Height: 2.0000014
+  m_Radius: 0.5
+  m_Height: 2
   m_Direction: 1
   m_Center: {x: 0.000000059604645, y: 0.0000038146973, z: -0.00000008940885}

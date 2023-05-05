@@ -5,26 +5,25 @@ namespace Yohash.FABRIK
 {
   public class PhysicalFabrikJoint : FabrikJoint
   {
-    [Header("Declare engine power")]
-    [SerializeField] private float Power = 10f;
-    [SerializeField] private float RotationalPower = 50f;
-
-    [Header("3-axis PID controllers")]
-    [SerializeField] private PidController controllerX;
-    [SerializeField] private PidController controllerY;
-    [SerializeField] private PidController controllerZ;
-
-    [Header("3-axis rotational PID controller")]
-    [SerializeField] private bool ApplyRotationForce = false;
+    [Header("Rotational PD controller")]
+    [SerializeField] private bool applyRotationForce = false;
     [SerializeField] private BackwardsPdController rotator;
-
-    [Header("Final values")]
-    [SerializeField] private Vector3 throttle;
     [SerializeField] private Vector3 torque;
+
+    [Header("Translation PD controller")]
+    [SerializeField] private bool applyTranslationForce = false;
+    [SerializeField] private bool matchVelocity = false;
+    [SerializeField] private BackwardsPdController translator;
+    [SerializeField] private Vector3 throttle;
 
     [Header("Internal vars")]
     [SerializeField] private Vector3 target;
+    [SerializeField] private float delta;
+    [SerializeField] private Vector3 targetLast;
     [SerializeField] private Vector3 lookAtPosition;
+
+    public bool SHOW_FORCE_DIR = false;
+    public bool SHOW_TARGET_DIR = false;
 
     private Rigidbody rb;
 
@@ -43,18 +42,19 @@ namespace Yohash.FABRIK
       this.lookAtPosition = lookAtPosition;
     }
 
+
     private void FixedUpdate()
     {
       if (rb == null) { rb = GetComponent<Rigidbody>(); }
 
       float dt = Time.fixedDeltaTime;
 
-      // solve for translation motion, and store the force in Throttle
-      throttle = new Vector3(
-        controllerX.Update(dt, transform.position.x, target.x),
-        controllerY.Update(dt, transform.position.y, target.y),
-        controllerZ.Update(dt, transform.position.z, target.z)
-      );
+      var targetVelocity = (target - targetLast) / Time.fixedDeltaTime;
+      throttle = matchVelocity
+        ? translator.UpdatePosition(dt, transform.position, target, rb.velocity, targetVelocity)
+        : translator.UpdatePosition(dt, transform.position, target, rb.velocity);
+
+      targetLast = target;
 
       // determine rotation directions
       var lookDir = lookAtPosition - transform.position;
@@ -72,10 +72,24 @@ namespace Yohash.FABRIK
       );
 
       // finally, apply the forces
-      rb.AddForce(throttle * Power);
-      if (ApplyRotationForce) {
-        rb.AddTorque(torque * RotationalPower);
+      if (applyTranslationForce) {
+        rb.AddForce(throttle);
       }
+      if (applyRotationForce) {
+        rb.AddTorque(torque);
+      }
+    }
+
+    private void LateUpdate()
+    {
+      if (SHOW_FORCE_DIR) {
+        Debug.DrawRay(transform.position, throttle.normalized * 0.25f, Color.yellow);
+      }
+      if (SHOW_TARGET_DIR) {
+        Debug.DrawRay(transform.position, target - transform.position, Color.cyan);
+      }
+
+      delta = (target - transform.position).magnitude;
     }
   }
 }

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using System.Linq;
+using UnityEngine;
 
 namespace Yohash.FABRIK
 {
@@ -43,13 +44,14 @@ namespace Yohash.FABRIK
 
     private void Update()
     {
-      SolveIK();
+      moveTorso();
+      solveIK();
     }
 
     // ****************************************************************
     //    PUBLIC ACCESSORS
     // ****************************************************************
-    public void SolveIK()
+    private void solveIK()
     {
       solve();
 
@@ -76,16 +78,10 @@ namespace Yohash.FABRIK
         leftArm.Backward();
         rightArm.Backward();
 
-        // Place the torso center directly below the head-tracker
-        var newTorsoPosition = headBaseOffsetReference.position + Vector3.up * headVerticalOffset;
-        transform.position = newTorsoPosition;
-
-        // adjust the rotation of the central hub at its new position
-        adjustHubRotation();
         // using this position as the root, perform a forward pass
         // perform a forwards pass over all chains
-        leftArm.Forward(newTorsoPosition);
-        rightArm.Forward(newTorsoPosition);
+        leftArm.Forward();
+        rightArm.Forward();
         // physically move the chains
         leftArm.Move();
         rightArm.Move();
@@ -99,26 +95,33 @@ namespace Yohash.FABRIK
     /// <summary>
     /// Adjusts the hub rotation.
     /// </summary>
-    private void adjustHubRotation()
+    private void moveTorso()
     {
-      var vn3 = Vector3.zero;
+      // Place the torso center directly below the head-tracker
+      var newTorsoPosition = headBaseOffsetReference.position + Vector3.up * headVerticalOffset;
+      transform.position = newTorsoPosition;
+
+      var lookAt = Vector3.zero;
       // adjust the rotation to face in the averaged relative forward vectors
-      vn3 += leftArm.SecondLink.TransformDirection(leftArm.LocalRelativeForward);
-      vn3 += rightArm.SecondLink.TransformDirection(rightArm.LocalRelativeForward);
+      var leftContribution = leftArm.SecondLink.TransformDirection(leftArm.LocalRelativeForward);
+      var rightContribution = rightArm.SecondLink.TransformDirection(rightArm.LocalRelativeForward);
+
+      lookAt += leftContribution;
+      lookAt += rightContribution;
 
       // determine if we tilt further forward or not
       float downQuotient = Vector3.Dot(Vector3.down, headObjectTransform.forward);
       if (downQuotient < 0) {
         // just use the half
-        vn3 += headObjectTransform.forward / 2f;
+        lookAt += headObjectTransform.forward / 2f;
       } else {
         // we are looking down, bend further
-        vn3 += headObjectTransform.forward * (Mathf.Clamp(downQuotient * 2f, 0.5f, 2f));
+        lookAt += headObjectTransform.forward * (Mathf.Clamp(downQuotient * 2f, 0.5f, 2f));
       }
 
       // get quaternion to rotate our forward to said new forward
-      if (vn3 != Vector3.zero) {
-        var toQuat = Quaternion.LookRotation(vn3);
+      if (lookAt != Vector3.zero) {
+        var toQuat = Quaternion.LookRotation(lookAt);
 
         var roteEuler = toQuat.eulerAngles;
 
@@ -129,6 +132,9 @@ namespace Yohash.FABRIK
 
         toQuat = Quaternion.Euler(roteEuler);
 
+        Debug.DrawRay(transform.position, lookAt.normalized * .5f, Color.cyan);
+        Debug.DrawRay(leftArm.SecondLink.transform.position, leftContribution.normalized * .5f, Color.yellow);
+        Debug.DrawRay(rightArm.SecondLink.transform.position, rightContribution.normalized * .5f, Color.yellow);
         transform.rotation = toQuat;
       }
     }

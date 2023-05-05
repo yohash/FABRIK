@@ -48,18 +48,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  applyConstraints: 0
+  constrainRotation: 0
   roteRight: 89
   roteLeft: -89
   roteUp: 89
   roteDown: -89
   hasPreferredDirection: 0
   preferredRelativeForward: {x: 0, y: 0, z: 0}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 0}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -272,22 +275,15 @@ MonoBehaviour:
   m_GameObject: {fileID: 2241600256657380295}
   m_Enabled: 1
   m_EditorHideFlags: 0
-  m_Script: {fileID: 11500000, guid: 9f86d6c0df433be41bd5fd83b29b7eaa, type: 3}
+  m_Script: {fileID: 11500000, guid: 5dc4ef3dbca87bf44801368654b22d98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  parentTR: {fileID: 2241600256657380294}
-  chain:
-  - {fileID: 2241600256888782526}
-  - {fileID: 2241600256357868665}
-  - {fileID: 2241600258373700227}
-  - {fileID: 2241600257783282694}
-  - {fileID: 2241600256855371659}
-  - {fileID: 2241600258265877340}
-  - {fileID: 2241600257594743244}
-  positions: []
+  LocalRelativeForward: {x: 0, y: 0, z: 0}
+  Positions: []
   locationTolerance: 0.005
-  maxIterations: 50
-  target: {fileID: 0}
+  maxIterations: 10
+  _target: {fileID: 0}
+  DEBUG_SHOW_SOLUTION: 0
 --- !u!1 &2241600256694134119
 GameObject:
   m_ObjectHideFlags: 0
@@ -516,18 +512,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  applyConstraints: 0
+  constrainRotation: 0
   roteRight: 89
   roteLeft: -89
   roteUp: 89
   roteDown: -89
   hasPreferredDirection: 0
   preferredRelativeForward: {x: 0, y: 0, z: 0}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 0}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -580,18 +579,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  applyConstraints: 0
+  constrainRotation: 0
   roteRight: 89
   roteLeft: -89
   roteUp: 89
   roteDown: -89
   hasPreferredDirection: 0
   preferredRelativeForward: {x: 0, y: 0, z: 0}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 0}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -688,6 +690,7 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 2241600257121191780}
+  - component: {fileID: 9069234996379945688}
   m_Layer: 0
   m_Name: FabrikArm
   m_TagString: Untagged
@@ -712,6 +715,20 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!114 &9069234996379945688
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 2241600257121191781}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: d83dbd40bd6f28a4fa9050f48be70e34, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  chain: {fileID: 2241600256657380297}
+  target: {fileID: 0}
 --- !u!1 &2241600257143493977
 GameObject:
   m_ObjectHideFlags: 0
@@ -924,18 +941,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  applyConstraints: 0
+  constrainRotation: 0
   roteRight: 89
   roteLeft: -89
   roteUp: 89
   roteDown: -89
   hasPreferredDirection: 0
   preferredRelativeForward: {x: 0, y: 0, z: 0}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 0}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -1154,18 +1174,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  applyConstraints: 0
+  constrainRotation: 0
   roteRight: 89
   roteLeft: -89
   roteUp: 89
   roteDown: -89
   hasPreferredDirection: 0
   preferredRelativeForward: {x: 0, y: 0, z: 0}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 0}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -1550,18 +1573,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  applyConstraints: 0
+  constrainRotation: 0
   roteRight: 89
   roteLeft: -89
   roteUp: 89
   roteDown: -89
   hasPreferredDirection: 0
   preferredRelativeForward: {x: 0, y: 0, z: 0}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 0}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0
@@ -1614,18 +1640,21 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  applyConstraints: 0
+  constrainRotation: 0
   roteRight: 89
   roteLeft: -89
   roteUp: 89
   roteDown: -89
   hasPreferredDirection: 0
   preferredRelativeForward: {x: 0, y: 0, z: 0}
-  springAlpha: 0.3
+  preferenceStrength: 0.3
   hasLookAt_PreferredDirection: 0
   lookAt_PreferredTransform: {fileID: 0}
   lookAt_PreferredRelativeVector: {x: 0, y: 0, z: 1}
   upchain: {fileID: 0}
+  _lookAtUp: {x: 0, y: 1, z: 0}
+  downstreamDistance: 0
+  upstreamDistance: 0
   DEBUG_SHOWCONE: 0
   DEBUG_SHOWDIR: 0
   DEBUG_SHOWUPSTRM: 0

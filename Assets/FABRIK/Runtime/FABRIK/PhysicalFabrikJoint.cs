@@ -34,7 +34,7 @@ namespace Yohash.FABRIK
 
     public override void LookAtUp(Vector3 up)
     {
-      _lookAtUp = up;
+      lookAtUpOverride = up;
     }
 
     public override void LookAtPosition(Vector3 lookAtPosition)
@@ -58,7 +58,7 @@ namespace Yohash.FABRIK
 
       // determine rotation directions
       var lookDir = lookAtPosition - transform.position;
-      var quat = Quaternion.LookRotation(lookDir, _lookAtUp);
+      var quat = Quaternion.LookRotation(lookDir, lookAtUpOverride);
 
       // solve rotational torque needed to meet to look requirements using
       // the stable backwards PD controller

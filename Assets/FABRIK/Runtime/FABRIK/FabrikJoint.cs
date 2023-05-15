@@ -5,56 +5,40 @@ namespace Yohash.FABRIK
   public class FabrikJoint : MonoBehaviour, IJoint
   {
     [Header("Define joint characteristics")]
-    [Range(0, 1)]
     [SerializeField] private float jointWeight = 1f;
 
     [Header("Define Conic Rotational constraints")]
     [SerializeField] private bool constrainRotation = false;
-    // rotate clockise about Y (Y=up), move right
-    [Range(0, 189)]
-    [SerializeField] private float roteRight = 89f;
-    // rotate counter-clockise about Y (Y=up), move left
-    [Range(-189, 0)]
-    [SerializeField] private float roteLeft = -89f;
-    // rotate clockise about X (X=right), move down
-    [Range(0, 189)]
-    [SerializeField] private float roteUp = 89f;
-    // rotate counter-clockwise about X (X=right), move up
-    [Range(-189, 0)]
-    [SerializeField] private float roteDown = -89f;
+    [SerializeField] private float roteRight = 60;
+    [SerializeField] private float roteLeft = -60;
+    [SerializeField] private float roteUp = 60;
+    [SerializeField] private float roteDown = -60;
 
     [Header("Define Preferred Direction")]
     [SerializeField] private bool hasPreferredDirection = false;
-    [SerializeField] private Vector3 preferredRelativeForward;
+    [SerializeField] private Vector3 preferredRelativeForward = Vector3.forward;
+    [SerializeField] private float preferredDirectionStrength = 0.3f;
 
-    [Range(0, 0.9f)]
-    [SerializeField] private float preferenceStrength = 0.3f;
+    public enum PreferredUp { None, Interpolate, Override }
+    [Header("Define Preferred Up")]
+    [SerializeField] private PreferredUp hasPreferredUp = PreferredUp.None;
+    [SerializeField] protected Vector3 lookAtUpOverride = Vector3.up;
+    [SerializeField] private float preferenceTowardsUpchain = 0.5f;
 
-    [Header("Define Preferred LookAt Direction")]
-    [SerializeField] private bool hasLookAt_PreferredDirection = false;
-    [SerializeField] private Transform lookAt_PreferredTransform;
-    [SerializeField] private Vector3 lookAt_PreferredRelativeVector = Vector3.forward;
-
-    [Header("Cached chain data")]
+    [Header("Cached display-only chain data")]
     [SerializeField] private Transform upchain;
-    [SerializeField] protected Vector3 _lookAtUp = Vector3.up;
-    [SerializeField] private float downstreamDistance;
-    [SerializeField] private float upstreamDistance;
+    [SerializeField] private Transform downchain;
+    // put in defaults here just so some math doesn't result in 0-value
+    // joint values causing divide-by-0 errors
+    [SerializeField] private float downstreamDistance = 1f;
+    [SerializeField] private float upstreamDistance = 1f;
 
     // compute the distance of the axes of each conic section
     private float coneTop;
     private float coneBot;
     private float coneRight;
     private float coneLeft;
-
     private float largestDelta;
-
-    // TODO - offload all debugging stuff into an editor script
-    [Header("DEBUG")]
-    public bool DEBUG_SHOWCONE;
-    public bool DEBUG_SHOWDIR;
-    public bool DEBUG_SHOWUPSTRM;
-    public bool DEBUG_SHOWPREF;
 
     // ****************************************************************
     //		IJoint
@@ -67,6 +51,7 @@ namespace Yohash.FABRIK
     public void SetupDownstream(IJoint downstream)
     {
       downstreamDistance = downstream.UpstreamDistance;
+      downchain = downstream.Transform;
       // precompute the cone axes lengths
       coneTop = downstreamDistance * Mathf.Tan(roteUp * Mathf.Deg2Rad);
       coneBot = downstreamDistance * Mathf.Tan(roteDown * Mathf.Deg2Rad);
@@ -110,33 +95,24 @@ namespace Yohash.FABRIK
 
     public virtual void LookAtPosition(Vector3 lookAtPosition)
     {
-      if (hasLookAt_PreferredDirection && lookAt_PreferredTransform != null) {
-        transform.LookAt(lookAtPosition, lookAt_PreferredTransform.TransformDirection(lookAt_PreferredRelativeVector));
-      } else {
-        transform.LookAt(lookAtPosition);
+      switch (hasPreferredUp) {
+        case PreferredUp.Interpolate:
+          var up = Vector3.Lerp(downchain.up, upchain.up, preferenceTowardsUpchain);
+          transform.LookAt(lookAtPosition, up);
+          break;
+        case PreferredUp.Override:
+          transform.LookAt(lookAtPosition, lookAtUpOverride);
+          break;
+        case PreferredUp.None:
+        default:
+          transform.LookAt(lookAtPosition);
+          break;
       }
     }
 
     public virtual void LookAtUp(Vector3 up)
     {
-      _lookAtUp = up;
-    }
-
-    // ****************************************************************
-    //		MONOBEHAVIOURS
-    // ****************************************************************
-    void Update()
-    {
-      if (DEBUG_SHOWDIR) {
-        Debug.DrawRay(transform.position, transform.right, Color.black);
-        Debug.DrawRay(transform.position, transform.up, Color.black);
-        Debug.DrawRay(transform.position, transform.forward, Color.black);
-      }
-      if (DEBUG_SHOWUPSTRM) {
-        Debug.DrawRay(upchain.position, upchain.right, Color.gray);
-        Debug.DrawRay(upchain.position, upchain.up, Color.gray);
-        Debug.DrawRay(upchain.position, upchain.forward, Color.gray);
-      }
+      lookAtUpOverride = up;
     }
 
     // ********************************************************************************************************************************
@@ -175,38 +151,6 @@ namespace Yohash.FABRIK
 
       // test to see if the point is in bounds of the ellipse
       float ellipse = (xPart * xPart) / (xBnd * xBnd) + (yPart * yPart) / (yBnd * yBnd);
-
-
-      if (DEBUG_SHOWCONE) {
-        Debug.DrawRay(transform.position + (upchain.forward * h), planarProjection, Color.blue);
-        Debug.DrawRay(transform.position, newDirection, Color.yellow);
-        Debug.DrawRay(transform.position, upchain.right * xPart, Color.magenta);
-        Debug.DrawRay(transform.position, upchain.up * yPart, Color.magenta);
-
-        for (float theta = 0; theta < Mathf.PI * 2f; theta += Mathf.PI / 100f) {
-          var xp = Mathf.Sign(Mathf.Cos(theta));
-          var yp = Mathf.Sign(Mathf.Sin(theta));
-
-          coneTop = downstreamDistance * Mathf.Tan(roteUp * Mathf.Deg2Rad);
-          coneBot = downstreamDistance * Mathf.Tan(roteDown * Mathf.Deg2Rad);
-          coneRight = downstreamDistance * Mathf.Tan(roteRight * Mathf.Deg2Rad);
-          coneLeft = downstreamDistance * Mathf.Tan(roteLeft * Mathf.Deg2Rad);
-          largestDelta = Mathf.Max(Mathf.Abs(coneTop) + Mathf.Abs(coneBot), Mathf.Abs(coneLeft) + Mathf.Abs(coneRight));
-
-          var xb = xp > 0 ? coneRight * scale : -coneLeft * scale;
-          var yb = yp > 0 ? coneTop * scale : -coneBot * scale;
-
-          var dtx = (xb / scale) * Mathf.Cos(theta);
-          var dty = (yb / scale) * Mathf.Sin(theta);
-
-          Debug.DrawRay(
-            transform.position,
-            (upchain.forward * downstreamDistance + (upchain.right * dtx + upchain.up * dty)).normalized * 0.1f,
-            Color.white
-          );
-        }
-      }
-
       if (ellipse > 1 || !inside90) {
         // out of bounds, and not on ellipse; find the closest point to the requested
         return solveEllipsePoint(xBnd, yBnd, xPart, yPart, h);
@@ -243,7 +187,7 @@ namespace Yohash.FABRIK
       // get the vector between the two points, this is the distance on which spring constant
       // is enforced
       var d_1 = globalPreferredProjection - planarProjection;
-      var d_spring = d_1 * preferenceStrength;
+      var d_spring = d_1 * preferredDirectionStrength;
 
       // get the distance that the target traveled
 
@@ -254,18 +198,6 @@ namespace Yohash.FABRIK
 
       // adjust the global
       var constrainedPosition = newPosition + d_spring * delta;
-
-      if (DEBUG_SHOWPREF) {
-        Debug.DrawRay(transform.position, upchain.TransformDirection(preferredRelativeForward), Color.cyan);
-        Debug.DrawRay(upchain.position, upchain.forward * downstreamDistance, Color.yellow);
-        Debug.DrawRay(transform.position, newDirection, Color.blue);
-        Debug.DrawRay(transform.position + upchain.forward * downstreamDistance, planarProjection, Color.magenta);
-        Debug.DrawRay(transform.position + upchain.forward * downstreamDistance, globalPreferredProjection, Color.red);
-        //Debug.DrawRay(transform.position + upchain.forward * downstreamDistance, globalPreferredProjection, Color.cyan);
-        Debug.DrawRay(transform.position, (constrainedPosition - transform.position), Color.green);
-      }
-
-
       return constrainedPosition;
     }
 
@@ -286,11 +218,6 @@ namespace Yohash.FABRIK
       var rotated = upchain.right * adjusted.x + upchain.up * adjusted.y + upchain.forward * adjusted.z;
       // add the rotated, scaled direction to adjusted
       adjusted = rotated + transform.position;
-
-      if (DEBUG_SHOWCONE && constrainRotation) {
-        Debug.DrawLine(transform.position, adjusted, Color.red);
-      }
-
       return adjusted;
     }
   }

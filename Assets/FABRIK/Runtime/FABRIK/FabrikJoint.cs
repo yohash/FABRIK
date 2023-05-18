@@ -4,28 +4,28 @@ namespace Yohash.FABRIK
 {
   public class FabrikJoint : MonoBehaviour, IJoint
   {
-    [Header("Define joint characteristics")]
+    // Joint Characteristics
     [SerializeField] private float jointWeight = 1f;
 
-    [Header("Define Conic Rotational constraints")]
+    // Conic rotational constraints
     [SerializeField] private bool constrainRotation = false;
     [SerializeField] private float roteRight = 60;
     [SerializeField] private float roteLeft = -60;
     [SerializeField] private float roteUp = 60;
     [SerializeField] private float roteDown = -60;
 
-    [Header("Define Preferred Direction")]
+    // define preferred forward (+z) direction
     [SerializeField] private bool hasPreferredDirection = false;
     [SerializeField] private Vector3 preferredRelativeForward = Vector3.forward;
     [SerializeField] private float preferredDirectionStrength = 0.3f;
 
+    // Define preferred up-facing technique
     public enum PreferredUp { None, Interpolate, Override }
-    [Header("Define Preferred Up")]
     [SerializeField] private PreferredUp hasPreferredUp = PreferredUp.None;
     [SerializeField] protected Vector3 lookAtUpOverride = Vector3.up;
     [SerializeField] private float preferenceTowardsUpchain = 0.5f;
 
-    [Header("Cached display-only chain data")]
+    // Misc cached variables
     [SerializeField] private Transform upchain;
     [SerializeField] private Transform downchain;
     // put in defaults here just so some math doesn't result in 0-value

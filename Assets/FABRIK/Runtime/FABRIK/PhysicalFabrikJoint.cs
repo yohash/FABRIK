@@ -5,25 +5,21 @@ namespace Yohash.FABRIK
 {
   public class PhysicalFabrikJoint : FabrikJoint
   {
-    [Header("Rotational PD controller")]
+    // Rotation PD controller
     [SerializeField] private bool applyRotationForce = false;
     [SerializeField] private BackwardsPdController rotator;
-    [SerializeField] private Vector3 torque;
+    [SerializeField] private Vector3 outputTorque;
 
-    [Header("Translation PD controller")]
+    // Translation PD controller
     [SerializeField] private bool applyTranslationForce = false;
     [SerializeField] private bool matchVelocity = false;
     [SerializeField] private BackwardsPdController translator;
-    [SerializeField] private Vector3 throttle;
+    [SerializeField] private Vector3 outputThrottle;
 
     [Header("Internal vars")]
     [SerializeField] private Vector3 target;
-    [SerializeField] private float delta;
     [SerializeField] private Vector3 targetLast;
     [SerializeField] private Vector3 lookAtPosition;
-
-    public bool SHOW_FORCE_DIR = false;
-    public bool SHOW_TARGET_DIR = false;
 
     private Rigidbody rb;
 
@@ -50,7 +46,7 @@ namespace Yohash.FABRIK
       float dt = Time.fixedDeltaTime;
 
       var targetVelocity = (target - targetLast) / Time.fixedDeltaTime;
-      throttle = matchVelocity
+      outputThrottle = matchVelocity
         ? translator.UpdatePosition(dt, transform.position, target, rb.velocity, targetVelocity)
         : translator.UpdatePosition(dt, transform.position, target, rb.velocity);
 
@@ -62,7 +58,7 @@ namespace Yohash.FABRIK
 
       // solve rotational torque needed to meet to look requirements using
       // the stable backwards PD controller
-      torque = rotator.UpdateRotation(
+      outputTorque = rotator.UpdateRotation(
         dt,
         quat,
         transform.rotation,
@@ -73,23 +69,11 @@ namespace Yohash.FABRIK
 
       // finally, apply the forces
       if (applyTranslationForce) {
-        rb.AddForce(throttle);
+        rb.AddForce(outputThrottle);
       }
       if (applyRotationForce) {
-        rb.AddTorque(torque);
+        rb.AddTorque(outputTorque);
       }
-    }
-
-    private void LateUpdate()
-    {
-      if (SHOW_FORCE_DIR) {
-        Debug.DrawRay(transform.position, throttle.normalized * 0.25f, Color.yellow);
-      }
-      if (SHOW_TARGET_DIR) {
-        Debug.DrawRay(transform.position, target - transform.position, Color.cyan);
-      }
-
-      delta = (target - transform.position).magnitude;
     }
   }
 }

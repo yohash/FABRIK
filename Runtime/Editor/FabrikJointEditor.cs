@@ -47,7 +47,7 @@ namespace Yohash.FABRIK
     private float preferenceTowardsUpchainValue;
 
     private bool showDesiredUp = false;
-    private MatchingArrowGizmo _ArrowGizmo;
+    private MatchingArrowGizmo _arrowGizmo;
 
     // ** Other display values
     private SerializedProperty upchain;
@@ -55,14 +55,14 @@ namespace Yohash.FABRIK
     private SerializedProperty downstreamDistance;
     private SerializedProperty upstreamDistance;
 
-    private GUIStyle Style {
+    protected GUIStyle Style {
       get {
         var style = EditorStyles.label;
         return style;
       }
     }
 
-    private void OnEnable()
+    protected virtual void OnEnable()
     {
       // *** Joint Weight
       jointWeight = serializedObject.FindProperty("jointWeight");
@@ -112,25 +112,28 @@ namespace Yohash.FABRIK
       defineJointWeight();
 
       // *** Constrain Rotation
-      EditorGUILayout.LabelField("Define Conic Rotational Constraints", Style.Bold());
-      if (constrainRotation.boolValue = GUILayout.Toggle(constrainRotation.boolValue, "  Constrain Rotation")) {
+      EditorGUILayout.PropertyField(constrainRotation);
+      if (constrainRotation.boolValue) {
         drawConstrainRotation();
       }
 
       // *** Preferred Forward direction
-      EditorGUILayout.LabelField("Define Preferred Direction", Style.Bold());
-      if (hasPreferredDirection.boolValue = GUILayout.Toggle(hasPreferredDirection.boolValue, "  Has Preferred Direction")) {
+      EditorGUILayout.PropertyField(hasPreferredDirection);
+      if (hasPreferredDirection.boolValue) {
         drawPreferredForward();
       }
 
       // *** Preferred Up Facing
-      //EditorGUILayout.LabelField("Define Preferred Up", Style.Bold());
       EditorGUILayout.PropertyField(hasPreferredUp);
       if (hasPreferredUp.intValue > 0) {
         drawPreferredUp();
       }
 
+      EditorGUILayout.LabelField("");
+
       // *** Misc.
+      GUI.color = new Color(0.8f, 0.8f, 0.8f, 0.5f);
+      EditorGUILayout.LabelField("Cached display-only chain data", Style.Bold());
       EditorGUILayout.PropertyField(upchain);
       EditorGUILayout.PropertyField(downchain);
       EditorGUILayout.PropertyField(downstreamDistance);
@@ -144,11 +147,11 @@ namespace Yohash.FABRIK
 
     private void defineJointWeight()
     {
-      EditorGUILayout.LabelField("Define Joint Weight", Style.Bold());
+      //EditorGUILayout.LabelField("Define Joint Weight", Style.Bold());
 
       EditorGUILayout.BeginHorizontal();
-      EditorGUILayout.LabelField("", GUILayout.MaxWidth(30));
-      EditorGUILayout.LabelField("Joint Weight:  ", GUILayout.MaxWidth(100));
+      //EditorGUILayout.LabelField("", GUILayout.MaxWidth(30));
+      EditorGUILayout.LabelField("Joint Weight:    ", GUILayout.MaxWidth(100));
       jointWeightValue = EditorGUILayout.Slider(jointWeightValue, 0, 1);
       EditorGUILayout.EndHorizontal();
 
@@ -161,7 +164,7 @@ namespace Yohash.FABRIK
 
       EditorGUILayout.BeginHorizontal();
       EditorGUILayout.LabelField("", GUILayout.MaxWidth(30));
-      EditorGUILayout.LabelField("X-Axis Limits", Style.Bold());
+      EditorGUILayout.LabelField("X-Axis Limits");
       EditorGUILayout.EndHorizontal();
 
       EditorGUILayout.BeginHorizontal();
@@ -175,7 +178,7 @@ namespace Yohash.FABRIK
 
       EditorGUILayout.BeginHorizontal();
       EditorGUILayout.LabelField("", GUILayout.MaxWidth(30));
-      EditorGUILayout.LabelField("Y-Axis Limits", Style.Bold());
+      EditorGUILayout.LabelField("Y-Axis Limits");
       EditorGUILayout.EndHorizontal();
 
       EditorGUILayout.BeginHorizontal();
@@ -199,7 +202,7 @@ namespace Yohash.FABRIK
 
       EditorGUILayout.BeginHorizontal();
       EditorGUILayout.LabelField("", GUILayout.MaxWidth(30));
-      showCone = GUILayout.Toggle(showCone, "  Show Cone");
+      showCone = GUILayout.Toggle(showCone, "    Show Cone");
       EditorGUILayout.EndHorizontal();
 
       if (showCone) {
@@ -218,6 +221,8 @@ namespace Yohash.FABRIK
           DestroyImmediate(_coneGizmo);
         }
       }
+
+      EditorGUILayout.LabelField("");
     }
 
     private void drawPreferredForward()
@@ -239,7 +244,7 @@ namespace Yohash.FABRIK
 
       EditorGUILayout.BeginHorizontal();
       EditorGUILayout.LabelField("", GUILayout.MaxWidth(30));
-      showPreferredDirection = GUILayout.Toggle(showPreferredDirection, "  Show Line");
+      showPreferredDirection = GUILayout.Toggle(showPreferredDirection, "    Show Line");
       EditorGUILayout.EndHorizontal();
 
       if (showPreferredDirection) {
@@ -255,6 +260,7 @@ namespace Yohash.FABRIK
           DestroyImmediate(_lineGizmo);
         }
       }
+      EditorGUILayout.LabelField("");
     }
 
     private void drawPreferredUp()
@@ -291,16 +297,16 @@ namespace Yohash.FABRIK
       {
         EditorGUILayout.BeginHorizontal();
         EditorGUILayout.LabelField("", GUILayout.MaxWidth(30));
-        showDesiredUp = GUILayout.Toggle(showDesiredUp, "  Show Desired Up");
+        showDesiredUp = GUILayout.Toggle(showDesiredUp, "    Show Desired Up");
         EditorGUILayout.EndHorizontal();
       }
 
       if (showDesiredUp) {
-        if (_ArrowGizmo == null) {
-          _ArrowGizmo = scriptObject.GetComponent<MatchingArrowGizmo>();
+        if (_arrowGizmo == null) {
+          _arrowGizmo = scriptObject.GetComponent<MatchingArrowGizmo>();
         }
-        if (_ArrowGizmo == null) {
-          _ArrowGizmo = scriptObject.AddComponent<MatchingArrowGizmo>();
+        if (_arrowGizmo == null) {
+          _arrowGizmo = scriptObject.AddComponent<MatchingArrowGizmo>();
         }
 
         var transformUp = upchain.objectReferenceValue as Transform;
@@ -311,18 +317,17 @@ namespace Yohash.FABRIK
             break;
           case FabrikJoint.PreferredUp.Interpolate:
             var up = Vector3.Lerp(transformUp.up, transformDown.up, preferenceTowardsUpchainValue);
-            _ArrowGizmo.RelativeUp = up;
+            _arrowGizmo.RelativeUp = up;
             break;
           case FabrikJoint.PreferredUp.Override:
-            _ArrowGizmo.RelativeUp = lookAtUpOverride.vector3Value;
+            _arrowGizmo.RelativeUp = lookAtUpOverride.vector3Value;
             break;
           default:
             break;
         }
-
       } else {
-        if (_ArrowGizmo != null) {
-          DestroyImmediate(_ArrowGizmo);
+        if (_arrowGizmo != null) {
+          DestroyImmediate(_arrowGizmo);
         }
       }
     }

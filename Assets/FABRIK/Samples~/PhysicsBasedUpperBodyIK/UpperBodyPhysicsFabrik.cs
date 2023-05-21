@@ -4,7 +4,7 @@ using Yohash.Propulsion;
 namespace Yohash.FABRIK
 {
   /// <summary>
-  /// Upper torso FABRIK.
+  /// Upper body physics-based FABRIK.
   ///
   /// Designed specifically for a torso with two arms.
   /// Optionally a head may be declared, and if so, will contribute
@@ -27,7 +27,6 @@ namespace Yohash.FABRIK
     [SerializeField] private Transform headObjectTransform;
     // cached variables
     private Quaternion lastHeadRotation;
-
 
     [Header("Rotational PD controller")]
     [SerializeField] private bool applyRotationForce = false;
@@ -120,8 +119,6 @@ namespace Yohash.FABRIK
       // Place the torso center directly below the head-tracker
       var newTorsoPosition = head.TargetPose.position - Vector3.up * head.ChainLength * 0.9f;
 
-      Debug.DrawLine(transform.position, newTorsoPosition, Color.red);
-
       throttle = translator.UpdatePosition(
         dt,
         torso.position,
@@ -132,7 +129,6 @@ namespace Yohash.FABRIK
       if (applyTranslationForce) {
         torsoRb.AddForce(throttle);
       }
-      // transform.position = newTorsoPosition;
 
       lookAt = Vector3.zero;
       if (leftArm.Positions.Count > 2) {
@@ -141,12 +137,6 @@ namespace Yohash.FABRIK
         var leftContribution = -Vector3.Cross(leftShoulderFacing, Vector3.up);
         var rightShoulderFacing = rightArm.Positions[2] - rightArm.Positions[1];
         var rightContribution = Vector3.Cross(rightShoulderFacing, Vector3.up);
-        //var leftContribution = leftArm.SecondLink.TransformDirection(leftArm.LocalRelativeForward);
-        //var rightContribution = rightArm.SecondLink.TransformDirection(rightArm.LocalRelativeForward);
-
-        Debug.DrawRay(leftArm.SecondLink.transform.position, leftContribution.normalized * .5f, Color.yellow);
-        Debug.DrawRay(rightArm.SecondLink.transform.position, rightContribution.normalized * .5f, Color.yellow);
-
         lookAt += leftContribution;
         lookAt += rightContribution;
       }
@@ -162,7 +152,6 @@ namespace Yohash.FABRIK
 
       // determine rotation directions
       var quat = Quaternion.LookRotation(lookAt, Vector3.up);
-      Debug.DrawRay(torso.position, lookAt.normalized * .5f, Color.cyan);
       // solve for the desired torso rotation using the stable backwards PD rotation controller
       torque = rotator.UpdateRotation(
          dt,

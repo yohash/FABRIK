@@ -10,3 +10,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Added
 
 - Physics-based upper torso sample scene and associated code changes
+
+## [0.3.0] - 2023-05-21
+
+### Changed
+
+- Significant code re-work for readability and code de-duplication

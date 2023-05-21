@@ -1,5 +1,4 @@
-﻿using System.Linq;
-using UnityEngine;
+﻿using UnityEngine;
 
 namespace Yohash.FABRIK
 {
@@ -131,10 +130,6 @@ namespace Yohash.FABRIK
         if (zAxisRotationIgnore) { roteEuler.z = 0f; }
 
         toQuat = Quaternion.Euler(roteEuler);
-
-        Debug.DrawRay(transform.position, lookAt.normalized * .5f, Color.cyan);
-        Debug.DrawRay(leftArm.SecondLink.transform.position, leftContribution.normalized * .5f, Color.yellow);
-        Debug.DrawRay(rightArm.SecondLink.transform.position, rightContribution.normalized * .5f, Color.yellow);
         transform.rotation = toQuat;
       }
     }

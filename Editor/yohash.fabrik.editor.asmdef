@@ -1,0 +1,16 @@
+{
+    "name": "yohash.fabrik.editor",
+    "rootNamespace": "",
+    "references": [
+        "yohash.fabrik.runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

@@ -4,7 +4,6 @@ using UnityEngine;
 
 namespace Yohash.FABRIK
 {
-  [ExecuteAlways]
   public class FabrikChain : MonoBehaviour
   {
     public Transform SecondLink {

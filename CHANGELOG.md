@@ -22,3 +22,9 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ### Fixed
 
 - Fixed bugs on the Custom IK and the Physics Based Upper Torse FABRIK sample scenes
+
+## [0.3.2] - 2023-05-22
+
+### Fixed
+
+- Cone gizmo shows cone length according to downstream joint

@@ -216,6 +216,7 @@ namespace Yohash.FABRIK
         _coneGizmo.PosY = upLimit;
         _coneGizmo.NegX = leftLimit;
         _coneGizmo.NegY = downLimit;
+        _coneGizmo.Length = ((IJoint)target).DownstreamDistance / 2f;
       } else {
         if (_coneGizmo != null) {
           DestroyImmediate(_coneGizmo);

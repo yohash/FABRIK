@@ -8,10 +8,11 @@ namespace Yohash.FABRIK
     public float NegX = 1.0f;
     public float PosY = 1.0f;
     public float NegY = 1.0f;
+    public float Length = 1.0f;
 
     private void OnDrawGizmos()
     {
-      var mesh = ConeMeshGenerator.CreateConeMesh(PosX, NegX, PosY, NegY, 1, 0, 80);
+      var mesh = ConeMeshGenerator.CreateConeMesh(PosX, NegX, PosY, NegY, Length, 0, 80);
       Gizmos.color = new Color(1, 1, 0, 1);
       Gizmos.DrawWireMesh(mesh, transform.position, transform.rotation);
     }

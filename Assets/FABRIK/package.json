@@ -1,6 +1,6 @@
 {
   "name": "com.yohash.fabrik",
-  "version": "0.3.1",
+  "version": "0.3.2",
   "displayName": "FABRIK",
   "description": "Implementation of Forward and Backward Reaching Inverse Kinematics (FABRIK), a fast IK solution",
   "unity": "2019.1",

@@ -187,7 +187,7 @@ namespace Yohash.FABRIK
       for (int i = 0; i < Positions.Count - 1; i++) {
         chain[i].AssignPosition(Positions[i]);
         chain[i].LookAtPosition(Positions[i + 1]);
-        chain[i].LookAtUp(Vector3.up);
+        //chain[i].LookAtUp(Vector3.up);
       }
       chain[chain.Count - 1].AssignPosition(Positions[Positions.Count - 1]);
       chain[chain.Count - 1].LookAtPosition(_target.position + _target.forward);

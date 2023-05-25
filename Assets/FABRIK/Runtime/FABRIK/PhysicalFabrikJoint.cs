@@ -28,11 +28,6 @@ namespace Yohash.FABRIK
       target = position;
     }
 
-    public override void LookAtUp(Vector3 up)
-    {
-      lookAtUpOverride = up;
-    }
-
     public override void LookAtPosition(Vector3 lookAtPosition)
     {
       this.lookAtPosition = lookAtPosition;
@@ -54,7 +49,21 @@ namespace Yohash.FABRIK
 
       // determine rotation directions
       var lookDir = lookAtPosition - transform.position;
-      var quat = Quaternion.LookRotation(lookDir, lookAtUpOverride);
+
+      var quat = Quaternion.identity;
+      switch (hasPreferredUp) {
+        case PreferredUp.Interpolate:
+          var up = Vector3.Lerp(downchain.up, upchain.up, preferenceTowardsUpchain);
+          quat = Quaternion.LookRotation(lookDir, up);
+          break;
+        case PreferredUp.Override:
+          quat = Quaternion.LookRotation(lookDir, lookAtUpOverride);
+          break;
+        case PreferredUp.None:
+        default:
+          quat = Quaternion.LookRotation(lookDir, Vector3.up);
+          break;
+      }
 
       // solve rotational torque needed to meet to look requirements using
       // the stable backwards PD controller

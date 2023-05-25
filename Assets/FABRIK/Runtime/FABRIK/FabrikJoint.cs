@@ -21,13 +21,13 @@ namespace Yohash.FABRIK
 
     // Define preferred up-facing technique
     public enum PreferredUp { None, Interpolate, Override }
-    [SerializeField] private PreferredUp hasPreferredUp = PreferredUp.None;
+    [SerializeField] protected PreferredUp hasPreferredUp = PreferredUp.None;
     [SerializeField] protected Vector3 lookAtUpOverride = Vector3.up;
-    [SerializeField] private float preferenceTowardsUpchain = 0.5f;
+    [SerializeField] protected float preferenceTowardsUpchain = 0.5f;
 
     // Misc cached variables
-    [SerializeField] private Transform upchain;
-    [SerializeField] private Transform downchain;
+    [SerializeField] protected Transform upchain;
+    [SerializeField] protected Transform downchain;
     // put in defaults here just so some math doesn't result in 0-value
     // joint values causing divide-by-0 errors
     [SerializeField] private float downstreamDistance = 1f;
@@ -110,7 +110,7 @@ namespace Yohash.FABRIK
       }
     }
 
-    public virtual void LookAtUp(Vector3 up)
+    public void LookAtUp(Vector3 up)
     {
       lookAtUpOverride = up;
     }

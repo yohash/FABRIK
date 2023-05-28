@@ -105,7 +105,7 @@ namespace Yohash.FABRIK
           break;
         case PreferredUp.None:
         default:
-          transform.LookAt(lookAtPosition);
+          transform.LookAt(lookAtPosition, Vector3.up);
           break;
       }
     }

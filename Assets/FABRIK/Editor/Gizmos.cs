@@ -8,11 +8,11 @@ namespace Yohash.FABRIK
     public float NegX = 1.0f;
     public float PosY = 1.0f;
     public float NegY = 1.0f;
-    public float Length = 1.0f;
+    public float Length = 0.15f;
 
     private void OnDrawGizmos()
     {
-      var mesh = ConeMeshGenerator.CreateConeMesh(PosX, NegX, PosY, NegY, Length, 0, 80);
+      var mesh = ConeMeshGenerator.CreateConeMesh(PosX, NegX, PosY, NegY, Length, 0, 360);
       Gizmos.color = new Color(1, 1, 0, 1);
       Gizmos.DrawWireMesh(mesh, transform.position, transform.rotation);
     }
@@ -97,21 +97,21 @@ namespace Yohash.FABRIK
       {
         float angle = (min + angleStep * i) * Mathf.Deg2Rad;
 
-        var xp = Mathf.Sign(Mathf.Cos(angle));
-        var yp = Mathf.Sign(Mathf.Sin(angle));
-
         var coneTop = height * Mathf.Tan(py * Mathf.Deg2Rad);
         var coneBot = height * Mathf.Tan(ny * Mathf.Deg2Rad);
         var coneRight = height * Mathf.Tan(px * Mathf.Deg2Rad);
         var coneLeft = height * Mathf.Tan(nx * Mathf.Deg2Rad);
 
-        var xb = xp > 0 ? coneRight : -coneLeft;
-        var yb = yp > 0 ? coneTop : -coneBot;
+        var xSign = Mathf.Sign(Mathf.Cos(angle));
+        var ySign = Mathf.Sign(Mathf.Sin(angle));
 
-        var dtx = xb * Mathf.Cos(angle);
-        var dty = yb * Mathf.Sin(angle);
+        var a = xSign > 0 ? coneRight : -coneLeft;
+        var b = ySign > 0 ? coneTop : -coneBot;
 
-        return new Vector3(dtx, dty, 1).normalized * height;
+        var x = a * Mathf.Cos(angle);
+        var y = b * Mathf.Sin(angle);
+
+        return new Vector3(x, y, height).normalized * height;
       }
 
       // Generate vertices and UV coordinates for the open edge

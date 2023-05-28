@@ -55,15 +55,15 @@ namespace Yohash.FABRIK
     void Update()
     {
       if (DEBUG_SHOW_SOLUTION) {
-        drawSolution();
+        drawSolution(Color.green);
       }
     }
 
-    private void drawSolution()
+    private void drawSolution(Color c)
     {
-      Debug.DrawRay(Positions[0], transform.position - Positions[0], Color.green);
+      Debug.DrawRay(Positions[0], transform.position - Positions[0], c);
       for (int i = 1; i < Positions.Count; i++) {
-        Debug.DrawRay(Positions[i], Positions[i - 1] - Positions[i], Color.green);
+        Debug.DrawRay(Positions[i], Positions[i - 1] - Positions[i], c);
       }
     }
 
@@ -152,6 +152,10 @@ namespace Yohash.FABRIK
         // save that new position in this forwward step
         Positions[i - 1] = final;
       }
+
+      if (DEBUG_SHOW_SOLUTION) {
+        drawSolution(Color.red);
+      }
     }
 
     public void Forward()
@@ -178,6 +182,9 @@ namespace Yohash.FABRIK
 
         // finally save that new position in this forwward step
         Positions[i + 1] = final;
+      }
+      if (DEBUG_SHOW_SOLUTION) {
+        drawSolution(Color.blue);
       }
     }
 

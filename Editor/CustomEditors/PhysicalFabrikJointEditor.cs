@@ -40,14 +40,14 @@ namespace Yohash.FABRIK
 
       EditorGUILayout.LabelField("Physical Fabrik Joint", Style.Bold());
 
-      EditorGUILayout.BeginVertical(FabrikEditorValues.headerOpen.Value);
+      EditorGUILayout.BeginVertical(FabrikEditorValues.windowStyle);
       EditorGUILayout.PropertyField(applyRotationForce);
       if (applyRotationForce.boolValue) {
         drawRotationController();
       }
       EditorGUILayout.EndVertical();
 
-      EditorGUILayout.BeginVertical(FabrikEditorValues.headerOpen.Value);
+      EditorGUILayout.BeginVertical(FabrikEditorValues.windowStyle);
       EditorGUILayout.PropertyField(applyTranslationForce);
       if (applyTranslationForce.boolValue) {
         drawTranslationController();

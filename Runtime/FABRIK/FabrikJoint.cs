@@ -26,17 +26,12 @@ namespace Yohash.FABRIK
     [SerializeField] protected float preferenceTowardsUpchain = 0.5f;
 
     // Misc cached variables
-    [SerializeField] public Transform upchain;
-    [SerializeField] public Transform downchain;
+    [SerializeField] protected Transform upchain;
+    [SerializeField] protected Transform downchain;
     // put in defaults here just so some math doesn't result in 0-value
     // joint values causing divide-by-0 errors
     [SerializeField] private float downstreamDistance = 1f;
     [SerializeField] private float upstreamDistance = 1f;
-
-    // cached vars for gizmos
-    public Vector3 originalNewDownstrream;
-    public Vector3 constrainedDirectionDownstream;
-    public Vector3 constrainedRotationDownstream;
 
     // compute the distance of the axes of each conic section
     private float coneTop;
@@ -82,19 +77,16 @@ namespace Yohash.FABRIK
     public Vector3 ConstrainDownstreamPoint(Vector3 newDownstreamPosition)
     {
       var constrainedDownstream = newDownstreamPosition;
-      originalNewDownstrream = newDownstreamPosition;
       // next, we see if this joint has a preferred relative position, and further constrain
       // the point to prefer this relative position
       if (hasPreferredDirection) {
         constrainedDownstream = applyPreferredDirection(constrainedDownstream);
-        constrainedDirectionDownstream = constrainedDownstream;
       }
 
       // first, we see if this joint has constrained movement, and refit the desired position to
       // the outisde of the conic section in our plane of movement
       if (constrainRotation) {
         constrainedDownstream = constrainToCone(constrainedDownstream);
-        constrainedRotationDownstream = constrainedDownstream;
       }
 
       return constrainedDownstream;

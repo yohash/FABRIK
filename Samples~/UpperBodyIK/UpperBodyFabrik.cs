@@ -18,6 +18,8 @@ namespace Yohash.FABRIK
     [Header("Left and Right Arm Chains")]
     [SerializeField] private FabrikChain leftArm;
     [SerializeField] private FabrikChain rightArm;
+    [SerializeField] private Vector3 leftArmLocaRelativeForward;
+    [SerializeField] private Vector3 rightArmLocalRelativeForward;
 
     // if we want to override any axis of the torso's rotation
     [Header("Torso Rotation Overrides")]
@@ -37,8 +39,17 @@ namespace Yohash.FABRIK
     void Start()
     {
       var pose = transform.ToPose();
-      leftArm.Intialize(pose);
-      rightArm.Intialize(pose);
+      leftArmLocaRelativeForward = computeLocalRelativeForward(pose, leftArm.SecondLink);
+      rightArmLocalRelativeForward = computeLocalRelativeForward(pose, rightArm.SecondLink);
+    }
+
+    private Vector3 computeLocalRelativeForward(Pose parent, Transform joint)
+    {
+      float rt = Vector3.Dot(parent.forward, joint.right);
+      float fwd = Vector3.Dot(parent.forward, joint.forward);
+      float up = Vector3.Dot(parent.forward, joint.up);
+
+      return new Vector3(rt, up, fwd);
     }
 
     private void Update()
@@ -47,9 +58,6 @@ namespace Yohash.FABRIK
       solveIK();
     }
 
-    // ****************************************************************
-    //    PUBLIC ACCESSORS
-    // ****************************************************************
     private void solveIK()
     {
       solve();
@@ -102,8 +110,8 @@ namespace Yohash.FABRIK
 
       var lookAt = Vector3.zero;
       // adjust the rotation to face in the averaged relative forward vectors
-      var leftContribution = leftArm.SecondLink.TransformDirection(leftArm.LocalRelativeForward);
-      var rightContribution = rightArm.SecondLink.TransformDirection(rightArm.LocalRelativeForward);
+      var leftContribution = leftArm.SecondLink.TransformDirection(leftArmLocaRelativeForward);
+      var rightContribution = rightArm.SecondLink.TransformDirection(rightArmLocalRelativeForward);
 
       lookAt += leftContribution;
       lookAt += rightContribution;

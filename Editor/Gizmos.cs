@@ -10,38 +10,6 @@ namespace Yohash.FABRIK
     public float DownAngle = 1.0f;
     public float Length = 0.15f;
 
-    public Vector3 NewGlobalPosition;
-    public Vector3 ConstrainedGlobalPosition;
-
-    private void OnDrawGizmosSelected()
-    {
-      var newVector = (NewGlobalPosition - transform.position);
-      var constrainedVector = (ConstrainedGlobalPosition - transform.position);
-
-      // if lines are the same, they were not constrained
-      if (newVector == constrainedVector) {
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine
-          (transform.position,
-          transform.position + newVector.normalized * Length * 1.25f
-        );
-        return;
-      }
-
-      // else, the line was constrained, so we'll put the original in red
-      Gizmos.color = Color.red;
-      Gizmos.DrawLine
-        (transform.position,
-        transform.position + newVector.normalized * Length * 1.25f
-      );
-
-      Gizmos.color = Color.green;
-      Gizmos.DrawLine
-        (transform.position,
-        transform.position + constrainedVector.normalized * Length * 1.25f
-      );
-    }
-
     private void OnDrawGizmos()
     {
       var mesh = ConeMeshGenerator.CreateConeMesh(
@@ -62,8 +30,6 @@ namespace Yohash.FABRIK
   public class LineGizmo : MonoBehaviour
   {
     public Vector3 PreferredForward;
-    public Vector3 OriginalForward;
-    public Vector3 ConstrainedForward;
     public float Length = 0.2f;
 
     private void OnDrawGizmos()
@@ -72,29 +38,6 @@ namespace Yohash.FABRIK
       Gizmos.DrawLine(
         transform.position,
         transform.position + transform.TransformDirection(PreferredForward).normalized * Length
-      );
-
-      // if lines are the same, they were not constrained
-      if (OriginalForward == ConstrainedForward) {
-        Gizmos.color = Color.green;
-        Gizmos.DrawLine
-          (transform.position,
-          transform.position + OriginalForward.normalized * Length
-        );
-        return;
-      }
-
-      // else, the line was constrained, so we'll put the original in red
-      Gizmos.color = Color.red;
-      Gizmos.DrawLine
-        (transform.position,
-        transform.position + OriginalForward.normalized * Length
-      );
-
-      Gizmos.color = Color.green;
-      Gizmos.DrawLine
-        (transform.position,
-        transform.position + ConstrainedForward.normalized * Length
       );
     }
   }

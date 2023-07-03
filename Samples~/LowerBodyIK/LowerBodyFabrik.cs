@@ -52,13 +52,6 @@ namespace Yohash.FABRIK
     // ****************************************************************
     //    MONOBEHAVIOURS
     // ****************************************************************
-    void Start()
-    {
-      var pose = transform.ToPose();
-      leftLeg.Intialize(pose);
-      rightLeg.Intialize(pose);
-    }
-
     private void Update()
     {
       var dt = Time.deltaTime;

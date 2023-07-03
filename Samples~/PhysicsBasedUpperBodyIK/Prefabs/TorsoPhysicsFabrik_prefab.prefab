@@ -140,7 +140,7 @@ MonoBehaviour:
   hasPreferredDirection: 0
   preferredRelativeForward: {x: 0, y: 0, z: 1}
   preferredDirectionStrength: 0.3
-  hasPreferredUp: 2
+  preferredUp: 0
   lookAtUpOverride: {x: 0, y: 1, z: 0}
   preferenceTowardsUpchain: 0.5
   upchain: {fileID: 0}
@@ -149,9 +149,10 @@ MonoBehaviour:
   upstreamDistance: 0
   applyRotationForce: 1
   rotator:
-    damping: 1
-    frequency: 4
+    damping: 20
+    frequency: 40
   outputTorque: {x: 0, y: 0, z: 0}
+  rotationMode: 1
   applyTranslationForce: 0
   matchVelocity: 0
   translator:
@@ -169,7 +170,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1308589901352156473}
   serializedVersion: 2
-  m_Mass: 0.2
+  m_Mass: 1.5
   m_Drag: 1
   m_AngularDrag: 1
   m_UseGravity: 0
@@ -269,7 +270,6 @@ GameObject:
   serializedVersion: 6
   m_Component:
   - component: {fileID: 1308589901376733660}
-  - component: {fileID: 1308589901376733661}
   m_Layer: 10
   m_Name: TorsoPhysicsFabrik_prefab
   m_TagString: Untagged
@@ -293,22 +293,6 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
---- !u!54 &1308589901376733661
-Rigidbody:
-  m_ObjectHideFlags: 0
-  m_CorrespondingSourceObject: {fileID: 0}
-  m_PrefabInstance: {fileID: 0}
-  m_PrefabAsset: {fileID: 0}
-  m_GameObject: {fileID: 1308589901376733662}
-  serializedVersion: 2
-  m_Mass: 90
-  m_Drag: 4
-  m_AngularDrag: 2
-  m_UseGravity: 0
-  m_IsKinematic: 0
-  m_Interpolate: 0
-  m_Constraints: 0
-  m_CollisionDetection: 0
 --- !u!1 &1308589901420339072
 GameObject:
   m_ObjectHideFlags: 0
@@ -485,7 +469,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  constrainRotation: 1
+  constrainRotation: 0
   roteRight: 20
   roteLeft: -5
   roteUp: 10
@@ -493,7 +477,7 @@ MonoBehaviour:
   hasPreferredDirection: 1
   preferredRelativeForward: {x: 0, y: 0, z: 1}
   preferredDirectionStrength: 0.3
-  hasPreferredUp: 0
+  preferredUp: 0
   lookAtUpOverride: {x: 0, y: 1, z: 0}
   preferenceTowardsUpchain: 0.5
   upchain: {fileID: 0}
@@ -505,6 +489,7 @@ MonoBehaviour:
     damping: 1
     frequency: 4
   outputTorque: {x: 0, y: 0, z: 0}
+  rotationMode: 1
   applyTranslationForce: 0
   matchVelocity: 0
   translator:
@@ -758,7 +743,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce1fc54e575a7c34da62f344a9967cb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jointWeight: 0.75
+  jointWeight: 1
   constrainRotation: 0
   roteRight: 60
   roteLeft: -60
@@ -767,7 +752,7 @@ MonoBehaviour:
   hasPreferredDirection: 0
   preferredRelativeForward: {x: 0, y: 0, z: 1}
   preferredDirectionStrength: 0.3
-  hasPreferredUp: 0
+  preferredUp: 0
   lookAtUpOverride: {x: 0, y: 1, z: 0}
   preferenceTowardsUpchain: 0.5
   upchain: {fileID: 0}
@@ -779,11 +764,12 @@ MonoBehaviour:
     damping: 1
     frequency: 4
   outputTorque: {x: 0, y: 0, z: 0}
+  rotationMode: 0
   applyTranslationForce: 1
   matchVelocity: 1
   translator:
-    damping: 4
-    frequency: 10
+    damping: 32
+    frequency: 40
   outputThrottle: {x: 0, y: 0, z: 0}
   target: {x: 0, y: 0, z: 0}
   targetLast: {x: 0, y: 0, z: 0}
@@ -796,7 +782,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1308589901512945892}
   serializedVersion: 2
-  m_Mass: 1
+  m_Mass: 4
   m_Drag: 1
   m_AngularDrag: 1
   m_UseGravity: 0
@@ -949,7 +935,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce1fc54e575a7c34da62f344a9967cb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jointWeight: 0.4
+  jointWeight: 0.8
   constrainRotation: 0
   roteRight: 80
   roteLeft: -80
@@ -958,7 +944,7 @@ MonoBehaviour:
   hasPreferredDirection: 1
   preferredRelativeForward: {x: -1, y: 0, z: 1}
   preferredDirectionStrength: 0.3
-  hasPreferredUp: 0
+  preferredUp: 0
   lookAtUpOverride: {x: 0, y: 1, z: 0}
   preferenceTowardsUpchain: 0.5
   upchain: {fileID: 0}
@@ -970,11 +956,12 @@ MonoBehaviour:
     damping: 1
     frequency: 4
   outputTorque: {x: 0, y: 0, z: 0}
+  rotationMode: 0
   applyTranslationForce: 1
   matchVelocity: 0
   translator:
-    damping: 1
-    frequency: 4
+    damping: 10
+    frequency: 40
   outputThrottle: {x: 0, y: 0, z: 0}
   target: {x: 0, y: 0, z: 0}
   targetLast: {x: 0, y: 0, z: 0}
@@ -1275,8 +1262,8 @@ MonoBehaviour:
   roteDown: -85
   hasPreferredDirection: 1
   preferredRelativeForward: {x: -0.3, y: -2, z: 0.5}
-  preferredDirectionStrength: 0.3
-  hasPreferredUp: 0
+  preferredDirectionStrength: 0.7
+  preferredUp: 0
   lookAtUpOverride: {x: 0, y: 1, z: 0}
   preferenceTowardsUpchain: 0.5
   upchain: {fileID: 0}
@@ -1288,6 +1275,7 @@ MonoBehaviour:
     damping: 1
     frequency: 4
   outputTorque: {x: 0, y: 0, z: 0}
+  rotationMode: 0
   applyTranslationForce: 1
   matchVelocity: 0
   translator:
@@ -1458,12 +1446,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dc4ef3dbca87bf44801368654b22d98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LocalRelativeForward: {x: 0, y: 0, z: 0}
-  Positions: []
   locationTolerance: 0.005
   maxIterations: 10
   _target: {fileID: 1308589903247002010}
-  DEBUG_SHOW_SOLUTION: 1
+  positions: []
 --- !u!1 &1308589901859816514
 GameObject:
   m_ObjectHideFlags: 0
@@ -1605,7 +1591,7 @@ MonoBehaviour:
   hasPreferredDirection: 0
   preferredRelativeForward: {x: -1, y: 0, z: 1}
   preferredDirectionStrength: 0.3
-  hasPreferredUp: 0
+  preferredUp: 0
   lookAtUpOverride: {x: 0, y: 1, z: 0}
   preferenceTowardsUpchain: 0.5
   upchain: {fileID: 0}
@@ -1617,11 +1603,12 @@ MonoBehaviour:
     damping: 1
     frequency: 4
   outputTorque: {x: 0, y: 0, z: 0}
+  rotationMode: 0
   applyTranslationForce: 1
   matchVelocity: 1
   translator:
     damping: 4
-    frequency: 10
+    frequency: 20
   outputThrottle: {x: 0, y: 0, z: 0}
   target: {x: 0, y: 0, z: 0}
   targetLast: {x: 0, y: 0, z: 0}
@@ -1634,7 +1621,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1308589901931889104}
   serializedVersion: 2
-  m_Mass: 1.5
+  m_Mass: 2
   m_Drag: 0.75
   m_AngularDrag: 1
   m_UseGravity: 0
@@ -1913,9 +1900,9 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1308589902041480933}
   serializedVersion: 2
-  m_Mass: 6
-  m_Drag: 1
-  m_AngularDrag: 1
+  m_Mass: 90
+  m_Drag: 5
+  m_AngularDrag: 2
   m_UseGravity: 0
   m_IsKinematic: 0
   m_Interpolate: 0
@@ -2523,7 +2510,7 @@ MonoBehaviour:
   hasPreferredDirection: 0
   preferredRelativeForward: {x: 0, y: 0, z: 0}
   preferredDirectionStrength: 0.3
-  hasPreferredUp: 2
+  preferredUp: 0
   lookAtUpOverride: {x: 0, y: 1, z: 0}
   preferenceTowardsUpchain: 0.5
   upchain: {fileID: 0}
@@ -2532,9 +2519,10 @@ MonoBehaviour:
   upstreamDistance: 0
   applyRotationForce: 1
   rotator:
-    damping: 1
-    frequency: 4
+    damping: 4
+    frequency: 40
   outputTorque: {x: 0, y: 0, z: 0}
+  rotationMode: 1
   applyTranslationForce: 0
   matchVelocity: 0
   translator:
@@ -2552,7 +2540,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1308589902294833496}
   serializedVersion: 2
-  m_Mass: 3
+  m_Mass: 6
   m_Drag: 1
   m_AngularDrag: 1
   m_UseGravity: 0
@@ -2609,7 +2597,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce1fc54e575a7c34da62f344a9967cb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jointWeight: 0.1
+  jointWeight: 0.3
   constrainRotation: 0
   roteRight: 60
   roteLeft: -60
@@ -2618,7 +2606,7 @@ MonoBehaviour:
   hasPreferredDirection: 1
   preferredRelativeForward: {x: 0, y: 0.05, z: 1}
   preferredDirectionStrength: 0.3
-  hasPreferredUp: 0
+  preferredUp: 0
   lookAtUpOverride: {x: 0, y: 1, z: 0}
   preferenceTowardsUpchain: 0.5
   upchain: {fileID: 0}
@@ -2630,11 +2618,12 @@ MonoBehaviour:
     damping: 1
     frequency: 4
   outputTorque: {x: 0, y: 0, z: 0}
+  rotationMode: 0
   applyTranslationForce: 1
   matchVelocity: 0
   translator:
-    damping: 1
-    frequency: 4
+    damping: 10
+    frequency: 10
   outputThrottle: {x: 0, y: 0, z: 0}
   target: {x: 0, y: 0, z: 0}
   targetLast: {x: 0, y: 0, z: 0}
@@ -3301,7 +3290,7 @@ MonoBehaviour:
   hasPreferredDirection: 0
   preferredRelativeForward: {x: 0, y: 0, z: 1}
   preferredDirectionStrength: 0.3
-  hasPreferredUp: 2
+  preferredUp: 0
   lookAtUpOverride: {x: 0, y: 1, z: 0}
   preferenceTowardsUpchain: 0.5
   upchain: {fileID: 0}
@@ -3310,9 +3299,10 @@ MonoBehaviour:
   upstreamDistance: 0
   applyRotationForce: 1
   rotator:
-    damping: 1
-    frequency: 4
+    damping: 20
+    frequency: 40
   outputTorque: {x: 0, y: 0, z: 0}
+  rotationMode: 1
   applyTranslationForce: 0
   matchVelocity: 0
   translator:
@@ -3330,7 +3320,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1308589902738178561}
   serializedVersion: 2
-  m_Mass: 0.2
+  m_Mass: 1.5
   m_Drag: 1
   m_AngularDrag: 1
   m_UseGravity: 0
@@ -3719,12 +3709,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dc4ef3dbca87bf44801368654b22d98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LocalRelativeForward: {x: 0, y: 0, z: 0}
-  Positions: []
   locationTolerance: 0.005
   maxIterations: 10
   _target: {fileID: 1308589902673180030}
-  DEBUG_SHOW_SOLUTION: 1
+  positions: []
 --- !u!1 &1308589902906164228
 GameObject:
   m_ObjectHideFlags: 0
@@ -3866,7 +3854,7 @@ MonoBehaviour:
   hasPreferredDirection: 0
   preferredRelativeForward: {x: -1, y: 0, z: 1}
   preferredDirectionStrength: 0.3
-  hasPreferredUp: 0
+  preferredUp: 0
   lookAtUpOverride: {x: 0, y: 1, z: 0}
   preferenceTowardsUpchain: 0.5
   upchain: {fileID: 0}
@@ -3878,11 +3866,12 @@ MonoBehaviour:
     damping: 1
     frequency: 4
   outputTorque: {x: 0, y: 0, z: 0}
+  rotationMode: 0
   applyTranslationForce: 1
   matchVelocity: 1
   translator:
     damping: 4
-    frequency: 10
+    frequency: 20
   outputThrottle: {x: 0, y: 0, z: 0}
   target: {x: 0, y: 0, z: 0}
   targetLast: {x: 0, y: 0, z: 0}
@@ -3895,7 +3884,7 @@ Rigidbody:
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1308589902907762239}
   serializedVersion: 2
-  m_Mass: 1.5
+  m_Mass: 2
   m_Drag: 0.75
   m_AngularDrag: 1
   m_UseGravity: 0
@@ -4047,7 +4036,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   jointWeight: 1
-  constrainRotation: 1
+  constrainRotation: 0
   roteRight: 5
   roteLeft: -20
   roteUp: 10
@@ -4055,7 +4044,7 @@ MonoBehaviour:
   hasPreferredDirection: 1
   preferredRelativeForward: {x: 0, y: 0, z: 1}
   preferredDirectionStrength: 0.3
-  hasPreferredUp: 0
+  preferredUp: 0
   lookAtUpOverride: {x: 0, y: 1, z: 0}
   preferenceTowardsUpchain: 0.5
   upchain: {fileID: 0}
@@ -4067,6 +4056,7 @@ MonoBehaviour:
     damping: 1
     frequency: 4
   outputTorque: {x: 0, y: 0, z: 0}
+  rotationMode: 1
   applyTranslationForce: 0
   matchVelocity: 0
   translator:
@@ -4319,12 +4309,10 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 5dc4ef3dbca87bf44801368654b22d98, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  LocalRelativeForward: {x: 0, y: 0, z: 0}
-  Positions: []
   locationTolerance: 0.005
   maxIterations: 10
   _target: {fileID: 1308589902386619760}
-  DEBUG_SHOW_SOLUTION: 1
+  positions: []
 --- !u!1 &1308589903016285649
 GameObject:
   m_ObjectHideFlags: 0
@@ -4457,16 +4445,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: ce1fc54e575a7c34da62f344a9967cb6, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  jointWeight: 0.4
+  jointWeight: 0.8
   constrainRotation: 0
-  roteRight: 80
-  roteLeft: -80
-  roteUp: 80
-  roteDown: -80
+  roteRight: 78.75
+  roteLeft: -11.25
+  roteUp: 80.05672
+  roteDown: -77.68829
   hasPreferredDirection: 1
   preferredRelativeForward: {x: 1, y: 0, z: 1}
   preferredDirectionStrength: 0.3
-  hasPreferredUp: 0
+  preferredUp: 0
   lookAtUpOverride: {x: 0, y: 1, z: 0}
   preferenceTowardsUpchain: 0.5
   upchain: {fileID: 0}
@@ -4478,11 +4466,12 @@ MonoBehaviour:
     damping: 1
     frequency: 4
   outputTorque: {x: 0, y: 0, z: 0}
+  rotationMode: 0
   applyTranslationForce: 1
   matchVelocity: 0
   translator:
-    damping: 1
-    frequency: 4
+    damping: 10
+    frequency: 40
   outputThrottle: {x: 0, y: 0, z: 0}
   target: {x: 0, y: 0, z: 0}
   targetLast: {x: 0, y: 0, z: 0}
@@ -4700,7 +4689,7 @@ MonoBehaviour:
   hasPreferredDirection: 1
   preferredRelativeForward: {x: 0, y: 0.05, z: 1}
   preferredDirectionStrength: 0.3
-  hasPreferredUp: 0
+  preferredUp: 0
   lookAtUpOverride: {x: 0, y: 1, z: 0}
   preferenceTowardsUpchain: 0.5
   upchain: {fileID: 0}
@@ -4712,6 +4701,7 @@ MonoBehaviour:
     damping: 1
     frequency: 4
   outputTorque: {x: 0, y: 0, z: 0}
+  rotationMode: 0
   applyTranslationForce: 0
   matchVelocity: 0
   translator:
@@ -5055,13 +5045,13 @@ MonoBehaviour:
   headObjectTransform: {fileID: 1308589902386619760}
   applyRotationForce: 1
   rotator:
-    damping: 1
-    frequency: 8
+    damping: 2
+    frequency: 10
   torque: {x: 0, y: 0, z: 0}
   applyTranslationForce: 1
   translator:
-    damping: 1
-    frequency: 4
+    damping: 10
+    frequency: 20
   throttle: {x: 0, y: 0, z: 0}
 --- !u!1 &1308589903232119772
 GameObject:
@@ -5413,8 +5403,8 @@ MonoBehaviour:
   roteDown: -85
   hasPreferredDirection: 1
   preferredRelativeForward: {x: 0.3, y: -2, z: 0.5}
-  preferredDirectionStrength: 0.3
-  hasPreferredUp: 0
+  preferredDirectionStrength: 0.7
+  preferredUp: 0
   lookAtUpOverride: {x: 0, y: 1, z: 0}
   preferenceTowardsUpchain: 0.5
   upchain: {fileID: 0}
@@ -5426,6 +5416,7 @@ MonoBehaviour:
     damping: 1
     frequency: 4
   outputTorque: {x: 0, y: 0, z: 0}
+  rotationMode: 0
   applyTranslationForce: 1
   matchVelocity: 0
   translator:

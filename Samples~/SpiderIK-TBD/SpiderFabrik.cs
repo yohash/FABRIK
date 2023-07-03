@@ -46,18 +46,14 @@ namespace Yohash.FABRIK
     // ****************************************************************
     void Start()
     {
-      Transform joint;
-      float fwd, rt, up;
-      Vector3 v3;
       // find the forward-vector for each joint, relative to the centralHub forwad
       for (int i = 0; i < chains.Count; i++) {
-        joint = chains[i].SecondLink;
-        rt = Vector3.Dot(centralHub.forward, joint.right);
-        fwd = Vector3.Dot(centralHub.forward, joint.forward);
-        up = Vector3.Dot(centralHub.forward, joint.up);
-        v3 = new Vector3(rt, up, fwd);
+        var joint = chains[i].SecondLink;
+        var rt = Vector3.Dot(centralHub.forward, joint.right);
+        var fwd = Vector3.Dot(centralHub.forward, joint.forward);
+        var up = Vector3.Dot(centralHub.forward, joint.up);
+        var v3 = new Vector3(rt, up, fwd);
         chainForwards.Add(v3);
-        chains[i].LocalRelativeForward = v3;
       }
     }
 
@@ -165,7 +161,7 @@ namespace Yohash.FABRIK
       for (int i = 0; i < useChain_toCenterHub.Count; i++) {
         if (useChain_toCenterHub[i]) {
           // get vector sum of all fabChain, 2nd-chain relativelocalfowards
-          vn3 += chains[i].SecondLink.TransformDirection(chains[i].LocalRelativeForward);
+          vn3 += chains[i].SecondLink.TransformDirection(chainForwards[i]);
         }
       }
       if (headObjectTransform != null) {

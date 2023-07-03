@@ -20,18 +20,23 @@ namespace Yohash.FABRIK
     [SerializeField] private float preferredDirectionStrength = 0.3f;
 
     // Define preferred up-facing technique
-    public enum PreferredUp { None, Interpolate, Override }
-    [SerializeField] protected PreferredUp hasPreferredUp = PreferredUp.None;
+    public enum PreferredUp { Up, Interpolate, Override }
+    [SerializeField] protected PreferredUp preferredUp = PreferredUp.Up;
     [SerializeField] protected Vector3 lookAtUpOverride = Vector3.up;
     [SerializeField] protected float preferenceTowardsUpchain = 0.5f;
 
     // Misc cached variables
-    [SerializeField] protected Transform upchain;
-    [SerializeField] protected Transform downchain;
+    [SerializeField] public Transform upchain;
+    [SerializeField] public Transform downchain;
     // put in defaults here just so some math doesn't result in 0-value
     // joint values causing divide-by-0 errors
     [SerializeField] private float downstreamDistance = 1f;
     [SerializeField] private float upstreamDistance = 1f;
+
+    // cached vars for gizmos
+    public Vector3 originalNewDownstrream;
+    public Vector3 constrainedDirectionDownstream;
+    public Vector3 constrainedRotationDownstream;
 
     // compute the distance of the axes of each conic section
     private float coneTop;
@@ -52,6 +57,11 @@ namespace Yohash.FABRIK
     {
       downstreamDistance = downstream.UpstreamDistance;
       downchain = downstream.Transform;
+      SetupConicRestraints();
+    }
+
+    public void SetupConicRestraints()
+    {
       // precompute the cone axes lengths
       coneTop = downstreamDistance * Mathf.Tan(roteUp * Mathf.Deg2Rad);
       coneBot = downstreamDistance * Mathf.Tan(roteDown * Mathf.Deg2Rad);
@@ -72,17 +82,19 @@ namespace Yohash.FABRIK
     public Vector3 ConstrainDownstreamPoint(Vector3 newDownstreamPosition)
     {
       var constrainedDownstream = newDownstreamPosition;
-
+      originalNewDownstrream = newDownstreamPosition;
       // next, we see if this joint has a preferred relative position, and further constrain
       // the point to prefer this relative position
       if (hasPreferredDirection) {
         constrainedDownstream = applyPreferredDirection(constrainedDownstream);
+        constrainedDirectionDownstream = constrainedDownstream;
       }
 
       // first, we see if this joint has constrained movement, and refit the desired position to
       // the outisde of the conic section in our plane of movement
       if (constrainRotation) {
         constrainedDownstream = constrainToCone(constrainedDownstream);
+        constrainedRotationDownstream = constrainedDownstream;
       }
 
       return constrainedDownstream;
@@ -95,7 +107,7 @@ namespace Yohash.FABRIK
 
     public virtual void LookAtPosition(Vector3 lookAtPosition)
     {
-      switch (hasPreferredUp) {
+      switch (preferredUp) {
         case PreferredUp.Interpolate:
           var up = Vector3.Lerp(downchain.up, upchain.up, preferenceTowardsUpchain);
           transform.LookAt(lookAtPosition, up);
@@ -103,7 +115,7 @@ namespace Yohash.FABRIK
         case PreferredUp.Override:
           transform.LookAt(lookAtPosition, lookAtUpOverride);
           break;
-        case PreferredUp.None:
+        case PreferredUp.Up:
         default:
           transform.LookAt(lookAtPosition, Vector3.up);
           break;
@@ -122,38 +134,66 @@ namespace Yohash.FABRIK
     {
       // first off, we declare several important relevant variables
       // find the direction vector from this joint, to the new position
-      var newDirection = newDownstream - transform.position;
+      var globalDirection = newDownstream - transform.position;
 
-      // get the ratio of the respective heights and scale the cone to
-      // our current conic cross section
-      float h = Vector3.Dot(newDirection, upchain.forward);
+      // we should use the diration from upchain->(this) to define the cone axis
+      // if the transforms are too close, we instead just use the upchain forward
+      // as the cone's central axis
+      var dir = transform.position - upchain.transform.position;
+      if (dir.sqrMagnitude < 0.1 * 0.1) {
+        dir = upchain.forward;
+      }
+
+      var rota = Quaternion.LookRotation(dir, transform.up);
+      var pose = new Pose(transform.position, rota);
+
+      // get the fraction of the global forward, projected onto the upchain's XY plane,
+      // to determine what the local "height" (h) of the cone will be
+      float h = Vector3.Dot(globalDirection, pose.forward);
 
       // get the projection of this point on the plane, for a plane with normal
       // equal to the upchain's forward vector
-      var planarProjection = Vector3.ProjectOnPlane(newDirection, upchain.forward);
+      var localProjection = Vector3.ProjectOnPlane(globalDirection, pose.forward);
+
+      // consider local z-axis rotation (joint twist) and rotate our local projection by it
+      float zRote = -transform.localEulerAngles.z;
+      var rotation = Quaternion.AngleAxis(zRote, upchain.forward);
+      localProjection = rotation * localProjection;
+
+      // see if the projection is facing "backwards"
       bool inside90 = true;
       if (h < 0) {
-        // the projection is facing "backwards"
         h = -h;
         // TODO finish the reverse case
         inside90 = false;
       }
       // get components (local to upchainTR) in global values
-      float xPart = Vector3.Dot(planarProjection, upchain.right);
-      float yPart = Vector3.Dot(planarProjection, upchain.up);
+      float xPart = Vector3.Dot(localProjection, pose.right);
+      float yPart = Vector3.Dot(localProjection, pose.up);
 
-      // scale length for conic cross section scalar
+      // get the ratio of the cone's height, to the total downstream distance,
+      // to determine by how much we scale the cone axes
       float scale = h / downstreamDistance;
 
-      // determine quadrant
-      var xBnd = xPart > 0 ? coneRight * scale : -coneLeft * scale;
-      var yBnd = yPart > 0 ? coneTop * scale : -coneBot * scale;
+      // determine a & b by checking which quadrant we're in, and scaling the appropriate
+      // cone axes to reproduce the ellipse in this given quadrant
+      var a = xPart > 0 ? coneRight * scale : -coneLeft * scale;
+      var b = yPart > 0 ? coneTop * scale : -coneBot * scale;
 
       // test to see if the point is in bounds of the ellipse
-      float ellipse = (xPart * xPart) / (xBnd * xBnd) + (yPart * yPart) / (yBnd * yBnd);
+      float ellipse = (xPart * xPart) / (a * a) + (yPart * yPart) / (b * b);
       if (ellipse > 1 || !inside90) {
         // out of bounds, and not on ellipse; find the closest point to the requested
-        return solveEllipsePoint(xBnd, yBnd, xPart, yPart, h);
+        var closestPoint = solveEllipsePoint(a, b, xPart, yPart, h);
+
+        // rotate to world space
+        var rotated = pose.right * closestPoint.x + pose.up * closestPoint.y + pose.forward * closestPoint.z;
+        // invert the z rotation applied from earlier
+        rotated = Quaternion.AngleAxis(-zRote, pose.forward) * rotated;
+
+        // add the rotated, scaled direction to adjusted
+        var translated = rotated + transform.position;
+        return translated;
       }
 
       return newDownstream;
@@ -189,7 +229,6 @@ namespace Yohash.FABRIK
       var d_1 = globalPreferredProjection - planarProjection;
       var d_spring = d_1 * preferredDirectionStrength;
 
-      // get the distance that the target traveled
 
       // get the scalar for this distance
       float delta = (transform.position - newPosition).magnitude;
@@ -197,7 +236,7 @@ namespace Yohash.FABRIK
       delta /= largestDelta;
 
       // adjust the global
-      var constrainedPosition = newPosition + d_spring * delta;
+      var constrainedPosition = Vector3.MoveTowards(newPosition, newPosition + d_spring * delta, d_1.magnitude);
       return constrainedPosition;
     }
 
@@ -214,10 +253,6 @@ namespace Yohash.FABRIK
       var adjusted = new Vector3(dx, dy, h);
       // extend the length of this link
       adjusted = adjusted.normalized * downstreamDistance;
-      // rotate to world space
-      var rotated = upchain.right * adjusted.x + upchain.up * adjusted.y + upchain.forward * adjusted.z;
-      // add the rotated, scaled direction to adjusted
-      adjusted = rotated + transform.position;
       return adjusted;
     }
   }

@@ -5,10 +5,12 @@ namespace Yohash.FABRIK
 {
   public class PhysicalFabrikJoint : FabrikJoint
   {
+    public enum RotationMode { TwistOnly, EndEffector }
     // Rotation PD controller
     [SerializeField] private bool applyRotationForce = false;
     [SerializeField] private BackwardsPdController rotator;
     [SerializeField] private Vector3 outputTorque;
+    [SerializeField] private RotationMode rotationMode = RotationMode.TwistOnly;
 
     // Translation PD controller
     [SerializeField] private bool applyTranslationForce = false;
@@ -28,11 +30,15 @@ namespace Yohash.FABRIK
       target = position;
     }
 
+    /// <summary>
+    /// TODO - better way to do this might be to extend IJoint with PhysicalFabrikJoint
+    ///         instead of piggy-backing off of FabrikJoint.
+    ///        Offload FabrikJoint's classes to helper functions in a static class.
+    /// </summary>
     public override void LookAtPosition(Vector3 lookAtPosition)
     {
       this.lookAtPosition = lookAtPosition;
     }
-
 
     private void FixedUpdate()
     {
@@ -47,21 +53,28 @@ namespace Yohash.FABRIK
 
       targetLast = target;
 
-      // determine rotation directions
-      var lookDir = lookAtPosition - transform.position;
+      // determine rotation directions but only rotate along the z-axis (forward facing),
+      // otherwise the rotator will try to rotate the joint in all directions to match the
+      // new forward facing, producing a really janky rotation that fights against the
+      // translational motor. If we're an end effector ("hand"), we'll want to look at the
+      // direction prescribed
+      var forward = transform.forward;
+      if (rotationMode == RotationMode.EndEffector) {
+        forward = lookAtPosition - transform.position;
+      }
 
       var quat = Quaternion.identity;
-      switch (hasPreferredUp) {
+      switch (preferredUp) {
         case PreferredUp.Interpolate:
           var up = Vector3.Lerp(downchain.up, upchain.up, preferenceTowardsUpchain);
-          quat = Quaternion.LookRotation(lookDir, up);
+          quat = Quaternion.LookRotation(forward, up);
           break;
         case PreferredUp.Override:
-          quat = Quaternion.LookRotation(lookDir, lookAtUpOverride);
+          quat = Quaternion.LookRotation(forward, lookAtUpOverride);
           break;
-        case PreferredUp.None:
+        case PreferredUp.Up:
         default:
-          quat = Quaternion.LookRotation(lookDir, Vector3.up);
+          quat = Quaternion.LookRotation(forward, Vector3.up);
           break;
       }
 
@@ -75,6 +88,10 @@ namespace Yohash.FABRIK
         rb.inertiaTensorRotation,
         rb.inertiaTensor
       );
+
+      if (rotationMode == RotationMode.TwistOnly) {
+        outputTorque = new Vector3(0, 0, outputTorque.z);
+      }
 
       // finally, apply the forces
       if (applyTranslationForce) {

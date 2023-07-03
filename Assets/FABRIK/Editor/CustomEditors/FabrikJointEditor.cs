@@ -87,7 +87,7 @@ namespace Yohash.FABRIK
       preferredDirectionStrengthValue = preferredDirectionStrength.floatValue;
 
       // *** Preferred Up Facing
-      hasPreferredUp = serializedObject.FindProperty("hasPreferredUp");
+      hasPreferredUp = serializedObject.FindProperty("preferredUp");
       lookAtUpOverride = serializedObject.FindProperty("lookAtUpOverride");
       preferenceTowardsUpchain = serializedObject.FindProperty("preferenceTowardsUpchain");
       preferenceTowardsUpchainValue = preferenceTowardsUpchain.floatValue;
@@ -112,24 +112,25 @@ namespace Yohash.FABRIK
       defineJointWeight();
 
       // *** Constrain Rotation
+      EditorGUILayout.BeginVertical(FabrikEditorValues.headerOpen.Value);
       EditorGUILayout.PropertyField(constrainRotation);
-      if (constrainRotation.boolValue) {
-        drawConstrainRotation();
-      }
+      drawConstrainRotation();
+      drawConeGizmo();
+      EditorGUILayout.EndVertical();
 
       // *** Preferred Forward direction
+      EditorGUILayout.BeginVertical(FabrikEditorValues.headerOpen.Value);
       EditorGUILayout.PropertyField(hasPreferredDirection);
-      if (hasPreferredDirection.boolValue) {
-        drawPreferredForward();
-      }
+      drawPreferredForward();
+      drawLineGizmo();
+      EditorGUILayout.EndVertical();
 
       // *** Preferred Up Facing
+      EditorGUILayout.BeginVertical(FabrikEditorValues.headerOpen.Value);
       EditorGUILayout.PropertyField(hasPreferredUp);
-      if (hasPreferredUp.intValue > 0) {
-        drawPreferredUp();
-      }
-
-      EditorGUILayout.LabelField("");
+      drawPreferredUp();
+      drawPreferredUpGizmo();
+      EditorGUILayout.EndVertical();
 
       // *** Misc.
       GUI.color = new Color(0.8f, 0.8f, 0.8f, 0.5f);
@@ -152,7 +153,7 @@ namespace Yohash.FABRIK
       EditorGUILayout.BeginHorizontal();
       //EditorGUILayout.LabelField("", GUILayout.MaxWidth(30));
       EditorGUILayout.LabelField("Joint Weight:    ", GUILayout.MaxWidth(100));
-      jointWeightValue = EditorGUILayout.Slider(jointWeightValue, 0, 1);
+      jointWeightValue = EditorGUILayout.Slider(jointWeightValue, 0.1f, 1);
       EditorGUILayout.EndHorizontal();
 
       jointWeight.floatValue = jointWeightValue;
@@ -161,6 +162,7 @@ namespace Yohash.FABRIK
     private void drawConstrainRotation()
     {
       showCone = scriptObject.GetComponent<ConeGizmo>() != null && constrainRotation.boolValue;
+      if (!constrainRotation.boolValue) { return; }
 
       EditorGUILayout.BeginHorizontal();
       EditorGUILayout.LabelField("", GUILayout.MaxWidth(30));
@@ -205,6 +207,11 @@ namespace Yohash.FABRIK
       showCone = GUILayout.Toggle(showCone, "    Show Cone");
       EditorGUILayout.EndHorizontal();
 
+      script.SetupConicRestraints();
+    }
+
+    private void drawConeGizmo()
+    {
       if (showCone) {
         if (_coneGizmo == null) {
           _coneGizmo = scriptObject.GetComponent<ConeGizmo>();
@@ -212,22 +219,31 @@ namespace Yohash.FABRIK
         if (_coneGizmo == null) {
           _coneGizmo = scriptObject.AddComponent<ConeGizmo>();
         }
-        _coneGizmo.PosX = rightLimit;
-        _coneGizmo.PosY = upLimit;
-        _coneGizmo.NegX = leftLimit;
-        _coneGizmo.NegY = downLimit;
+        _coneGizmo.AngleRight = rightLimit;
+        _coneGizmo.UpAngle = upLimit;
+        _coneGizmo.LeftAngle = leftLimit;
+        _coneGizmo.DownAngle = downLimit;
+
+        _coneGizmo.ConstrainedGlobalPosition = script.constrainedRotationDownstream;
+        _coneGizmo.NewGlobalPosition = script.originalNewDownstrream;
+
+        //_coneGizmo.match = script.upchain == null
+        //  ? scriptObject.transform : script.upchain;
+        ////_coneGizmo.GlobalForwardAxis = script.upchain == null
+        ////  ? scriptObject.transform.forward : script.upchain.forward;
+        ////_coneGizmo.GlobalUpAxis = script.upchain == null
+        ////  ? scriptObject.transform.up : script.upchain.up;
       } else {
         if (_coneGizmo != null) {
           DestroyImmediate(_coneGizmo);
         }
       }
-
-      EditorGUILayout.LabelField("");
     }
 
     private void drawPreferredForward()
     {
       showPreferredDirection = scriptObject.GetComponent<LineGizmo>() != null && hasPreferredDirection.boolValue;
+      if (!hasPreferredDirection.boolValue) { return; }
 
       EditorGUILayout.BeginHorizontal();
       EditorGUILayout.LabelField("", GUILayout.MaxWidth(30));
@@ -246,7 +262,10 @@ namespace Yohash.FABRIK
       EditorGUILayout.LabelField("", GUILayout.MaxWidth(30));
       showPreferredDirection = GUILayout.Toggle(showPreferredDirection, "    Show Line");
       EditorGUILayout.EndHorizontal();
+    }
 
+    private void drawLineGizmo()
+    {
       if (showPreferredDirection) {
         if (_lineGizmo == null) {
           _lineGizmo = scriptObject.GetComponent<LineGizmo>();
@@ -254,24 +273,23 @@ namespace Yohash.FABRIK
         if (_lineGizmo == null) {
           _lineGizmo = scriptObject.AddComponent<LineGizmo>();
         }
-        _lineGizmo.RelativeForward = preferredDirection.vector3Value;
+        _lineGizmo.PreferredForward = preferredDirection.vector3Value;
+        _lineGizmo.OriginalForward = script.originalNewDownstrream;
+        _lineGizmo.ConstrainedForward = script.constrainedDirectionDownstream;
       } else {
         if (_lineGizmo != null) {
           DestroyImmediate(_lineGizmo);
         }
       }
-      EditorGUILayout.LabelField("");
     }
 
     private void drawPreferredUp()
     {
       var preferredUp = (FabrikJoint.PreferredUp)hasPreferredUp.intValue;
-
-      showDesiredUp = scriptObject.GetComponent<MatchingArrowGizmo>() != null
-        && preferredUp != FabrikJoint.PreferredUp.None;
+      showDesiredUp = scriptObject.GetComponent<MatchingArrowGizmo>() != null;
 
       switch (preferredUp) {
-        case FabrikJoint.PreferredUp.None:
+        case FabrikJoint.PreferredUp.Up:
           break;
         case FabrikJoint.PreferredUp.Interpolate:
           // this is interpolate
@@ -281,7 +299,6 @@ namespace Yohash.FABRIK
           preferenceTowardsUpchainValue = EditorGUILayout.Slider(preferenceTowardsUpchainValue, 0, 1);
           EditorGUILayout.EndHorizontal();
           preferenceTowardsUpchain.floatValue = preferenceTowardsUpchainValue;
-          showGizmoOption();
           break;
         case FabrikJoint.PreferredUp.Override:
           // this value is override
@@ -289,18 +306,18 @@ namespace Yohash.FABRIK
           EditorGUILayout.LabelField("", GUILayout.MaxWidth(30));
           EditorGUILayout.PropertyField(lookAtUpOverride);
           EditorGUILayout.EndHorizontal();
-          showGizmoOption();
           break;
       }
 
-      void showGizmoOption()
-      {
-        EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField("", GUILayout.MaxWidth(30));
-        showDesiredUp = GUILayout.Toggle(showDesiredUp, "    Show Desired Up");
-        EditorGUILayout.EndHorizontal();
-      }
+      // option to show the gizmo
+      EditorGUILayout.BeginHorizontal();
+      EditorGUILayout.LabelField("", GUILayout.MaxWidth(30));
+      showDesiredUp = GUILayout.Toggle(showDesiredUp, "    Show Desired Up");
+      EditorGUILayout.EndHorizontal();
+    }
 
+    private void drawPreferredUpGizmo()
+    {
       if (showDesiredUp) {
         if (_arrowGizmo == null) {
           _arrowGizmo = scriptObject.GetComponent<MatchingArrowGizmo>();
@@ -312,8 +329,9 @@ namespace Yohash.FABRIK
         var transformUp = upchain.objectReferenceValue as Transform;
         var transformDown = downchain.objectReferenceValue as Transform;
 
+        var preferredUp = (FabrikJoint.PreferredUp)hasPreferredUp.intValue;
         switch (preferredUp) {
-          case FabrikJoint.PreferredUp.None:
+          case FabrikJoint.PreferredUp.Up:
             break;
           case FabrikJoint.PreferredUp.Interpolate:
             var up = Vector3.Lerp(transformUp.up, transformDown.up, preferenceTowardsUpchainValue);

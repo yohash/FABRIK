@@ -11,6 +11,7 @@ namespace Yohash.FABRIK
     private SerializedProperty applyRotationForce;
     private SerializedProperty rotator;
     private SerializedProperty torque;
+    private SerializedProperty rotationMode;
 
     // *** Translational motor force
     private SerializedProperty applyTranslationForce;
@@ -23,6 +24,7 @@ namespace Yohash.FABRIK
       applyRotationForce = serializedObject.FindProperty("applyRotationForce");
       rotator = serializedObject.FindProperty("rotator");
       torque = serializedObject.FindProperty("outputTorque");
+      rotationMode = serializedObject.FindProperty("rotationMode");
 
       applyTranslationForce = serializedObject.FindProperty("applyTranslationForce");
       matchVelocity = serializedObject.FindProperty("matchVelocity");
@@ -32,7 +34,72 @@ namespace Yohash.FABRIK
       base.OnEnable();
     }
 
-    private void HorizontalLine(Color color)
+    public override void OnInspectorGUI()
+    {
+      serializedObject.Update();
+
+      EditorGUILayout.LabelField("Physical Fabrik Joint", Style.Bold());
+
+      EditorGUILayout.BeginVertical(FabrikEditorValues.headerOpen.Value);
+      EditorGUILayout.PropertyField(applyRotationForce);
+      if (applyRotationForce.boolValue) {
+        drawRotationController();
+      }
+      EditorGUILayout.EndVertical();
+
+      EditorGUILayout.BeginVertical(FabrikEditorValues.headerOpen.Value);
+      EditorGUILayout.PropertyField(applyTranslationForce);
+      if (applyTranslationForce.boolValue) {
+        drawTranslationController();
+      }
+      EditorGUILayout.EndVertical();
+
+      serializedObject.ApplyModifiedProperties();
+
+      EditorGUILayout.LabelField("Standard Fabrik Joint", Style.Bold());
+      base.OnInspectorGUI();
+    }
+
+    private void drawRotationController()
+    {
+      EditorGUILayout.PropertyField(rotationMode);
+
+      EditorGUILayout.BeginHorizontal();
+      EditorGUILayout.LabelField("", GUILayout.MaxWidth(40), GUILayout.ExpandWidth(false));
+      EditorGUILayout.PropertyField(rotator);
+      EditorGUILayout.EndHorizontal();
+
+      var c = GUI.color;
+      GUI.color = new Color(0.8f, 0.8f, 0.8f, 0.5f);
+      EditorGUILayout.BeginHorizontal();
+      EditorGUILayout.LabelField("", GUILayout.MaxWidth(40), GUILayout.ExpandWidth(false));
+      EditorGUILayout.PropertyField(torque);
+      EditorGUILayout.EndHorizontal();
+      GUI.color = c;
+    }
+
+    private void drawTranslationController()
+    {
+      EditorGUILayout.BeginHorizontal();
+      EditorGUILayout.LabelField("", GUILayout.MaxWidth(40), GUILayout.ExpandWidth(false));
+      EditorGUILayout.PropertyField(matchVelocity);
+      EditorGUILayout.EndHorizontal();
+
+      EditorGUILayout.BeginHorizontal();
+      EditorGUILayout.LabelField("", GUILayout.MaxWidth(40), GUILayout.ExpandWidth(false));
+      EditorGUILayout.PropertyField(translator);
+      EditorGUILayout.EndHorizontal();
+
+      var c = GUI.color;
+      GUI.color = new Color(0.8f, 0.8f, 0.8f, 0.5f);
+      EditorGUILayout.BeginHorizontal();
+      EditorGUILayout.LabelField("", GUILayout.MaxWidth(40), GUILayout.ExpandWidth(false));
+      EditorGUILayout.PropertyField(throttle);
+      EditorGUILayout.EndHorizontal();
+      GUI.color = c;
+    }
+
+    private void horizontalLine(Color color)
     {
       GUIStyle horizontalLine;
       horizontalLine = new GUIStyle();
@@ -44,66 +111,6 @@ namespace Yohash.FABRIK
       GUI.color = color;
       GUILayout.Box(GUIContent.none, horizontalLine);
       GUI.color = c;
-    }
-
-    public override void OnInspectorGUI()
-    {
-      serializedObject.Update();
-
-      EditorGUILayout.LabelField("Physical Fabrik Joint", Style.Bold());
-      //HorizontalLine(new Color(0.8f, 0.8f, 0.8f, 0.5f));
-      EditorGUILayout.LabelField("");
-
-      EditorGUILayout.PropertyField(applyRotationForce);
-      if (applyRotationForce.boolValue) {
-        EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField("", GUILayout.MaxWidth(40), GUILayout.ExpandWidth(false));
-        EditorGUILayout.PropertyField(rotator);
-        EditorGUILayout.EndHorizontal();
-
-        var c = GUI.color;
-        GUI.color = new Color(0.8f, 0.8f, 0.8f, 0.5f);
-        EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField("", GUILayout.MaxWidth(40), GUILayout.ExpandWidth(false));
-        EditorGUILayout.PropertyField(torque);
-        EditorGUILayout.EndHorizontal();
-        GUI.color = c;
-
-        EditorGUILayout.LabelField("");
-      }
-
-      EditorGUILayout.PropertyField(applyTranslationForce);
-      if (applyTranslationForce.boolValue) {
-        EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField("", GUILayout.MaxWidth(40), GUILayout.ExpandWidth(false));
-        EditorGUILayout.PropertyField(matchVelocity);
-        EditorGUILayout.EndHorizontal();
-
-        EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField("", GUILayout.MaxWidth(40), GUILayout.ExpandWidth(false));
-        EditorGUILayout.PropertyField(translator);
-        EditorGUILayout.EndHorizontal();
-
-        var c = GUI.color;
-        GUI.color = new Color(0.8f, 0.8f, 0.8f, 0.5f);
-        EditorGUILayout.BeginHorizontal();
-        EditorGUILayout.LabelField("", GUILayout.MaxWidth(40), GUILayout.ExpandWidth(false));
-        EditorGUILayout.PropertyField(throttle);
-        EditorGUILayout.EndHorizontal();
-        GUI.color = c;
-
-        //EditorGUILayout.LabelField("");
-      }
-
-      serializedObject.ApplyModifiedProperties();
-
-      EditorGUILayout.LabelField("");
-      HorizontalLine(new Color(0.8f, 0.8f, 0.8f, 0.5f));
-      EditorGUILayout.LabelField("Standard Fabrik Joint", Style.Bold());
-      //HorizontalLine(new Color(0.8f, 0.8f, 0.8f, 0.5f));
-      EditorGUILayout.LabelField("");
-
-      base.OnInspectorGUI();
     }
   }
 }

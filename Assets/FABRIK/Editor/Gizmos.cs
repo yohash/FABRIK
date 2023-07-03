@@ -4,15 +4,56 @@ namespace Yohash.FABRIK
 {
   public class ConeGizmo : MonoBehaviour
   {
-    public float PosX = 1.0f;
-    public float NegX = 1.0f;
-    public float PosY = 1.0f;
-    public float NegY = 1.0f;
+    public float AngleRight = 1.0f;
+    public float LeftAngle = 1.0f;
+    public float UpAngle = 1.0f;
+    public float DownAngle = 1.0f;
     public float Length = 0.15f;
+
+    public Vector3 NewGlobalPosition;
+    public Vector3 ConstrainedGlobalPosition;
+
+    private void OnDrawGizmosSelected()
+    {
+      var newVector = (NewGlobalPosition - transform.position);
+      var constrainedVector = (ConstrainedGlobalPosition - transform.position);
+
+      // if lines are the same, they were not constrained
+      if (newVector == constrainedVector) {
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine
+          (transform.position,
+          transform.position + newVector.normalized * Length * 1.25f
+        );
+        return;
+      }
+
+      // else, the line was constrained, so we'll put the original in red
+      Gizmos.color = Color.red;
+      Gizmos.DrawLine
+        (transform.position,
+        transform.position + newVector.normalized * Length * 1.25f
+      );
+
+      Gizmos.color = Color.green;
+      Gizmos.DrawLine
+        (transform.position,
+        transform.position + constrainedVector.normalized * Length * 1.25f
+      );
+    }
 
     private void OnDrawGizmos()
     {
-      var mesh = ConeMeshGenerator.CreateConeMesh(PosX, NegX, PosY, NegY, Length, 0, 360);
+      var mesh = ConeMeshGenerator.CreateConeMesh(
+        AngleRight,
+        LeftAngle,
+        UpAngle,
+        DownAngle,
+        Length,
+        0,
+        90
+      );
+
       Gizmos.color = new Color(1, 1, 0, 1);
       Gizmos.DrawWireMesh(mesh, transform.position, transform.rotation);
     }
@@ -20,14 +61,40 @@ namespace Yohash.FABRIK
 
   public class LineGizmo : MonoBehaviour
   {
-    public Vector3 RelativeForward;
+    public Vector3 PreferredForward;
+    public Vector3 OriginalForward;
+    public Vector3 ConstrainedForward;
+    public float Length = 0.2f;
 
     private void OnDrawGizmos()
     {
-      Gizmos.color = Color.red;
+      Gizmos.color = Color.blue;
       Gizmos.DrawLine(
         transform.position,
-        transform.position + transform.TransformDirection(RelativeForward).normalized
+        transform.position + transform.TransformDirection(PreferredForward).normalized * Length
+      );
+
+      // if lines are the same, they were not constrained
+      if (OriginalForward == ConstrainedForward) {
+        Gizmos.color = Color.green;
+        Gizmos.DrawLine
+          (transform.position,
+          transform.position + OriginalForward.normalized * Length
+        );
+        return;
+      }
+
+      // else, the line was constrained, so we'll put the original in red
+      Gizmos.color = Color.red;
+      Gizmos.DrawLine
+        (transform.position,
+        transform.position + OriginalForward.normalized * Length
+      );
+
+      Gizmos.color = Color.green;
+      Gizmos.DrawLine
+        (transform.position,
+        transform.position + ConstrainedForward.normalized * Length
       );
     }
   }
@@ -35,20 +102,34 @@ namespace Yohash.FABRIK
   public class MatchingArrowGizmo : MonoBehaviour
   {
     public Vector3 RelativeUp;
+    public float Length = 0.2f;
 
     private void OnDrawGizmos()
     {
       Gizmos.color = Color.red;
       Gizmos.DrawLine(
         transform.position,
-        transform.position + transform.TransformDirection(RelativeUp).normalized
+        transform.position + transform.TransformDirection(RelativeUp).normalized * Length
       );
 
       Gizmos.color = Color.cyan;
       Gizmos.DrawLine(
         transform.position,
-        transform.position + transform.up
+        transform.position + transform.up * Length
       ); ;
+    }
+  }
+
+  public class FabrikChainSolutionGizmo : MonoBehaviour
+  {
+    public Vector3[] Solution;
+
+    private void OnDrawGizmos()
+    {
+      if (Solution == null || Solution.Length == 0) { return; }
+      for (int i = 1; i < Solution.Length; i++) {
+        Gizmos.DrawLine(Solution[i], Solution[i - 1]);
+      }
     }
   }
 
@@ -57,15 +138,23 @@ namespace Yohash.FABRIK
     /// <summary>
     /// Quad: (0: all), (1: up-left), (2: up-right), (3: down-right), (4: down-left)
     /// </summary>
-    /// <param name="px"></param>
-    /// <param name="nx"></param>
-    /// <param name="py"></param>
-    /// <param name="ny"></param>
+    /// <param name="degreesRight"></param>
+    /// <param name="degreesLeft"></param>
+    /// <param name="degreesUp"></param>
+    /// <param name="degreesDown"></param>
     /// <param name="height"></param>
     /// <param name="quad"></param>
     /// <param name="steps"></param>
     /// <returns></returns>
-    public static Mesh CreateConeMesh(float px, float nx, float py, float ny, float height, int quad = 0, int steps = 16)
+    public static Mesh CreateConeMesh(
+      float degreesRight,
+      float degreesLeft,
+      float degreesUp,
+      float degreesDown,
+      float height,
+      int quad = 0,
+      int steps = 16
+    )
     {
       var coneMesh = new Mesh();
 
@@ -92,15 +181,16 @@ namespace Yohash.FABRIK
         : 360;
 
       var angleStep = (max - min) / steps;
+      //var quat = Quaternion.FromToRotation(axis, desiredAxis);
 
       Vector3 GetVert(int i)
       {
         float angle = (min + angleStep * i) * Mathf.Deg2Rad;
 
-        var coneTop = height * Mathf.Tan(py * Mathf.Deg2Rad);
-        var coneBot = height * Mathf.Tan(ny * Mathf.Deg2Rad);
-        var coneRight = height * Mathf.Tan(px * Mathf.Deg2Rad);
-        var coneLeft = height * Mathf.Tan(nx * Mathf.Deg2Rad);
+        var coneTop = height * Mathf.Tan(degreesUp * Mathf.Deg2Rad);
+        var coneBot = height * Mathf.Tan(degreesDown * Mathf.Deg2Rad);
+        var coneRight = height * Mathf.Tan(degreesRight * Mathf.Deg2Rad);
+        var coneLeft = height * Mathf.Tan(degreesLeft * Mathf.Deg2Rad);
 
         var xSign = Mathf.Sign(Mathf.Cos(angle));
         var ySign = Mathf.Sign(Mathf.Sin(angle));
@@ -111,7 +201,10 @@ namespace Yohash.FABRIK
         var x = a * Mathf.Cos(angle);
         var y = b * Mathf.Sin(angle);
 
-        return new Vector3(x, y, height).normalized * height;
+        var vector = new Vector3(x, y, height).normalized * height;
+
+        //return quat * vector;
+        return vector;
       }
 
       // Generate vertices and UV coordinates for the open edge

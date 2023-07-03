@@ -51,13 +51,6 @@ namespace Yohash.FABRIK
       }
     }
 
-    void Start()
-    {
-      var pose = transform.ToPose();
-      leftArm.Intialize(pose);
-      rightArm.Intialize(pose);
-    }
-
     private void FixedUpdate()
     {
       moveTorso();
@@ -92,7 +85,6 @@ namespace Yohash.FABRIK
         rightArm.Backward();
         head.Backward();
 
-        // using this position as the root, perform a forward pass
         // perform a forwards pass over all chains
         leftArm.Forward();
         rightArm.Forward();
@@ -117,7 +109,7 @@ namespace Yohash.FABRIK
       float dt = Time.fixedDeltaTime;
 
       // Place the torso center directly below the head-tracker
-      var newTorsoPosition = head.TargetPose.position - Vector3.up * head.ChainLength * 0.9f;
+      var newTorsoPosition = head.Target.position - Vector3.up * head.ChainLength * 0.9f;
 
       throttle = translator.UpdatePosition(
         dt,

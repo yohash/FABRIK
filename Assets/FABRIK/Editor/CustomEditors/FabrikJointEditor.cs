@@ -98,7 +98,6 @@ namespace Yohash.FABRIK
       downstreamDistance = serializedObject.FindProperty("downstreamDistance");
       upstreamDistance = serializedObject.FindProperty("upstreamDistance");
 
-
       // save local references
       script = (FabrikJoint)target;
       scriptObject = script.gameObject;
@@ -112,21 +111,21 @@ namespace Yohash.FABRIK
       defineJointWeight();
 
       // *** Constrain Rotation
-      EditorGUILayout.BeginVertical(FabrikEditorValues.headerOpen.Value);
+      EditorGUILayout.BeginVertical(FabrikEditorValues.windowStyle);
       EditorGUILayout.PropertyField(constrainRotation);
       drawConstrainRotation();
       drawConeGizmo();
       EditorGUILayout.EndVertical();
 
       // *** Preferred Forward direction
-      EditorGUILayout.BeginVertical(FabrikEditorValues.headerOpen.Value);
+      EditorGUILayout.BeginVertical(FabrikEditorValues.windowStyle);
       EditorGUILayout.PropertyField(hasPreferredDirection);
       drawPreferredForward();
       drawLineGizmo();
       EditorGUILayout.EndVertical();
 
       // *** Preferred Up Facing
-      EditorGUILayout.BeginVertical(FabrikEditorValues.headerOpen.Value);
+      EditorGUILayout.BeginVertical(FabrikEditorValues.windowStyle);
       EditorGUILayout.PropertyField(hasPreferredUp);
       drawPreferredUp();
       drawPreferredUpGizmo();
@@ -148,10 +147,7 @@ namespace Yohash.FABRIK
 
     private void defineJointWeight()
     {
-      //EditorGUILayout.LabelField("Define Joint Weight", Style.Bold());
-
       EditorGUILayout.BeginHorizontal();
-      //EditorGUILayout.LabelField("", GUILayout.MaxWidth(30));
       EditorGUILayout.LabelField("Joint Weight:    ", GUILayout.MaxWidth(100));
       jointWeightValue = EditorGUILayout.Slider(jointWeightValue, 0.1f, 1);
       EditorGUILayout.EndHorizontal();
@@ -223,16 +219,6 @@ namespace Yohash.FABRIK
         _coneGizmo.UpAngle = upLimit;
         _coneGizmo.LeftAngle = leftLimit;
         _coneGizmo.DownAngle = downLimit;
-
-        _coneGizmo.ConstrainedGlobalPosition = script.constrainedRotationDownstream;
-        _coneGizmo.NewGlobalPosition = script.originalNewDownstrream;
-
-        //_coneGizmo.match = script.upchain == null
-        //  ? scriptObject.transform : script.upchain;
-        ////_coneGizmo.GlobalForwardAxis = script.upchain == null
-        ////  ? scriptObject.transform.forward : script.upchain.forward;
-        ////_coneGizmo.GlobalUpAxis = script.upchain == null
-        ////  ? scriptObject.transform.up : script.upchain.up;
       } else {
         if (_coneGizmo != null) {
           DestroyImmediate(_coneGizmo);
@@ -274,8 +260,6 @@ namespace Yohash.FABRIK
           _lineGizmo = scriptObject.AddComponent<LineGizmo>();
         }
         _lineGizmo.PreferredForward = preferredDirection.vector3Value;
-        _lineGizmo.OriginalForward = script.originalNewDownstrream;
-        _lineGizmo.ConstrainedForward = script.constrainedDirectionDownstream;
       } else {
         if (_lineGizmo != null) {
           DestroyImmediate(_lineGizmo);

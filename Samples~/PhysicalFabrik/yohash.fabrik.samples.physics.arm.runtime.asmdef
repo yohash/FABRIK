@@ -1,0 +1,17 @@
+{
+    "name": "yohash.fabrik.samples.physics.arm.runtime",
+    "rootNamespace": "",
+    "references": [
+        "yohash.fabrik.runtime",
+        "yohash.propulsion.runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

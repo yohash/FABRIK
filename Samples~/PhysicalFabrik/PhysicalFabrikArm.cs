@@ -1,19 +1,21 @@
 using UnityEngine;
-using Yohash.FABRIK;
 
-public class PhysicalFabrikArm : MonoBehaviour
+namespace Yohash.FABRIK.Samples.Physics.Arm
 {
-  [SerializeField] private FabrikChain chain;
-  [SerializeField] private Transform target;
-
-  private void FixedUpdate()
+  public class PhysicalFabrikArm : MonoBehaviour
   {
-    if (chain.Target == null || chain.Target != target) {
-      chain.Target = target;
+    [SerializeField] private FabrikChain chain;
+    [SerializeField] private Transform target;
+
+    private void FixedUpdate()
+    {
+      if (chain.Target == null || chain.Target != target) {
+        chain.Target = target;
+      }
+
+      if (chain.Target == null) { return; }
+
+      chain.Solve();
     }
-
-    if (chain.Target == null) { return; }
-
-    chain.Solve();
   }
 }

@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Yohash.FABRIK
+namespace Yohash.FABRIK.Samples.Upperbody
 {
   /// <summary>
   /// Upper torso FABRIK.

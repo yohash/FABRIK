@@ -5,17 +5,18 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
-## [0.2.2] - 2023-03-06
+## [0.4] - 2023-07-03
 
-### Added
+### Fixed
 
-- Physics-based upper torso sample scene and associated code changes
+- Some crucial corrections to applying cone-contraints in a FabrikJoint
+- Critical corrections to how a PhysicalFrabrikJoint applies rotation forces
 
-## [0.3.0] - 2023-05-21
+## [0.3.2] - 2023-05-22
 
-### Changed
+### Fixed
 
-- Significant code re-work for readability and code de-duplication
+- Cone gizmo shows cone length according to downstream joint
 
 ## [0.3.1] - 2023-05-22
 
@@ -23,8 +24,14 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 - Fixed bugs on the Custom IK and the Physics Based Upper Torse FABRIK sample scenes
 
-## [0.3.2] - 2023-05-22
+## [0.3.0] - 2023-05-21
 
-### Fixed
+### Changed
 
-- Cone gizmo shows cone length according to downstream joint
+- Significant code re-work for readability and code de-duplication
+
+## [0.2.2] - 2023-03-06
+
+### Added
+
+- Physics-based upper torso sample scene and associated code changes

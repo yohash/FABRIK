@@ -221,7 +221,6 @@ namespace Yohash.FABRIK
       var d_1 = globalPreferredProjection - planarProjection;
       var d_spring = d_1 * preferredDirectionStrength;
 
-
       // get the scalar for this distance
       float delta = (transform.position - newPosition).magnitude;
       // normalized to the largest delta, scaled

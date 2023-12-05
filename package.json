@@ -1,6 +1,6 @@
 {
   "name": "com.yohash.fabrik",
-  "version": "0.3.2",
+  "version": "0.4.0",
   "displayName": "FABRIK",
   "description": "Implementation of Forward and Backward Reaching Inverse Kinematics (FABRIK), a fast IK solution",
   "unity": "2019.1",
@@ -46,7 +46,7 @@
     },
     {
       "displayName": "Physics-based Upper Body FABRIK example",
-      "description": "This scene uses physical joints and PID controllers to move a model of an upper body.",
+      "description": "This scene uses physical joints and PD/PID controllers to move a model of an upper body.",
       "path": "Samples~/PhysicsBasedUpperBodyIK"
     }
   ],

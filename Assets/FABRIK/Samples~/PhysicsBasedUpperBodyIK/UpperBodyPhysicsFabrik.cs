@@ -1,7 +1,7 @@
 using UnityEngine;
 using Yohash.Propulsion;
 
-namespace Yohash.FABRIK
+namespace Yohash.FABRIK.Samples.Physics.Upperbody
 {
   /// <summary>
   /// Upper body physics-based FABRIK.

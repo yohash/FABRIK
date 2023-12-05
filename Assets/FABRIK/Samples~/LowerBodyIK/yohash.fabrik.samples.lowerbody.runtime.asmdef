@@ -1,0 +1,17 @@
+{
+    "name": "yohash.fabrik.samples.lowerbody.runtime",
+    "rootNamespace": "",
+    "references": [
+        "yohash.fabrik.runtime",
+        "yohash.bezier.runtime"
+    ],
+    "includePlatforms": [],
+    "excludePlatforms": [],
+    "allowUnsafeCode": false,
+    "overrideReferences": false,
+    "precompiledReferences": [],
+    "autoReferenced": true,
+    "defineConstraints": [],
+    "versionDefines": [],
+    "noEngineReferences": false
+}

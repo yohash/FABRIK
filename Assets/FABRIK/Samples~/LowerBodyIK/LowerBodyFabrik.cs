@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using Yohash.Bezier;
 
-namespace Yohash.FABRIK
+namespace Yohash.FABRIK.Samples.Lowerbody
 {
   public enum foot_placement
   {

@@ -18,7 +18,7 @@ namespace Yohash.FABRIK.Samples.Upperbody
     [Header("Left and Right Arm Chains")]
     [SerializeField] private FabrikChain leftArm;
     [SerializeField] private FabrikChain rightArm;
-    [SerializeField] private Vector3 leftArmLocaRelativeForward;
+    [SerializeField] private Vector3 leftArmLocalRelativeForward;
     [SerializeField] private Vector3 rightArmLocalRelativeForward;
 
     // if we want to override any axis of the torso's rotation
@@ -39,7 +39,7 @@ namespace Yohash.FABRIK.Samples.Upperbody
     void Start()
     {
       var pose = transform.ToPose();
-      leftArmLocaRelativeForward = computeLocalRelativeForward(pose, leftArm.SecondLink);
+      leftArmLocalRelativeForward = computeLocalRelativeForward(pose, leftArm.SecondLink);
       rightArmLocalRelativeForward = computeLocalRelativeForward(pose, rightArm.SecondLink);
     }
 
@@ -110,7 +110,7 @@ namespace Yohash.FABRIK.Samples.Upperbody
 
       var lookAt = Vector3.zero;
       // adjust the rotation to face in the averaged relative forward vectors
-      var leftContribution = leftArm.SecondLink.TransformDirection(leftArmLocaRelativeForward);
+      var leftContribution = leftArm.SecondLink.TransformDirection(leftArmLocalRelativeForward);
       var rightContribution = rightArm.SecondLink.TransformDirection(rightArmLocalRelativeForward);
 
       lookAt += leftContribution;

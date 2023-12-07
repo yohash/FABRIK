@@ -5,6 +5,17 @@ All notable changes to this project will be documented in this file.
 The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/),
 and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
 
+## [0.4.2] - 2024-03-14
+
+### Changed 
+
+- Update LowerBodyIk sample scene's enum reference style to PascalCase
+
+### Fixed
+
+- Corrected a typo in the upper body fabrik sample scene
+- Adjusted upper-torso sample scene so wrist end-effectors have a preferred up to match the up-rotation of the follow-object
+
 ## [0.4.1] - 2023-07-03
 
 ### Changed

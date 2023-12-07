@@ -3,7 +3,7 @@ using Yohash.Bezier;
 
 namespace Yohash.FABRIK.Samples.Lowerbody
 {
-  public enum foot_placement
+  public enum FootPlacement
   {
     STANDING,
     LEFT_FOOT_STEPPING,
@@ -37,7 +37,7 @@ namespace Yohash.FABRIK.Samples.Lowerbody
     [Header("Tracked private vars")]
     [SerializeField] private Vector3 leftFootWorldPosition;
     [SerializeField] private Vector3 rightFootWorldPosition;
-    [SerializeField] private foot_placement currentSteps = foot_placement.STANDING;
+    [SerializeField] private FootPlacement currentSteps = FootPlacement.STANDING;
 
     // private vars
     private Vector3 leftFootDestination;
@@ -114,46 +114,46 @@ namespace Yohash.FABRIK.Samples.Lowerbody
     private void updateFootsteps()
     {
       switch (currentSteps) {
-        case foot_placement.STANDING:
+        case FootPlacement.STANDING:
           if (!leftFootProximityOK()) {
             // initialize
             initializeLeftFootStep();
             // call update step
             updateLeftStep();
             // set state
-            currentSteps = foot_placement.LEFT_FOOT_STEPPING;
+            currentSteps = FootPlacement.LEFT_FOOT_STEPPING;
           } else if (!rightFootProximityOK()) {
             // initialize
             initializeRightFootStep();
             // call update
             updateRightStep();
             // set state
-            currentSteps = foot_placement.RIGHT_FOOT_STEPPING;
+            currentSteps = FootPlacement.RIGHT_FOOT_STEPPING;
           }
           break;
-        case foot_placement.LEFT_FOOT_STEPPING:
+        case FootPlacement.LEFT_FOOT_STEPPING:
           updateLeftStep();
           // test step time
           if ((Time.time - timeStepStarted) > stepMaxTime) {
             // foot has arrived, check right foot
             if (rightFootProximityOK()) {
-              currentSteps = foot_placement.STANDING;
+              currentSteps = FootPlacement.STANDING;
             } else {
               initializeRightFootStep();
-              currentSteps = foot_placement.RIGHT_FOOT_STEPPING;
+              currentSteps = FootPlacement.RIGHT_FOOT_STEPPING;
             }
           }
           break;
-        case foot_placement.RIGHT_FOOT_STEPPING:
+        case FootPlacement.RIGHT_FOOT_STEPPING:
           updateRightStep();
           // test step time
           if ((Time.time - timeStepStarted) > stepMaxTime) {
             // foot has arrived, check left foot
             if (leftFootProximityOK()) {
-              currentSteps = foot_placement.STANDING;
+              currentSteps = FootPlacement.STANDING;
             } else {
               initializeLeftFootStep();
-              currentSteps = foot_placement.LEFT_FOOT_STEPPING;
+              currentSteps = FootPlacement.LEFT_FOOT_STEPPING;
             }
           }
           break;
